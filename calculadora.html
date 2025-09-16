@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Proyecto calculadora científica en JS</title>
+	<link rel="stylesheet" href="view/normalize.css">
+	<link rel="stylesheet" href="view/style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Story+Script&display=swap" rel="stylesheet">
+</head>
+<body>
+	
+
+
+	<div class="container">
+		<div class="Info">
+			<p>Aquí van las opciones para usuarios.</p>
+		</div>
+		<div class="calculadora">
+			<h1>CALCULADORA CIENTÍFICA</h1>
+			
+			<div id="layout-calc"><!--contenedor calculador-->
+				<div id="visor">
+					<input type="text" class="visor" placeholder="0">
+				</div>
+				<div class="columnas">
+					<div>
+						<button><ion-icon name="square-outline"></ion-icon>&sup2;</button>
+						<button>SIN</button>
+						<button>IN</button>
+						<button>ANS</button>
+					</div>
+					<div>
+						<button>x&sup2;</button>
+						<button>COS</button>
+						<button>LOG 10</button>
+						<button>,</button>
+					</div>
+					<div>
+						<button>&radic;<ion-icon name="square-outline"></ion-icon></button>
+						<button>TAN</button>
+						<button>LOGx</button>
+						<button>(</button>
+					</div>
+					<div>
+						<button id="ac">AC</button>
+						<button>TT</button>
+						<button>&#8540;</button>
+						<button>)</button>
+					</div>
+					<div>
+						<button>7</button>
+						<button>4</button>
+						<button>1</button>
+						<button>0</button>
+					</div>
+					<div>
+						<button>8</button>
+						<button>5</button>
+						<button>2</button>
+						<button>.</button>
+					</div>
+					<div>
+						<button>9</button>
+						<button>6</button>
+						<button>3</button>
+						<button><ion-icon name="chevron-back-outline"></ion-icon></button>
+					</div>
+					<div>
+						<button>x</button>
+						<button>+</button>
+						<button>%</button>
+						<button><ion-icon name="chevron-forward-outline"></ion-icon></button>
+					</div>
+					<div>
+						<button>/</button>
+						<button>-</button>
+						<button id="borrar"><ion-icon name="arrow-undo-outline"></ion-icon></button>
+						<button id="calcular"><ion-icon name="checkbox-outline"></ion-icon></button>
+					</div>
+				</div>
+				<div class="funcionalidades">
+					<button>MCD</button>
+					<button>FRACCIONES</button>
+				</div>
+			</div><!--fin contenedor calculadora-->
+
+		</div>
+
+		<div class="Users">
+			<p>Aquí va la descripción</p>
+		</div>
+
+	</div>
+
+	<script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+	<script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+	<script src="model/main.js"></script>
+
+
+</body>
+</html>
+

@@ -1,0 +1,137 @@
+body{
+	font-family: "Poppins";
+}
+.container{
+	width: 100%;
+	max-width: 1120px;
+	height: 100vh;
+	margin: 0 auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.calculadora{
+	display: flex;
+	justify-content: center;
+	flex-direction: column;
+	align-items: center;
+	background: rgba(179, 57, 57,1.0);
+	padding: 20px;
+	border-radius: 10px;
+	width: 40%;
+}
+.calculadora h1{
+	text-align: center;
+	color: rgba(255, 82, 82,1.0);
+	margin-bottom: 20px;
+	font-size: 2rem;
+}
+#layout-calc{
+	width: 100%;
+}
+#visor{
+	width: 100%;
+}
+.visor{
+	display: flex;
+	justify-content: flex-end;
+	margin: 20px 0;
+}
+input.visor{
+	text-align: right;
+	width: 100%;
+	font-size: 45px;
+	box-shadow: none;
+	transition: .3s;
+	background: transparent;
+	border: none;
+	outline: none;
+	color: #fff;
+	border-radius: 5px;
+}
+input.visor:hover{
+	box-shadow: -8px -8px 15px rgba(255, 82, 82,0.5), 5px 5px 15px rgba(255, 82, 82,0.5);
+}
+.columnas{
+	width: 100%;
+	display: flex;
+	justify-content: flex-end;
+	flex-wrap: wrap;
+}
+.columnas div{
+	width: 11.1%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.columnas div button{
+	width: 40px;
+	height: 40px;
+	margin: 3px;
+	box-shadow: -8px -8px 15px rgba(255, 82, 82,0.3), 5px 5px 15px rgba(255, 82, 82,0.3);
+	background: transparent;
+	border: 0;
+	outline: 0;
+	border-radius: 3px;
+	font-size: .8rem;
+	text-align: center;
+	color: #fff;
+	font-weight: 200;
+	cursor: pointer;
+	transition: 0.3s;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+.columnas div button:hover{
+	background: rgba(255, 82, 82,1.0);
+	box-shadow: -8px -8px 15px rgba(179, 57, 57,0.8), 5px 5px 15px rgba(179, 57, 57,0.8);
+}
+#calcular{
+	background: rgba(44, 44, 84,1.0);
+}
+#calcular:hover{
+	background: rgba(64, 64, 122,1.0);
+}
+#ac{
+	background: rgba(33, 140, 116,1.0);
+}
+#ac:hover{
+	background: rgba(51, 217, 178,1.0);
+}
+#borrar{
+	background: rgba(205, 97, 51,1.0);
+}
+#borrar:hover{
+	background: rgba(255, 121, 63,1.0);
+}
+.funcionalidades{
+	width: 100%;
+	display: flex;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	justify-content: flex-start;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.funcionalidades button{
+	border: 0;
+	outline: 0;
+	cursor: pointer;
+	margin: 3px;
+	font-size: 1em;
+	border-radius: 3px;
+	background: rgba(44, 44, 84,1.0);
+	color: #fff;
+	transition: .3s;
+}
+.funcionalidades button:hover{
+	background: rgba(64, 64, 122,1.0);
+}
+.Info{
+	width: 30%;
+}
+.Users{
+	width: 30%;
+}
