@@ -73,32 +73,32 @@ function Calculadora(){
                         <button>)</button>
                     </div>
                     <div>
-                        <button>7</button>
-                        <button>4</button>
-                        <button>1</button>
-                        <button>0</button>
+                        <button dataClick="7">7</button>
+                        <button dataClick="4">4</button>
+                        <button dataClick="1">1</button>
+                        <button dataClick="0">0</button>
                     </div>
                     <div>
-                        <button>8</button>
-                        <button>5</button>
-                        <button>2</button>
-                        <button>.</button>
+                        <button dataClick="7">8</button>
+                        <button dataClick="5">5</button>
+                        <button dataClick="2">2</button>
+                        <button dataClick=".">.</button>
                     </div>
                     <div>
-                        <button>9</button>
-                        <button>6</button>
-                        <button>3</button>
+                        <button dataClick="9">9</button>
+                        <button dataClick="6">6</button>
+                        <button dataClick="3">3</button>
                         <button><ion-icon name="chevron-back-outline"></ion-icon></button>
                     </div>
                     <div>
-                        <button>x</button>
-                        <button>+</button>
-                        <button>%</button>
+                        <button dataClick="x">x</button>
+                        <button dataClick="+">+</button>
+                        <button dataClick="%">%</button>
                         <button><ion-icon name="chevron-forward-outline"></ion-icon></button>
                     </div>
                     <div>
-                        <button>/</button>
-                        <button>-</button>
+                        <button dataClick="/">/</button>
+                        <button dataClick="-">-</button>
                         <button id="borrar"><ion-icon name="arrow-undo-outline"></ion-icon></button>
                         <button id="calcular"><ion-icon name="checkbox-outline"></ion-icon></button>
                     </div>
