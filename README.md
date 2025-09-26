@@ -6,7 +6,7 @@ Este repositorio documenta mi viaje público para implementar un **Sistema de Á
 
 ## 🚀 **La Misión**
 
-**Objetivo Final:** Implementar el algoritmo de **Bases de Gröbner** (Buchberger) en JavaScript, creando una herramienta web de código abierto para resolver sistemas de ecuaciones polinomiales.
+**Objetivo Final:** Implementar el algoritmo de **Bases de Gröbner** (Buchberger) en Typescript, creando una herramienta web de código abierto para resolver sistemas de ecuaciones polinomiales.
 
 **¿Por qué?** Este proyecto es mi demostración técnica y personal de que la capacidad de aprendizaje y la determinación pueden superar cualquier circunstancia. Es mi argumento más sólido para una oportunidad en la industria tecnológica.
 
@@ -32,7 +32,7 @@ Este repositorio documenta mi viaje público para implementar un **Sistema de Á
 
 El proyecto se estructura en dos partes principales:
 
--   **`/engine/`**: Un motor matemático en **JavaScript vanilla** que contiene toda la lógica de cálculo (parser, algoritmos, polinomios). Utiliza patrones de diseño como **Strategy, Visitor y Factory** para ser modular y extensible.
+-   **`/engine/`**: Un motor matemático en **Typescript** que contiene toda la lógica de cálculo (parser, algoritmos, polinomios). Utiliza patrones de diseño como **Strategy, Visitor y Factory** para ser modular y extensible.
 -   **`/frontend/`**: Una interfaz moderna construida en **React** que consume el motor a través de una **Fachada (Facade)** simple.
 
 Esta separación garantiza que el núcleo matemático sea independiente del framework y pueda ser reutilizado.
