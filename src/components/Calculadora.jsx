@@ -87,7 +87,7 @@ function Calculadora(){
                             <button><ion-icon name="chevron-back-outline"></ion-icon></button>
                         </div>
                         <div>
-                            <button name="x" onClick={clickCalc}>x</button>
+                            <button name="*" onClick={clickCalc}>*</button>
                             <button name="+" onClick={clickCalc}>+</button>
                             <button name="%" onClick={clickCalc}>%</button>
                             <button><ion-icon name="chevron-forward-outline"></ion-icon></button>

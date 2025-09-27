@@ -4,7 +4,6 @@ export default class Parser{
     protected posfixConversion: string[] = [];
     protected pila: string[] = [];
     protected cadena: string; 
-    protected bufferElem: string[] = []; 
 
     private enteros = /^\d+$/; 
 
@@ -69,14 +68,6 @@ export default class Parser{
 
     }
 
-    //obtenemos todos los digitos de un entero de más de 1 digito. Ej: 3889
-    protected tokenizNumeros(posicionAcual: number): any{
-        if(this.enteros.test(this.infija[posicionAcual])){
-            return 1 + this.tokenizNumeros(posicionAcual +1);
-        }
-        return console.log("Digitos recuperados"); 
-    }
-
     //SHUNTHING-YARD ALGORITMO
     private conversionElem(){
 
@@ -86,7 +77,6 @@ export default class Parser{
             if(this.enteros.test(this.infija[i])){
  
                 this.posfixConversion.push(this.infija[i]); //agregamos si es un número
-
             
             }else if(this.infija[i] == "("){
 
@@ -133,6 +123,7 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
+        console.log(this.posfixConversion); 
     }
 	
 }
