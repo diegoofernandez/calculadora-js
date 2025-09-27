@@ -6,68 +6,6 @@ export interface VisitorElemental{
 
 }
 
-export class Visitor implements VisitorElemental{
-
-    visitorNumber(node: NumberNode): number {
-        return node.numero; 
-    }
-
-    visitorVariable(node: VariableNode): string {
-        return node.variable;
-    }
-
-    visitorOperador(node: OperadorNode):  number | NodeElem{
-        const izquierda = node.izquierda.accept(this); 
-        const derecha = node.derecha.accept(this); 
-        const operador = node.operador; 
-
-        //REGLAS DE OPERACIONES ELEMENTALES
-        //SUMA DE CERO
-        if(operador == "+" && izquierda.numero == 0){
-            return derecha; 
-        }
-        if(operador == "+" && derecha.numero == 0){
-            return izquierda; 
-        }
-        //SUMA
-        if(operador == '+' && derecha.numero != 0){
-            return new NumberNode(derecha.numero + izquierda.numero); 
-        }
-        //RESTA DE CERO
-        if(operador == '-' && izquierda.numero == 0){
-            return izquierda;
-        }
-        if(operador == '-' && derecha.numero == 0){
-            return derecha;
-        }
-        //RESTA
-        if(operador == '-' && izquierda.numero != 0){
-            return new NumberNode(izquierda.numero - derecha.numero);
-        }
-        //MULTIPLICACION POR CERO
-        if(operador == '*' && izquierda.numero == 0){
-            return new NumberNode(0);
-        }
-        //MULTIPLICACION 
-        if(operador == '*' && izquierda.numero != 0){
-            return new NumberNode(izquierda.numero * derecha.numero);
-        }
-        //DIVISION POR CERO
-        if(operador == '/' && izquierda.numero == 0){
-            return new NumberNode(0);
-        }
-        //DIVISION
-        if(operador == '/' && derecha.numero != 0){
-            return new NumberNode(izquierda.numero / derecha.numero);
-        }
-
-        return new OperadorNode(operador, izquierda, derecha); 
-
-
-    }
-
-}
-
 // Visitor para evaluar la expresión
 export class EvaluarVisitor implements VisitorElemental {
 
@@ -91,24 +29,6 @@ export class EvaluarVisitor implements VisitorElemental {
             default: throw new Error(`Operador desconocido: ${node.operador}`);
         }
     }
-}
-
-export class Imprimir implements VisitorElemental{
-
-    visitorNumber(node: NumberNode): string{
-        return node.numero.toString();
-    }
-
-    visitorVariable(node: VariableNode): string {
-        return node.variable;
-    }
-
-    visitorOperador(node: OperadorNode): string{
-        const leftStr = node.izquierda.accept(this);
-        const rightStr = node.derecha.accept(this);
-        return `(${leftStr} ${node.operador} ${rightStr})`;
-    }
-
 }
 
 export class NodeElem{

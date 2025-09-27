@@ -1,11 +1,6 @@
-import { NumberNode, OperadorNode, Imprimir, Visitor, NodeElem, EvaluarVisitor} from "../tree/TreeElemental";
-export interface ResolviendoElemental{
+import { NumberNode, OperadorNode, EvaluarVisitor} from "../tree/TreeElemental";
 
-    operar(operacion: string[]): number;
-
-}
-
-export class Operacion implements ResolviendoElemental{
+export class Operacion{
 
     public pilaTree: Array<NumberNode | OperadorNode> = []; 
     public enteros = /^\d+$/;
