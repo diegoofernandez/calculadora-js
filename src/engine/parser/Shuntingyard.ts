@@ -4,7 +4,7 @@ export default class Parser{
     protected posfixConversion: string[] = [];
     protected pila: string[] = [];
     protected cadena: string; 
-
+    protected road: number; 
     private enteros = /^\d+$/; 
 
     
@@ -15,25 +15,32 @@ export default class Parser{
         "/": 2
     }; 
 
-    protected context = "|"; 
-    protected objetoMatematico = ["frac", "expo", "eculin", "ecurac", "pol"]; 
-
     constructor(data: string, road: number){
         this.cadena = data; 
-        if(road == 1){
-            //objetos complejos
-            this.tokenization(this.cadena); 
+        this.road = road; 
+    }
+
+    public goConversion(): string[]{
+
+        if(this.road == 1){
+            this.tokenization(this.cadena);
+            return this.sufijoObjetos();
         }else{
-            this.tokenizacionElem(this.cadena);
-            this.conversionElem(); 
+            this.tokenizacionElem(this.cadena); 
+            return this.conversionElem(); 
         }
+
+    }
+
+    protected sufijoObjetos(): string[]{
+        return []
     }
 
     //tokenizacion de las cadenas
     protected tokenization(cadena: string){
         this.infija = cadena.split("");
     }
-    protected tokenizacionElem(cadena: string){
+    protected tokenizacionElem(cadena: string){//se forma el token para las 4 operaciones elementales
         let i = 0; 
 
         while(i < cadena.length){
@@ -123,7 +130,7 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
-        console.log(this.posfixConversion); 
+        return this.posfixConversion;
     }
 	
 }

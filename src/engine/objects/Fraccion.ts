@@ -21,7 +21,7 @@ export class Fraccion{
     }
 
 }
-export class FraccionSumar extends Fraccion implements ProcesamientoFraccion{
+export class FraccionSumar implements ProcesamientoFraccion{
 
     operacion(fraccion1: Fraccion, fraccion2: Fraccion): Fraccion{
 
@@ -43,7 +43,7 @@ export class FraccionSumar extends Fraccion implements ProcesamientoFraccion{
 
 }
 
-export class FraccionRestar extends Fraccion implements ProcesamientoFraccion{
+export class FraccionRestar implements ProcesamientoFraccion{
 
     operacion(fraccion1: Fraccion, fraccion2: Fraccion): Fraccion{
 
@@ -54,7 +54,7 @@ export class FraccionRestar extends Fraccion implements ProcesamientoFraccion{
 
 }
 
-export class FraccionMultiplicar extends Fraccion implements ProcesamientoFraccion{
+export class FraccionMultiplicar implements ProcesamientoFraccion{
 
     operacion(fraccion1: Fraccion, fraccion2: Fraccion): Fraccion{
 
@@ -65,7 +65,7 @@ export class FraccionMultiplicar extends Fraccion implements ProcesamientoFracci
 
 }
 
-export class FraccionDividir extends Fraccion implements ProcesamientoFraccion{
+export class FraccionDividir implements ProcesamientoFraccion{
 
     operacion(fraccion1: Fraccion, fraccion2: Fraccion): Fraccion{
 
@@ -89,3 +89,5 @@ export abstract class OperandoFraccion{
     }
 
 }
+
+export class Operar extends OperandoFraccion{}
