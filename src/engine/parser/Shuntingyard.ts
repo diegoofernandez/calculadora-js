@@ -20,7 +20,7 @@ export default class Parser{
         this.road = road; 
     }
 
-    public goConversion(): string[]{
+    public goConversion(): any{
 
         if(this.road == 1){
             this.tokenization(this.cadena);
@@ -130,6 +130,7 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
+        console.log("Cadena convertida a sufija: "+this.posfixConversion); 
         return this.posfixConversion;
     }
 	

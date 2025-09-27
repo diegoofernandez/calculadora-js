@@ -1,28 +1,58 @@
+import { NumberNode, OperadorNode, Imprimir, Visitor, NodeElem, EvaluarVisitor} from "../tree/TreeElemental";
 export interface ResolviendoElemental{
 
-    operar(operacion: []): string;
+    operar(operacion: string[]): number;
 
 }
 
 export class Operacion implements ResolviendoElemental{
-    operar(operacion: []): string{
 
-        return "";
+    public pilaTree: Array<NumberNode | OperadorNode> = []; 
+    public enteros = /^\d+$/;
+
+    operar(operacion: Array<string>): any{
+
+        this.pilaTree = []; 
+        let i = 0; 
+
+        while(i < operacion.length){
+
+            if(this.enteros.test(operacion[i])){
+                this.pilaTree.push(new NumberNode(Number(operacion[i]))); 
+                i++; 
+                continue; 
+            }else if(operacion[i] == "+"){
+                let izquierda = this.pilaTree.pop(); 
+                let derecha = this.pilaTree.pop()
+                this.pilaTree.push(new OperadorNode('+', izquierda!, derecha!)); 
+                i++; 
+                continue; 
+            }else if(operacion[i] == '-'){
+                let izquierda = this.pilaTree.pop(); 
+                let derecha = this.pilaTree.pop()
+                this.pilaTree.push(new OperadorNode('-', izquierda!, derecha!)); 
+                i++;
+                continue; 
+            }else if(operacion[i] == '*'){
+                let izquierda = this.pilaTree.pop(); 
+                let derecha = this.pilaTree.pop()
+                this.pilaTree.push(new OperadorNode('*', izquierda!, derecha!)); 
+                i++;
+                continue;
+            }else if(operacion[i] == '/'){
+                let izquierda = this.pilaTree.pop(); 
+                let derecha = this.pilaTree.pop()
+                this.pilaTree.push(new OperadorNode('/', izquierda!, derecha!)); 
+                i++;
+                continue;
+            }
+        }
+
+        
+        let impresor = new EvaluarVisitor();
+        let arbolSimplificado = this.pilaTree[0].accept(impresor); 
+
+        return arbolSimplificado;
 
     }
-}
-
-export abstract class Operando{
-
-    private operador: ResolviendoElemental; 
-    
-    constructor(operacion: ResolviendoElemental){
-        this.operador = operacion; 
-    }
-
-    public resolver(data: []){
-        return this.operador.operar(data); 
-    }
-
-
 }

@@ -18,6 +18,7 @@ function Calculadora(){
             setVisorNormal("")
         }else if(event.target.name == "calcular"){
             let motor = new FacadeDriver(visorComplex, stringVisorNormal); 
+            console.log(motor.runOp()); 
         }
     }
 
