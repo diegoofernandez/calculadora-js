@@ -1,30 +1,33 @@
 export interface VisitorElemental{
 
-    visitorNumber(node: number): string | number;
-    visitorVariable(node: string): string | number; 
-    visitorOperador(node: ObjElemental): string | number | NumberNode | VariableNode | OperadorNode;  
+    visitorNumber(node: NumberNode): number;
+    visitorVariable(node: VariableNode): string; 
+    visitorOperador(node: OperadorNode): number | NodeElem;  
 
 }
 
 export class Visitor implements VisitorElemental{
 
-    visitorNumber(node: number): number {
-        return node; 
+    visitorNumber(node: NumberNode): number {
+        return node.numero; 
     }
 
-    visitorVariable(node: string): string {
-        return node;
+    visitorVariable(node: VariableNode): string {
+        return node.variable;
     }
 
-    visitorOperador(node: ObjElemental): string | number | NumberNode | VariableNode | OperadorNode{
-        const izquierda = node.izquierda; 
-        const derecha = node.derecha; 
+    visitorOperador(node: OperadorNode):  number | NodeElem{
+        const izquierda = node.izquierda.accept(this); 
+        const derecha = node.derecha.accept(this); 
         const operador = node.operador; 
 
         //REGLAS DE OPERACIONES ELEMENTALES
         //SUMA DE CERO
-        if(operador == "+" && izquierda == 0){
+        if(operador == "+" && izquierda.numero == 0){
             return derecha; 
+        }
+        if(operador == "+" && derecha.numero == 0){
+            return izquierda; 
         }
 
         return new OperadorNode(operador, izquierda, derecha); 
@@ -41,11 +44,13 @@ export class NodeElem{
         this.tipo = tipo; 
     }
 
+    public accept(visitor: VisitorElemental): any{}
+
 }
 
 export class NumberNode extends NodeElem{
 
-    protected numero: number; 
+    public numero: number; 
 
     constructor(numero: number){
         super('numero'); 
@@ -53,14 +58,14 @@ export class NumberNode extends NodeElem{
     }
 
     accept(visitor: VisitorElemental){
-        return visitor.visitorNumber(this.numero); 
+        return visitor.visitorNumber(this); 
     }
 
 }
 
 export class VariableNode extends NodeElem{
 
-    protected variable: string; 
+    public variable: string; 
 
     constructor(variable: string){
         super('variable'); 
@@ -68,18 +73,18 @@ export class VariableNode extends NodeElem{
     }
 
     accept(visitor: VisitorElemental){
-        return visitor.visitorVariable(this.variable); 
+        return visitor.visitorVariable(this); 
     }
 
 }
 
 export class OperadorNode extends NodeElem{
 
-    protected operador: string; 
-    protected izquierda: number; 
-    protected derecha: number; 
+    public operador: string; 
+    public izquierda: NodeElem; 
+    public derecha: NodeElem; 
 
-    constructor(operador: string, izquierda: number, derecha: number){
+    constructor(operador: string, izquierda: NodeElem, derecha: NodeElem){
         
         super('operador'); 
         this.operador = operador; 
@@ -89,8 +94,7 @@ export class OperadorNode extends NodeElem{
     }
 
     accept(visitor: VisitorElemental){
-        let pasar = {"izquierda": this.izquierda, "derecha": this.derecha, "operador": this.operador};
-        return visitor.visitorOperador(pasar); 
+        return visitor.visitorOperador(this); 
     }
 
 }
