@@ -7,8 +7,8 @@ export default class Parser{
 
     private enteros = /^\d+$/; 
 
-    type Operador = "+" | "-" | "*" | "/"; 
-    protected operadores: Record<Operador, number> ={
+    
+    protected operadores: Record<Operador, number> = {
         "+": 1, 
         "-": 1, 
         "*": 2,
@@ -85,11 +85,11 @@ export default class Parser{
 
                 this.pila.push(this.infija[i]); 
             
-            }else if(operadores[this.infija[i] as Operador] <= operadores[this.pila[this.pila.length-1] as Operador]){
+            }else if(this.operadores[this.infija[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                while(operadores[this.infija[i] as Operador] <= operadores[this.pila[this.pila.length-1] as Operador]){
+                while(this.operadores[this.infija[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                    this.posfixConversion.push(this.pila.pop()); 
+                    this.posfixConversion.push(this.pila.pop() as string); 
                 
                 }
                 this.pila.push(this.infija[i]);
