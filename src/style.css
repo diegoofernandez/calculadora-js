@@ -594,3 +594,61 @@ input.visor:hover{
 .BasePotencia:hover{
 	border: 1px solid #fff;
 }
+
+/*********************************
+*********************************
+*********************************
+*********************************
+*********************************
+    TEMPORAL STYLES
+	TEMPORAL STYLES
+*********************************
+*********************************
+*********************************
+*********************************
+**********************************/
+.containerTemporal{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	flex-direction: column;
+	box-sizing: border-box;
+}
+.containerTemporal h1{
+	color: var(--violeta-claro);
+}
+.containerTemporal p{
+	color: var(--violeta-bordestext);
+	width: 50%;
+	font-size: .8em;
+}
+.containerTemporal div{
+	width: 70%;
+}
+.containerTemporal div p{
+	font-size: 1em;
+	width: 100%;
+	color: #fff;
+}
+.containerTemporal img{
+	width: 30%;
+}
+.containerTemporal input{
+	width: 70%;
+	box-sizing: border-box;
+	height: 55px;
+	min-height: 55px;
+	font-size: 1rem;
+	border-radius: 3px;
+	outline: 0;
+	border: none;
+	margin-bottom: 8px;
+	font-family: "Poppins";
+	padding-left: 10px;
+	color: var(--violeta-oscuro);
+	transition: 0.1s;
+}
+.containerTemporal input:focus{
+	outline: 3px solid var(--violeta-bordestext);
+}
