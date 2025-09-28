@@ -4,6 +4,8 @@
 
 Este repositorio documenta mi viaje público para implementar un **Sistema de Álgebra Computacional (CAS)** desde cero, culminando con la implementación del algoritmo de **Bases de Gröbner** en un plazo de 3 meses.
 
+## 🚀 **Mirá el motor** dentro de la carpeta "engine", priorizaré este desarrollo y luego implementaré el front. 
+
 ## 🚀 **La Misión**
 
 **Objetivo Final:** Implementar el algoritmo de **Bases de Gröbner** (Buchberger) en Typescript, creando una herramienta web de código abierto para resolver sistemas de ecuaciones polinomiales.
@@ -33,7 +35,7 @@ Este repositorio documenta mi viaje público para implementar un **Sistema de Á
 El proyecto se estructura en dos partes principales:
 
 -   **`/engine/`**: Un motor matemático en **Typescript** que contiene toda la lógica de cálculo (parser, algoritmos, polinomios). Utiliza patrones de diseño como **Strategy, Visitor y Factory** para ser modular y extensible.
--   **`/frontend/`**: Una interfaz moderna construida en **React** que consume el motor a través de una **Fachada (Facade)** simple.
+-   **`/frontend/`**: Una interfaz moderna construida en **React** que consume el motor a través de una **Fachada (Facade)** simple. (LA MISMA NO SE PRIORIZARÁ POR EL MOMENTO, YA QUE BUSCO PRIMERO EL DESARROLLO DEL "MOTOR")
 
 Esta separación garantiza que el núcleo matemático sea independiente del framework y pueda ser reutilizado.
 

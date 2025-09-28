@@ -102,7 +102,7 @@ function Calculadora(){
                     </div>
                     <div className="funcionalidades">
                     <button>MCD</button>
-                    <button onClick={clickVisor} >FRACCIONES</button>
+                    <button onClick={clickVisor} >OPERACIONES INTERMEDIAS (de Fracciones a Ecuaciones racionales)</button>
                     </div>
                 </div>
 
