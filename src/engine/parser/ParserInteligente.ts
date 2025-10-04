@@ -59,9 +59,10 @@ export class ParserInteligente{
       }
 
       if ((/\d/.test(char) || char == "/" || /[a-zA-Z]/.test(char) || char == "\\" || char == "|" || char == "^") && char != ")" && char != "+" && char != "-" && char != ":" && char != "*") {
+
         let objeto = '';
         
-        while (current < input.length && /\d/.test(input[current])) {
+        while (current < input.length) {
           
           char = input[current]; 
 
@@ -73,7 +74,6 @@ export class ParserInteligente{
           }else{
             break; 
           }
-
           
         }
         tokens.push(objeto);

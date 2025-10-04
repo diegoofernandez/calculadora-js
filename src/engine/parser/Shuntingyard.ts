@@ -14,7 +14,7 @@ export default class Parser{
         "-": 1, 
         "*": 2,
         "/": 2, 
-        ":": 2,
+        ":": 2
     }; 
 
     constructor(data: string, road: number){
@@ -140,22 +140,29 @@ export default class Parser{
         for(var i = 0; i < data.length; i++){
 
             //situaciones básicas de inserción a pila y posfija
-            if(data[i] !== "+" || data[i] !== "-" || data[i] !== "*" || data[i] !== ":" || data[i] !== "="){
+            if(data[i] !== "+" && data[i] !== "-" && data[i] !== "*" && data[i] !== ":" && data[i] !== "="){
  
                 this.posfixConversion.push(data[i]); //agregamos si es un término, una representación de objetos, un monomio, etc.
             
-            }else if(this.operadores[data[i] as Operador] > this.operadores[this.pila[this.pila.length-1] as Operador]){
+            }else{
 
+                if(this.operadores[data[i] as Operador] > this.operadores[this.pila[this.pila.length-1] as Operador]){
+                    
+                console.log(this.operadores[this.pila[this.pila.length-1] as Operador]); 
                 this.pila.push(data[i]); 
             
-            }else if(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
+                }else if(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                while(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
+                    while(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                    this.posfixConversion.push(this.pila.pop() as string); 
-                
+                        this.posfixConversion.push(this.pila.pop() as string); 
+                    
+                    }
+                    this.pila.push(data[i]);
+                }else if(this.pila.length < 1){
+                    this.pila.push(data[i]);
                 }
-                this.pila.push(data[i]);
+
             }
         
         }

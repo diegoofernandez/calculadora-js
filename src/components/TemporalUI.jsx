@@ -7,10 +7,13 @@ function TemporalUI(){
 
     function clickCalculo(){
 
-        setCalculo(calculo);
         let motor = new FacadeDriver(1, calculo); 
-        console.log(motor.runOp()); 
+        motor.runOp(); 
 
+    }
+
+    function cambiandoValor(event){
+        setCalculo(event.target.value); 
     }
 
     return (
@@ -19,7 +22,7 @@ function TemporalUI(){
             <h1>Motor Matemático</h1>
             <img src="https://i.gifer.com/V8qR.gif" />
             <p>Disculpe la interfaz humilde, estoy corriendo hacia las bases de Grobner para el motor. Palabra de caballero: Una vez el motor este completo, le daré la interfaz que usted merece. :D </p>
-            <input type="text" placeholder="Calcula lo que quieras..." value={calculo} />
+            <input type="text" placeholder="Calcula lo que quieras..." value={calculo} onChange={cambiandoValor} />
             <button onClick={clickCalculo}>CALCULAR</button>
             <p>Indicaciones... para calcular apriete enter.<br />Permite: Fracciones, Potencias, Raices, Polinomios, Ecuaciones Lineales, Ecuaciones Racionales.</p>
             <div>

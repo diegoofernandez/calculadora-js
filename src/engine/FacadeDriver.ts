@@ -9,16 +9,10 @@ export default class FacadeDriver{
 	
 	//complex indica si es una operacion elemental, o requerirá objetos matemáticos
 	constructor(complex: number, info: string){
-		this.tipoOperacion = complex; 
-		if(this.tipoOperacion == 1){
-
-			this.parser = new Parser(info, complex); 
-
-		}else{
-
-			this.parser = new Parser(info, complex);
 		
-		}
+		this.tipoOperacion = complex; 
+		this.parser = new Parser(info, complex); 
+
 	}
 
 	
