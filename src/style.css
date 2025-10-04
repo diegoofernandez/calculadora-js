@@ -611,7 +611,7 @@ input.visor:hover{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 100vh;
+	min-height: 100vh;
 	flex-direction: column;
 	box-sizing: border-box;
 }
@@ -651,4 +651,21 @@ input.visor:hover{
 }
 .containerTemporal input:focus{
 	outline: 3px solid var(--violeta-bordestext);
+}
+.containerTemporal button{
+	outline: 0;
+	border: 0;
+	width: 70%;
+	cursor: pointer;
+	background-color: var(--violeta-claro);
+	margin-top: 10px;
+	border-radius: 3px;
+	font-size: 2em;
+	margin-bottom: 10px;
+	color: var(--violeta-bordestext);
+	transition: .3s;
+}
+.containerTemporal button:hover{
+	background-color: var(--violeta-bordestext);
+	color: var(--violeta-oscuro);
 }

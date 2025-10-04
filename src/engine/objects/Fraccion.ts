@@ -1,16 +1,56 @@
+import { ObjetoMatematico } from "./ObjetoMatematico";
+
 export interface ProcesamientoFraccion{
 
     operacion(fraccion1: Fraccion, fraccion2: Fraccion): Fraccion;
 
 }
-export class Fraccion{
+export class Fraccion extends ObjetoMatematico{
 
-    protected numerador: string | number | Fraccion; 
-    protected denominador: string | number | Fraccion; 
+    protected numerador: string | number | ObjetoMatematico; 
+    protected denominador: string | number | ObjetoMatematico; 
 
-    constructor(numerador: string | number | Fraccion, denominador: string | number | Fraccion){
+    constructor(numerador: string | number | ObjetoMatematico, denominador: string | number | ObjetoMatematico){
+
+        super(); 
         this.numerador = numerador; 
-        this.denominador = denominador
+        this.denominador = denominador; 
+
+        if(denominador == 0){
+            throw new Error("El denominador no puede ser Cero"); 
+        }
+
+    }
+
+    evaluar(): Fraccion{
+
+        if(this.numerador instanceof ObjetoMatematico || this.denominador instanceof ObjetoMatematico){
+
+            return new Fraccion(
+                this.numerador instanceof ObjetoMatematico ? this.numerador.evaluar() : this.numerador, 
+                this.denominador instanceof ObjetoMatematico ? this.denominador.evaluar() : this.denominador
+            );
+
+        } 
+
+        return new Fraccion(this.numerador as number, this.denominador as number); 
+
+    }
+
+    simplficar(): Fraccion{
+
+        const evaluar = this.evaluar(); 
+
+        return evaluar; 
+
+    }
+
+    toString(): string {
+        return "hola"; 
+    }
+
+    toTree() {
+        
     }
 
     getNumerador(){
