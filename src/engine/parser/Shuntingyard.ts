@@ -13,7 +13,8 @@ export default class Parser{
         "+": 1, 
         "-": 1, 
         "*": 2,
-        "/": 2
+        "/": 2, 
+        ":": 2,
     }; 
 
     constructor(data: string, road: number){
@@ -28,20 +29,13 @@ export default class Parser{
             let parserInteligente = new ParserInteligente(); 
             let tokenInteligente = parserInteligente.parse(this.cadena); 
 
+            return this.conversionObjeto(tokenInteligente); 
+
         }else{
             this.tokenizacionElem(this.cadena); 
             return this.conversionElem(); 
         }
 
-    }
-
-    protected sufijoObjetos(): string[]{
-        return []
-    }
-
-    //tokenizacion de las cadenas para operaciones elementales
-    protected tokenization(cadena: string){
-        this.infija = cadena.split("");
     }
 
     //se forma el token para las 4 operaciones elementales
@@ -141,51 +135,27 @@ export default class Parser{
 
 
     //SHUNTHING-YARD ALGORITMO (para operaciones complejas)
-    private conversionObjeto(){
+    private conversionObjeto(data: string[]): string[]{
 
-        for(var i = 0; i < this.infija.length; i++){
+        for(var i = 0; i < data.length; i++){
 
             //situaciones básicas de inserción a pila y posfija
-            if(this.enteros.test(this.infija[i])){
+            if(data[i] !== "+" || data[i] !== "-" || data[i] !== "*" || data[i] !== ":" || data[i] !== "="){
  
-                this.posfixConversion.push(this.infija[i]); //agregamos si es un número
+                this.posfixConversion.push(data[i]); //agregamos si es un término, una representación de objetos, un monomio, etc.
             
-            }else if(this.infija[i] == "("){
+            }else if(this.operadores[data[i] as Operador] > this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                this.pila.push(this.infija[i]); //parentesis de apertura a la pila
+                this.pila.push(data[i]); 
             
-            }else if(this.infija[i] == ")"){//leyendo array al reves, extrayendo hasta encontrar un "("
+            }else if(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
-                for(var j = this.pila.length - 1; j >= 0; j--){
-
-                    if(this.pila[j] != "("){
-
-                        this.posfixConversion.push(this.pila.splice(j, 1)[0]); //extraemos operadores hacia posfija
-                    
-                    }else{
-
-                        this.pila.pop(); 
-                        break; 
-                   
-                    }
-
-                }
-            }else if(this.pila.length == 0 || this.pila[this.pila.length-1] == "("){//insertando y comparando operadores
-
-                this.pila.push(this.infija[i]); 
-            
-            }else if(this.operadores[this.infija[i] as Operador] > this.operadores[this.pila[this.pila.length-1] as Operador]){
-
-                this.pila.push(this.infija[i]); 
-            
-            }else if(this.operadores[this.infija[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
-
-                while(this.operadores[this.infija[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
+                while(this.operadores[data[i] as Operador] <= this.operadores[this.pila[this.pila.length-1] as Operador]){
 
                     this.posfixConversion.push(this.pila.pop() as string); 
                 
                 }
-                this.pila.push(this.infija[i]);
+                this.pila.push(data[i]);
             }
         
         }

@@ -1,4 +1,4 @@
-type Operador = "*" | "+" | "/" |"-"; 
+type Operador = "*" | "+" | "/" |"-" | ":"; 
 type ObjetoMath = Frac | "expo" | "rai" | "eculin" | "ecurac" | "polin"; 
 type Frac = [number, number]; 
 type ObjElemental = {
