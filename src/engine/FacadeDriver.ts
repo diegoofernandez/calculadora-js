@@ -1,5 +1,5 @@
 import Parser from './parser/Shuntingyard';
-import { Fraccion, FraccionSumar, Operar, ProcesamientoFraccion } from './objects/Fraccion';
+import { Fraccion, FraccionSumar, ProcesamientoFraccion } from './objects/Fraccion';
 import { Operacion} from './objects/OperacionesElementales';
 
 export default class FacadeDriver{
@@ -17,17 +17,20 @@ export default class FacadeDriver{
 
 	
 
-	public runOp(): any{		
+	public runOp(): any{
+		let tomandoParser = this.parser.goConversion(); 
+		let operacion = new Operacion(); 		
 		if(this.tipoOperacion == 0){
 
-			let tomandoParser = this.parser.goConversion(); 
-			let operacion = new Operacion(); 
 			let resultado = operacion.operar(tomandoParser); 
 
 			return resultado; 
 		}else{
 			
-			let tomandoParser = this.parser.goConversion(); 
+			let resultado = operacion.operar(tomandoParser, 1); 
+
+			return resultado; 
+
 
 		}
 

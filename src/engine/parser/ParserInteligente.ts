@@ -11,7 +11,6 @@ export class ParserInteligente{
     if(cadenaSinEspacios.startsWith('F:')){
 
         let tokenizado = this.parseOperacion(cadenaSinEspacios);
-        tokenizado.push('F');
 
         return tokenizado; 
         

@@ -129,7 +129,7 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
-        console.log("Cadena convertida a sufija: "+this.posfixConversion); 
+
         return this.posfixConversion;
     }
 
@@ -172,7 +172,6 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
-        console.log("Cadena convertida a sufija: "+this.posfixConversion); 
         return this.posfixConversion;
     }
 	

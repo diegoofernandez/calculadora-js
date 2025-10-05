@@ -8,7 +8,7 @@ function TemporalUI(){
     function clickCalculo(){
 
         let motor = new FacadeDriver(1, calculo); 
-        motor.runOp(); 
+        console.log(motor.runOp()); 
 
     }
 

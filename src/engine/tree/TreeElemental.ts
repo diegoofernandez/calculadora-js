@@ -1,8 +1,11 @@
+import ObjetoComplejo from "../objects/ObjetoComplejo";
+
 export interface VisitorElemental{
 
     visitorNumber(node: NumberNode): number | string;
     visitorVariable(node: VariableNode): string | string; 
     visitorOperador(node: OperadorNode): number | NodeElem | string;  
+    visitorStringObj(node: StringNode): string; 
 
 }
 
@@ -17,19 +20,37 @@ export class EvaluarVisitor implements VisitorElemental {
         return node.numero;
     }
     
-    visitorOperador(node: OperadorNode): number {
+    visitorOperador(node: OperadorNode): number | string{
         const izquierda = node.izquierda.accept(this);
         const derecha = node.derecha.accept(this);
         
-        switch (node.operador) {
-            case '+': return izquierda + derecha;
-            case '-': return izquierda - derecha;
-            case '*': return izquierda * derecha;
-            case '/': return izquierda / derecha;
-            default: throw new Error(`Operador desconocido: ${node.operador}`);
+        if(izquierda.length > 1 && derecha.length > 1){
+
+            let resolver = ObjetoComplejo.setStrategy(izquierda, derecha, node.operador); 
+            return resolver; 
+
+        }else{
+
+            switch (node.operador) {
+                case '+': return izquierda + derecha;
+                case '-': return izquierda - derecha;
+                case '*': return izquierda * derecha;
+                case '/': return izquierda / derecha;
+                default: throw new Error(`Operador desconocido: ${node.operador}`);
+            }
+
         }
+
+
+    }
+
+    visitorStringObj(node: StringNode): string{
+
+        return node.stringObj; 
+
     }
 }
+
 
 export class NodeElem{
     
@@ -56,6 +77,7 @@ export class NumberNode extends NodeElem{
     }
 
 }
+
 
 export class VariableNode extends NodeElem{
 
@@ -89,6 +111,21 @@ export class OperadorNode extends NodeElem{
 
     accept(visitor: VisitorElemental){
         return visitor.visitorOperador(this); 
+    }
+
+}
+
+export class StringNode extends NodeElem{
+
+    public stringObj: string;
+    
+    constructor(stringObj: string){
+        super('objetoString'); 
+        this.stringObj = stringObj; 
+    }
+
+    accept(visitor: VisitorElemental) {
+        return visitor.visitorStringObj(this); 
     }
 
 }
