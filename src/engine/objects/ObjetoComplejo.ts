@@ -1,4 +1,4 @@
-import { Fraccion, FraccionSumar, ProcesamientoFraccion } from "./Fraccion";
+import { Fraccion, FraccionDividir, FraccionMultiplicar, FraccionRestar, FraccionSumar, ProcesamientoFraccion } from "./Fraccion";
 
 export default class ObjetoComplejo{ 
 
@@ -25,17 +25,30 @@ export default class ObjetoComplejo{
             let objeto1; 
             let objeto2; 
 
-            if(fraccionRegex.test(izquierda)){
+            if(fraccionRegex.test(izquierda) && fraccionRegex.test(derecha!)){
+
+                objeto1 = izquierda.split('/');
+                objeto2 = derecha?.split('/');
+                let fraccion1 = new Fraccion(objeto1[0], objeto1[1]); 
+                let fraccion2 = new Fraccion(objeto2![0], objeto2![1]);
+                let strategy; 
 
                 switch(operador){
                     case '+':
-                        objeto1 = izquierda.split('/');
-                        objeto2 = derecha?.split('/');
-                        let fraccion1 = new Fraccion(objeto1[0], objeto1[1]); 
-                        let fraccion2 = new Fraccion(objeto2![0], objeto2![1]);
-                        let strategy = new FraccionSumar(); 
+                        strategy = new FraccionSumar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-
+                        break;
+                    case '-':
+                        strategy = new FraccionRestar(); 
+                        return strategy.operacion(fraccion1, fraccion2); 
+                        break;
+                    case ':':
+                        strategy = new FraccionDividir(); 
+                        return strategy.operacion(fraccion1, fraccion2); 
+                        break;
+                    case '*':
+                        strategy = new FraccionMultiplicar(); 
+                        return strategy.operacion(fraccion1, fraccion2); 
                         break;
                 }
 
