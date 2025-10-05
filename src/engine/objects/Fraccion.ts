@@ -19,6 +19,15 @@ export class Fraccion{
         }
 
     }
+
+    simplificacion(){
+
+        let mcd= Euclides.maximoComunDivisor(this.numerador as number, this.denominador as number); 
+        let simplificada = (this.numerador as number / mcd) + "/" + (this.denominador as number / mcd);   
+        return simplificada;
+
+    }
+
     getNumerador(){
         return this.numerador; 
     }
@@ -34,21 +43,18 @@ export class FraccionSumar implements ProcesamientoFraccion{
         if(fraccion1.getDenominador() == fraccion2.getDenominador()){
             let numerador1 = fraccion1.getNumerador() as number; 
             let numerador2 = fraccion2.getNumerador() as number; 
-            let resultado = new Fraccion(numerador1 + numerador2, fraccion1.getDenominador());
-            /*let mcd= Euclides.maximoComunDivisor(Number(resultado.getNumerador()), Number(resultado.getDenominador)); 
-            let simplificada = (Number(resultado.getNumerador()) / mcd) + "/" + (Number(resultado.getDenominador) / mcd);   
-            return String(simplificada); */
-            return resultado.getNumerador() + "/" + resultado.getDenominador();
+            let resultado = new Fraccion(Number(numerador1) + Number(numerador2), fraccion1.getDenominador());
+             
+            return resultado.simplificacion();
+
         }else{
             let numerador1 = fraccion1.getNumerador() as number; 
             let denominador1 = fraccion1.getDenominador() as number;
             let numerador2 = fraccion2.getNumerador() as number;
             let denominador2 = fraccion2.getDenominador() as number; 
             let resultado = new Fraccion((numerador1 * denominador2) + (numerador2 * denominador1), denominador1 * denominador2);
-            /*let mcd= Euclides.maximoComunDivisor(Number(resultado.getNumerador()), Number(resultado.getDenominador)); 
-            let simplificada = (Number(resultado.getNumerador()) / mcd) + "/" + (Number(resultado.getDenominador) / mcd);   
-            return String(simplificada); */
-            return resultado.getNumerador() + "/" + resultado.getDenominador();
+            
+            return resultado.simplificacion();
 
         }
 
@@ -66,7 +72,7 @@ export class FraccionRestar implements ProcesamientoFraccion{
             let numerador2 = fraccion2.getNumerador() as number; 
             let resultado = new Fraccion(numerador1 - numerador2, fraccion1.getDenominador());
         
-            return resultado.getNumerador() + "/" + resultado.getDenominador();
+            return resultado.simplificacion();
 
         }else{
 
@@ -75,11 +81,10 @@ export class FraccionRestar implements ProcesamientoFraccion{
             let numerador2 = fraccion2.getNumerador() as number;
             let denominador2 = fraccion2.getDenominador() as number; 
             let resultado = new Fraccion((numerador1 * denominador2) - (numerador2 * denominador1), denominador1 * denominador2);
-            
-            return resultado.getNumerador() + "/" + resultado.getDenominador();
+
+            return resultado.simplificacion();
 
         }
-
 
     }
 
@@ -95,7 +100,7 @@ export class FraccionMultiplicar implements ProcesamientoFraccion{
         let denominador2 = fraccion2.getDenominador() as number;
         let resultado = new Fraccion(numerador1 * numerador2, denominador1 * denominador2);
         
-        return resultado.getNumerador() + "/" + resultado.getDenominador();
+        return resultado.simplificacion();
 
     }
 
@@ -111,7 +116,7 @@ export class FraccionDividir implements ProcesamientoFraccion{
         let denominador2 = fraccion2.getDenominador() as number;
         let resultado = new Fraccion(numerador1 * denominador2, numerador2 * denominador1);
         
-        return resultado.getNumerador() + "/" + resultado.getDenominador();
+        return resultado.simplificacion();
 
     }
 
