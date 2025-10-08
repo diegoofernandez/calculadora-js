@@ -6,6 +6,7 @@ export interface VisitorElemental{
     visitorVariable(node: VariableNode): string | string; 
     visitorOperador(node: OperadorNode): number | NodeElem | string;  
     visitorStringObj(node: StringNode): string; 
+    visitorMonomio(node: MonomioNode): string; 
 
 }
 
@@ -41,7 +42,10 @@ export class EvaluarVisitor implements VisitorElemental {
 
         }
 
+    }
 
+    visitorMonomio(node: MonomioNode): string{
+        return node.monomio; 
     }
 
     visitorStringObj(node: StringNode): string{
@@ -126,6 +130,21 @@ export class StringNode extends NodeElem{
 
     accept(visitor: VisitorElemental) {
         return visitor.visitorStringObj(this); 
+    }
+
+}
+
+export class MonomioNode extends NodeElem{
+
+    public monomio: string; 
+
+    constructor(stringObj: string){
+        super('monomio'); 
+        this.monomio = stringObj; 
+    }
+
+    accept(visitor: VisitorElemental) {
+        return visitor.visitorMonomio(this); 
     }
 
 }

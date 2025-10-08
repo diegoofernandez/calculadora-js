@@ -1,4 +1,5 @@
 import { Fraccion, FraccionDividir, FraccionMultiplicar, FraccionRestar, FraccionSumar, ProcesamientoFraccion } from "./Fraccion";
+import { Potencia } from "./Potencia";
 
 export default class ObjetoComplejo{ 
 
@@ -15,7 +16,15 @@ export default class ObjetoComplejo{
             if(fraccionRegex.test(izquierda)){
                 //simplificar fraccion
             }else if(potenciaRegex.test(izquierda)){
-                //calcular potencia
+                
+                let limpieza = izquierda.split("^");
+                let base = limpieza[0].substring(1); 
+                let exponente = limpieza[1].split("|");
+                let solucion = new Potencia(base, String(exponente)); 
+
+                return solucion.resolver(); 
+
+
             }else if(raizRegex.test(izquierda)){
                 //calcular raíz
             }
@@ -37,19 +46,15 @@ export default class ObjetoComplejo{
                     case '+':
                         strategy = new FraccionSumar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-                        break;
                     case '-':
                         strategy = new FraccionRestar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-                        break;
                     case ':':
                         strategy = new FraccionDividir(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-                        break;
                     case '*':
                         strategy = new FraccionMultiplicar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-                        break;
                 }
 
             }
