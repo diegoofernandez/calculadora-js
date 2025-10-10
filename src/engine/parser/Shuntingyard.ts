@@ -135,7 +135,7 @@ export default class Parser{
 
 
     //SHUNTHING-YARD ALGORITMO (para operaciones complejas)
-    private conversionObjeto(data: string[]): string[]{
+    private conversionObjeto(data: any): string[]{
 
         for(var i = 0; i < data.length; i++){
 
@@ -172,7 +172,11 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
+
+        console.log(this.posfixConversion); 
+
         return this.posfixConversion;
+        
     }
 	
 }
