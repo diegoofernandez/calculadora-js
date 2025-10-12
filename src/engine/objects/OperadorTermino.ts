@@ -1,6 +1,17 @@
 import Termino from './Termino';
+import ComparadorTermino from './ComparadorTermino';
 
 export default class OperadorTermino {
+
+    static ordenarPolinomio(polinomio: string[]): string[] {
+            
+        const terminos = polinomio.map(str => new Termino(str));
+        const ordenados = terminos.sort((a, b) => ComparadorTermino.comparar(b, a));
+            
+        return ordenados.map(term => term.toString());
+        
+    }
+
     static multiplicar(termA: Termino, termB: Termino): Termino {
         console.log(`✖️ Multiplicando: ${termA.toString()} * ${termB.toString()}`);
         
@@ -26,6 +37,19 @@ export default class OperadorTermino {
         
         // Crear nuevo término
         return this.crearTerminoDesdePartes(nuevoCoef, nuevasVars);
+    }
+
+    static restar(termA: Termino, termB: Termino): Termino {
+        
+        // Si son equivalentes, restar coeficientes
+        if (ComparadorTermino.sonEquivalentes(termA, termB)) {
+            const nuevoCoef = termA.getCoeficiente() - termB.getCoeficiente();
+            const vars = termA.getVariables();
+            return this.crearTerminoDesdePartes(nuevoCoef, vars);
+        }
+        
+        
+        throw new Error(`No se pueden restar términos no equivalentes: ${termA.toString()} - ${termB.toString()}`);
     }
     
     static dividirMultiple(dividendo: Termino, divisores: Termino[]): Termino[] {
