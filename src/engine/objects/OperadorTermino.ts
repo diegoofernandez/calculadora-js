@@ -28,6 +28,10 @@ export default class OperadorTermino {
         return this.crearTerminoDesdePartes(nuevoCoef, nuevasVars);
     }
     
+    static dividirMultiple(dividendo: Termino, divisores: Termino[]): Termino[] {
+        return divisores.map(divisor => this.dividir(dividendo, divisor));
+    }
+
     static dividir(termA: Termino, termB: Termino): Termino {
         console.log(`➗ Dividiendo: ${termA.toString()} / ${termB.toString()}`);
         
@@ -77,7 +81,7 @@ export default class OperadorTermino {
         return true;
     }
     
-    private static crearTerminoDesdePartes(coef: number, vars: {[key: string]: number}): Termino {
+    public static crearTerminoDesdePartes(coef: number, vars: {[key: string]: number}): Termino {
         // Convertir las partes a string representation que entienda Termino
         let repr = '';
         

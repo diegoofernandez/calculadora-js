@@ -2,6 +2,29 @@ import Termino from './Termino';
 
 export default class ComparadorTermino{
 
+
+    static sonEquivalentes(termA: Termino, termB: Termino): boolean {
+        const varsA = termA.getVariables();
+        const varsB = termB.getVariables();
+        
+        // Mismas variables?
+        const variablesA = Object.keys(varsA).sort();
+        const variablesB = Object.keys(varsB).sort();
+        
+        if (variablesA.length !== variablesB.length) return false;
+        
+        // Mismos exponentes en cada variable?
+        for (let i = 0; i < variablesA.length; i++) {
+            const varA = variablesA[i];
+            const varB = variablesB[i];
+            
+            if (varA !== varB) return false;
+            if (varsA[varA] !== varsB[varB]) return false;
+        }
+        
+        return true;
+    }
+
     static comparar(termA: Termino, termB: Termino): number{
         
 
@@ -43,6 +66,7 @@ export default class ComparadorTermino{
         return 0;
 
     }
+
     
     static esMayor(termA: Termino, termB: Termino): boolean{
 

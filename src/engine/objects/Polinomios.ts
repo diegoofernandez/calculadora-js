@@ -1,4 +1,7 @@
 import { Euclides } from "../utils/Euclides";
+import Termino from './Termino'; 
+import MCMTerminos from "./MCMTerminos";
+
 
 export interface ProcesamientoPolinomio{
 
@@ -8,17 +11,47 @@ export interface ProcesamientoPolinomio{
 
 export default class Polinomio{
 
-	private p: Array<{polinomio: string[]}> = []; 
+	private p: string[][] = []; 
 
 
 	constructor(...polin: string[][]){
 
-		polin.forEach(pI => {
-			polinomio: pI
-		});
+		if(polin){
+			polin.forEach(pI => {
+				this.p.push(pI);
+			});
+		}else{
+			this.p.push(["vacío"]); 
+		}
 
 	}
 
+
+}
+
+export class SPolinomio{
+
+	private listadoPols: Array<{ polinomio: string[], terminoLider: string}> = [];
+	private coeficientes: Termino[] = []; 
+
+	constructor(datos: Array<{ polinomio: string[], terminoLider: string}>, monomios: Termino[]){
+
+		this.listadoPols = datos; 
+		this.coeficientes = monomios; 
+
+	}
+
+	public operacion(){
+
+		
+
+	}
+
+	private multiplicarCoeficientePorEcuacion(){
+
+
+
+	}
 
 }
 

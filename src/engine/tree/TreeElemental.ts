@@ -21,11 +21,11 @@ export class EvaluarVisitor implements VisitorElemental {
         return node.numero;
     }
     
-    visitorOperador(node: OperadorNode): number | string{
+    visitorOperador(node: OperadorNode, grobner?: boolean): number | string{
         const izquierda = node.izquierda.accept(this);
         const derecha = node.derecha.accept(this);
         
-        if(izquierda.length > 1 && derecha.length > 1){
+        if(izquierda.length > 1 && derecha.length > 1 && grobner == false){
 
             let resolver = ObjetoComplejo.setStrategy(izquierda, derecha, node.operador); 
             return resolver; 
@@ -39,6 +39,16 @@ export class EvaluarVisitor implements VisitorElemental {
                 case '/': return izquierda / derecha;
                 default: throw new Error(`Operador desconocido: ${node.operador}`);
             }
+
+        }
+
+        if(grobner == true){
+
+            const izquierda = node.izquierda.accept(this); 
+            const derehca = node.derecha.accept(this); 
+
+            let resolver = ObjetoComplejo.setStrategy(izquierda, derecha, node.operador, true); 
+            return resolver; 
 
         }
 

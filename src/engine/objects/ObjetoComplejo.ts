@@ -5,13 +5,19 @@ export default class ObjetoComplejo{
 
     
 
-    public static setStrategy(izquierda: string, derecha?: string, operador?: string): string | number{
+    public static setStrategy(izquierda: string, derecha?: string, operador?: string, grobner: boolean = false): string | number{
 
         const fraccionRegex = /(.+)\/(.+)/;
         const potenciaRegex = /\|(.+)\^(.+)\|/;
         const raizRegex = /\\(.+)\\(.+)/;
 
-        if(!(operador !== undefined)){
+        if(grobner == true){
+
+            
+
+        }
+
+        if(!(operador !== undefined && grobner == false)){
 
             if(fraccionRegex.test(izquierda)){
                 //simplificar fraccion
