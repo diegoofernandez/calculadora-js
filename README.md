@@ -9,7 +9,8 @@
 ## 🎯 **LOGRO PRINCIPAL: ¡BASE DE GRÖBNER IMPLEMENTADA!**
 
 ### 📸 Demostración en Vivo:
-![Captura de Consola - Gröbner Funcionando](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner2.jpg)
+![Captura de Consola - Gröbner Funcionando](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner4.jpg)
+
 *Sistema polinomial complejo resuelto por el motor Romi Math*
 
 ## 🚀 **ESTADO ACTUAL: FASE 3 COMPLETADA**
@@ -99,9 +100,8 @@ Sigueme el viaje en tiempo real:
 
     🐦 Twitter: https://x.com/DiegoAFEscritor
 
+
 ¿Interesado en colaborar? ¡Todas las contribuciones son bienvenidas!
-<div align="center">
 
 ¿Creías que Gröbner era solo para académicos?
 Romi Math demuestra que las matemáticas avanzadas también tienen barrio.
-</div> ```
