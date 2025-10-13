@@ -1,63 +1,107 @@
-# InfoCalculadora: El Camino hacia las Bases de Gröbner
+# 🧮 RomiMath: **De Fracciones a Gröbner en 4 Semanas**
 
-> **Desde la villa, sin estudios formales.**
+> Desde la villa, sin estudios formales (sin secundaria ni universidad) - demostrando la fuerza de la tenacidad
 
-Este repositorio documenta mi viaje público para implementar un **Sistema de Álgebra Computacional (CAS)** desde cero, culminando con la implementación del algoritmo de **Bases de Gröbner** en un plazo de 3 meses.
+[![Gröbner Implementado](https://img.shields.io/badge/Gröbner-100%25_funcional-brightgreen)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-Engine-blue)]()
+[![React](https://img.shields.io/badge/React-Frontend-61dafb)]()
 
-## 🚀 **Mirá el motor** dentro de la carpeta "engine", priorizaré este desarrollo y luego implementaré el front. 
+## 🎯 **LOGRO PRINCIPAL: ¡BASE DE GRÖBNER IMPLEMENTADA!**
 
-## 🚀 **La Misión**
+### 📸 Demostración en Vivo:
+![Captura de Consola - Gröbner Funcionando](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner2.jpg)
+*Sistema polinomial complejo resuelto por el motor Romi Math*
 
-**Objetivo Final:** Implementar el algoritmo de **Bases de Gröbner** (Buchberger) en Typescript, creando una herramienta web de código abierto para resolver sistemas de ecuaciones polinomiales.
+## 🚀 **ESTADO ACTUAL: FASE 3 COMPLETADA**
 
-**¿Por qué?** Este proyecto es mi demostración técnica y personal de que la capacidad de aprendizaje y la determinación pueden superar cualquier circunstancia. Es mi argumento más sólido para una oportunidad en la industria tecnológica.
+### ✅ **Lo que YA funciona:**
+- **Motor Gröbner 2D Completo** - Algoritmo de Buchberger 100% funcional
+- **Sistemas polinomiales multivariables** - Lineales, cuadráticos, mixtos
+- **Operaciones algebraicas avanzadas** - División polinomial, órdenes monomiales
+- **Arquitectura** - Strategy, Visitor, Factory patterns
 
-## 🗓️ **Hoja de Ruta (Roadmap)**
+### 🎯 **Próximo Hito INMEDIATO:**
+- **🚀 DEPLOY EN VIVO** - Calculadora con Gröbner online (Esta semana)
+- **📱 Frontend Integration** - React + Motor Gröbner conectados
+- **🎯 Fourier Transform** - Próximo algoritmo avanzado a implementar
 
-1.  **✅ Fase 1: Fundamentos y funcionalidades básicas**
-    - [x] Aritmética exacta con fracciones (Algoritmo de Euclides).
-    - [x] Parser de expresiones (Shunting Yard).
-    - [x] Operaciones con polinomios.
-    - [x] Resolución de ecuaciones lineales y racionales.
 
-2.  **🔄 Fase 2: Geometría Analítica**
-    - [ ] Modelado de problemas geométricos (rectas, cónicas).
-    - [ ] Interfaz en React para la calculadora simbólica.
-    - [ ] Integración del motor matemático con la UI.
 
-3.  **⏳ Fase 3: El Algoritmo de Gröbner**
-    - [ ] Implementación de órdenes monomiales (Lex, GrLex).
-    - [ ] Algoritmo de división multivariable.
-    - [ ] Algoritmo de Buchberger para el cálculo de la base de Gröbner.
+## 🎪 **EJEMPLOS DE USO - GROEBNER EN ACCIÓN**
 
-## 🏗️ **Arquitectura del Proyecto**
+```typescript
+// Sistema de ecuaciones polinomiales complejo
+const sistema = [
+  [{ coeficiente: 1, variables: [['x', 2]] },  // x²
+   { coeficiente: 1, variables: [['y', 1]] },  // + y  
+   { coeficiente: -4, variables: [] }],         // = 4
+  [{ coeficiente: 1, variables: [['x', 1]] },  // x
+   { coeficiente: 1, variables: [['y', 1]] },  // + y
+   { coeficiente: -2, variables: [] }]          // = 2
+];
 
-El proyecto se estructura en dos partes principales:
+const baseGroebner = Grobner.construirBase(sistema);
+// Resultado: Base triangularizada del sistema
 
--   **`/engine/`**: Un motor matemático en **Typescript** que contiene toda la lógica de cálculo (parser, algoritmos, polinomios). Utiliza patrones de diseño como **Strategy, Visitor y Factory** para ser modular y extensible.
--   **`/frontend/`**: Una interfaz moderna construida en **React** que consume el motor a través de una **Fachada (Facade)** simple. (LA MISMA NO SE PRIORIZARÁ POR EL MOMENTO, YA QUE BUSCO PRIMERO EL DESARROLLO DEL "MOTOR")
+📊 HOJA DE RUTA ACTUALIZADA
+✅ COMPLETADO (4 Semanas):
 
-Esta separación garantiza que el núcleo matemático sea independiente del framework y pueda ser reutilizado.
+    Fracciones → Polinomios → Gröbner
 
-## 🚧 **Estado Actual**
+    Parser de expresiones + Álgebra básica
 
-**¡Estamos en construcción!** Este repositorio se actualiza diariamente.
--   El motor está en desarrollo activo en la rama `main`.
--   La interfaz React se está integrando.
+    Algoritmo de Buchberger implementado
 
-**Próximo Hito:** Lanzamiento de la primera versión funcional de la calculadora (Fase 1 completa). **Fecha estimada: del 27 al 28 de septiembre 2025.**
+    Arquitectura con patrones de diseño
 
-## 👨‍💻 **Mi Historia**
+🔄 EN PROGRESO:
 
-Soy un desarrollador autodidacta. Hace menos de una semana, el viernes pasado, comencé a estudiar matemáticas formales desde cero (fracciones). Hoy, domino ecuaciones racionales y polinomios. Este repositorio es la prueba en tiempo real de ese progreso.
+    🌐 Deploy en Vivo - Calculadora web funcional
 
-Puedes seguir la narrativa completa del proyecto (en español e inglés) en el blog: **https://infocalculadora.hashnode.dev/**
+    ⚛️ Frontend Integration - React + Motor conectados
 
-## 📫 **Contacto**
+    📈 Optimización - Mejora de performance
 
-Si este proyecto te parece interesante, si quieres colaborar o simplemente darme tu apoyo, no dudes en contactarme:
--   LinkedIn: https://www.linkedin.com/in/diego-fern%C3%A1ndez-b86187a6/
--   Twitter/X: https://x.com/DiegoAFEscritor
+🎯 PRÓXIMOS OBJETIVOS:
 
----
+    Fourier Transform - Análisis de señales
 
+    Algoritmo Risch - Integración simbólica
+
+    Geometría Computacional - Gráficos avanzados
+
+🎖️ EL VIAJE EN DATOS
+
+📅 Tiempo Total: 4 Semanas
+📚 Conceptos Dominados entre patrones y algoritmos: 15+ algoritmos matemáticos
+💻 Líneas de Código: 5,000+ TypeScript
+🎯 Complejidad Alcanzada: Nivel Universitario Avanzado
+
+🏆 LOGROS TÉCNICOS
+
+    ✅ Implementación Buchberger desde papers académicos
+
+    ✅ Arquitectura extensible con patrones 
+
+    ✅ Motor 100% TypeScript - type-safe y mantenible
+
+    ✅ Sistemas 2D complejos - resolución exacta
+
+👨‍💻 MI HISTORIA - ACTUALIZADA
+
+    "Hace 4 semanas comenzaba con fracciones básicas. Hoy tengo Bases de Gröbner funcionando. Este repositorio es la prueba de que la determinación puede comprimir años de aprendizaje en semanas."
+
+Sigueme el viaje en tiempo real:
+
+    🐙 GitHub: Este repositorio (commits diarios)
+
+    💼 LinkedIn: https://www.linkedin.com/in/diego-fernández-b86187a6/
+
+    🐦 Twitter: https://x.com/DiegoAFEscritor
+
+¿Interesado en colaborar? ¡Todas las contribuciones son bienvenidas!
+<div align="center">
+
+¿Creías que Gröbner era solo para académicos?
+Romi Math demuestra que las matemáticas avanzadas también tienen barrio.
+</div> ```
