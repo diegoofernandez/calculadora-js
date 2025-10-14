@@ -11,16 +11,20 @@ export default class ObjetoComplejo{
         const potenciaRegex = /\|(.+)\^(.+)\|/;
         const raizRegex = /\\(.+)\\(.+)/;
 
+        
+
         if(grobner == true){
 
             
 
         }
 
-        if(!(operador !== undefined && grobner == false)){
+        if(operador !== undefined && grobner == undefined){
 
             if(fraccionRegex.test(izquierda)){
                 //simplificar fraccion
+                
+
             }else if(potenciaRegex.test(izquierda)){
                 
                 let limpieza = izquierda.split("^");
@@ -47,7 +51,7 @@ export default class ObjetoComplejo{
                 let fraccion1 = new Fraccion(objeto1[0], objeto1[1]); 
                 let fraccion2 = new Fraccion(objeto2![0], objeto2![1]);
                 let strategy; 
-
+                
                 switch(operador){
                     case '+':
                         strategy = new FraccionSumar(); 

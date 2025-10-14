@@ -1,6 +1,3 @@
-import { Token, TiposToken } from "./TiposToken";
-import { Fraccion } from "../objects/Fraccion";
-
 export class ParserInteligente{
 
   public parse(input: string): string[] | string[][]{
@@ -8,16 +5,17 @@ export class ParserInteligente{
     const cadenaSinEspacios = input.trim();
 
     //verificamos tipo de operación
-    if(cadenaSinEspacios.startsWith('F:')){
+    if(cadenaSinEspacios.startsWith('F')){
 
-        let tokenizado = this.parseOperacion(cadenaSinEspacios, 2);
+        let tokenizado = this.parseOperacion(cadenaSinEspacios, 1);
 
         return tokenizado; 
         
-    }else if(cadenaSinEspacios.startsWith('G:')){
+    }else if(cadenaSinEspacios.startsWith('G')){
 
-      //para bases de grobner 
-      return [""];
+      let tokenizado = this.parseOperacion(cadenaSinEspacios, 1);
+
+      return tokenizado; 
 
     }else if(cadenaSinEspacios.startsWith('POL')){
 
@@ -165,6 +163,7 @@ export class ParserInteligente{
         current++;
       }
 
+       
       return tokens;
 
     }

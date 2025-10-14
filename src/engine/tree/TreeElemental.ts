@@ -24,14 +24,14 @@ export class EvaluarVisitor implements VisitorElemental {
     visitorOperador(node: OperadorNode, grobner?: boolean): number | string{
         const izquierda = node.izquierda.accept(this);
         const derecha = node.derecha.accept(this);
-        
-        if(izquierda.length > 1 && derecha.length > 1 && grobner == false){
 
+        if(izquierda.length > 1 && derecha.length > 1 && grobner == undefined){
+            
             let resolver = ObjetoComplejo.setStrategy(izquierda, derecha, node.operador); 
             return resolver; 
 
         }else{
-
+            
             switch (node.operador) {
                 case '+': return izquierda + derecha;
                 case '-': return izquierda - derecha;
@@ -42,7 +42,7 @@ export class EvaluarVisitor implements VisitorElemental {
 
         }
 
-        if(grobner == true){
+        if(grobner === true){
 
             const izquierda = node.izquierda.accept(this); 
             const derehca = node.derecha.accept(this); 

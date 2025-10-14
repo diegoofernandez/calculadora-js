@@ -1,14 +1,18 @@
 import FacadeDriver from './../engine/FacadeDriver'; 
-import { useState } from 'react';
+import { use, useState } from 'react';
 
 function TemporalUI(){
 
     const [calculo, setCalculo] = useState("");
+    const [resultado, setResultado] = useState("Resultados se mostrarán aquí"); 
+    const [historial, setHistorial] = useState("");
 
     function clickCalculo(){
 
         let motor = new FacadeDriver(1, calculo); 
-        console.log(motor.runOp()); 
+        motor.runOp(); 
+        setResultado(motor.getRespuesta()); 
+        setHistorial(historial += resultado); 
 
     }
 
@@ -34,16 +38,17 @@ function TemporalUI(){
                     <a className="text-primary hover:underline" href="#">Ver documentación</a>
                         <div class="w-full max-w-md mx-auto space-y-4">
 
-                            <input className="form-input w-full px-4 py-3 rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg" placeholder="Ingrese la operación que desea" type="text" onChange={cambiandoValor} />
+                            <input className="form-input w-full px-4 py-3 rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg" placeholder="Ingrese la operación que desea" type="text" onChange={cambiandoValor} value={calculo} />
 
-                            <button className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-300 text-lg">
+                            <button className="w-full bg-primary text-white font-bold py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors duration-300 text-lg" onClick={clickCalculo} >
                                 Calcular
                             </button>
 
                             <div className="w-full max-w-md mx-auto mt-4">
 
                                 <div className="bg-gray-100 dark:bg-gray-800/20 p-4 rounded-lg max-h-[100px] overflow-y-auto text-left text-sm text-gray-700 dark:text-gray-300">
-                                    <p>Resultados aparecerán aquí...</p>
+                                    <p>{historial}</p>
+                                    <p>{resultado}</p>
                                 </div>
 
                             </div>
@@ -63,7 +68,7 @@ function TemporalUI(){
 
                             <p><strong class="font-semibold text-gray-900 dark:text-white">Polinomios:</strong> Para polinomios solo ingrese los polinomios luego de agregar la abreviación POL, separándolos con una coma. Ejemplo: <code class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">POL 2|x^4|-5|x^3|+|x^2|, 3|x^2|-5x+2</code>.</p>
 
-                            <p><strong class="font-semibold text-gray-900 dark:text-white">Groebner Bases:</strong> Para calcular bases de Grobner, ingrese las ecuaciones separadas con coma <code class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">GROB 2|x^4|-5|x^3|+|x^2|, 3|x^2|-5x+2</code>.</p>
+                            <p><strong class="font-semibold text-gray-900 dark:text-white">Groebner Bases:</strong> Para calcular bases de Grobner, ingrese las ecuaciones separadas con coma <code class="bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">G 2|x^4|-5|x^3|+|x^2|, 3|x^2|-5x+2</code>.</p>
                         </div>
                 </div>
                 <footer class="w-full max-w-2xl text-center py-4 mt-8">

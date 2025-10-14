@@ -1,16 +1,18 @@
-import { useState } from 'react'
-/*import Informacion from './components/Info'
-import Calculadora from './components/Calculadora'
-import Usuarios from './components/Usuarios'
-import Blog from './components/Blog'*/
+import { useState, useEffect } from 'react'
 import TemporalUI from './components/TemporalUI'
 
 
 function App() {
 
+  useEffect(() => {
+    document.documentElement.classList.add('dark');
+    localStorage.theme = 'dark';
+  }, []);
+
+
   return (
     <>
-      <div className='containerTemporal'>
+      <div>
         <TemporalUI />
       </div>
       

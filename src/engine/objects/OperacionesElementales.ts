@@ -42,8 +42,7 @@ export class Operacion{
                 }
             }
         }
-
-        console.log(this.pilaTree); 
+        
         let impresor = new EvaluarVisitor();
         let arbolSimplificado = this.pilaTree[0].accept(impresor); 
 

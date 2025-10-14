@@ -129,7 +129,7 @@ export default class Parser{
             this.posfixConversion.push(this.pila.pop() as string);
 
         }
-
+        
         return this.posfixConversion;
     }
 
@@ -173,7 +173,7 @@ export default class Parser{
 
         }
 
-        console.log(this.posfixConversion); 
+        
 
         return this.posfixConversion;
         
