@@ -65,7 +65,8 @@ function TemporalUI(){
                                 Calcular
                             </button>
 
-                            <div className="w-full max-w-md mx-auto mt-4">
+                            { !esVisible && ( 
+                                <div className="w-full max-w-md mx-auto mt-4" >
 
                                 <div className="bg-gray-100 dark:bg-gray-800/20 p-4 rounded-lg max-h-[100px] overflow-y-auto text-left text-sm text-gray-700 dark:text-gray-300">
                                     <p>Los resultados se mostrarán aquí:</p>
@@ -74,6 +75,7 @@ function TemporalUI(){
                                 </div>
 
                             </div>
+                            )}
                         </div>
 
 
