@@ -5,6 +5,7 @@
 [![Gröbner Implementado](https://img.shields.io/badge/Gröbner-100%25_funcional-brightgreen)]()
 [![TypeScript](https://img.shields.io/badge/TypeScript-Engine-blue)]()
 [![React](https://img.shields.io/badge/React-Frontend-61dafb)]()
+![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 
 ## 🎯 **LOGRO PRINCIPAL: ¡BASE DE GRÖBNER IMPLEMENTADA!**
 
@@ -57,7 +58,7 @@ const baseGroebner = Grobner.construirBase(sistema);
 
 🔄 EN PROGRESO:
 
-    🌐 Deploy en Vivo - Calculadora web funcional
+    🌐 Deploy en Vivo: https://romimath.pages.dev/
 
     ⚛️ Frontend Integration - React + Motor conectados
 
@@ -99,6 +100,8 @@ Sigueme el viaje en tiempo real:
     💼 LinkedIn: https://www.linkedin.com/in/diego-fernández-b86187a6/
 
     🐦 Twitter: https://x.com/DiegoAFEscritor
+
+    🌐 Vivo: https://romimath.pages.dev/
 
 
 ¿Interesado en colaborar? ¡Todas las contribuciones son bienvenidas!
