@@ -56,7 +56,8 @@ function TemporalUI(){
                     <p className="text-gray-600 dark:text-gray-400">
                         El diseño de la interfaz es minimalista y prioriza la función sobre la forma, reflejando mi enfoque en la optimización del núcleo algorítmico.
                     </p>
-                    <a className="text-primary hover:underline" href="#">Ver documentación</a>
+                    <a className="text-primary hover:underline" href="https://romimath.hashnode.dev/documentacion">Ver documentación</a>
+                    <a className="text-primary hover:underline" href="https://romimath.hashnode.dev">Blog</a>
                         <div class="w-full max-w-md mx-auto space-y-4">
 
                             <input className="form-input w-full px-4 py-3 rounded-lg border-gray-300 dark:border-gray-600 bg-background-light dark:bg-background-dark focus:ring-primary focus:border-primary text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-lg" placeholder="Ingrese la operación que desea" type="text" onChange={cambiandoValor} value={calculo} />
