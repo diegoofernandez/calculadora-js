@@ -1,10 +1,3 @@
-
-type Termino = {
-    coeficiente: number, 
-    variables: Array<[string, number]>
-}
-
-
 export default class Grobner{
 
     private basesG: Termino[][] = [[
@@ -16,7 +9,8 @@ export default class Grobner{
         { coeficiente: -1, variables: [['y', 2]] }
     ]];
 
-    constructor(){
+    constructor(polinomios: Termino[][]){
+        this.basesG = polinomios; 
         this.construirBaseGroebner();
         this.mostrarBaseFinal();
     }

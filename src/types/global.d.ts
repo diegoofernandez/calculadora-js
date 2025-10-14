@@ -6,3 +6,7 @@ type ObjElemental = {
     derecha: number,
     operador: string
 }; 
+type Termino = {
+    coeficiente: number, 
+    variables: Array<[string, number]>
+}

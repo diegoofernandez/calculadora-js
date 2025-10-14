@@ -4,20 +4,29 @@ import { use, useState } from 'react';
 function TemporalUI(){
 
     const [calculo, setCalculo] = useState("");
-    const [resultado, setResultado] = useState("Resultados se mostrarán aquí"); 
+    const [resultado, setResultado] = useState(""); 
     const [historial, setHistorial] = useState("");
 
     function clickCalculo(){
 
         let motor = new FacadeDriver(1, calculo); 
         motor.runOp(); 
-        setResultado(motor.getRespuesta()); 
-        setHistorial(historial += resultado); 
+        setResultado("Resultado actual: " + motor.getRespuesta()); 
+        setHistorial(historial + motor.getRespuesta() + " || "); 
 
     }
 
     function cambiandoValor(event){
+        if(event.target.value.startWidth('G')){
+            mostrarBox(); 
+        }
         setCalculo(event.target.value); 
+    }
+
+    function mostrarBox(){
+
+
+
     }
 
     return (
@@ -47,6 +56,7 @@ function TemporalUI(){
                             <div className="w-full max-w-md mx-auto mt-4">
 
                                 <div className="bg-gray-100 dark:bg-gray-800/20 p-4 rounded-lg max-h-[100px] overflow-y-auto text-left text-sm text-gray-700 dark:text-gray-300">
+                                    <p>Los resultados se mostrarán aquí:</p>
                                     <p>{historial}</p>
                                     <p>{resultado}</p>
                                 </div>
@@ -74,6 +84,28 @@ function TemporalUI(){
                 <footer class="w-full max-w-2xl text-center py-4 mt-8">
                 <p class="text-gray-500 dark:text-gray-400 text-sm">Creado por Diego Fernández</p>
                 </footer>
+
+
+
+                <div class="fixed top-14 right-8 w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 max-h-[700px] overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Procesando resultados</h3>
+                        <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">Tus bases de grobner están en progreso, aguarda un momento.</p>
+                        <div class="bg-gray-100 dark:bg-gray-900/50 p-4 rounded-lg">
+                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">Calculos. <span class="text-primary">Procesando...</span></p>
+                                <p>Aquí van los calculos</p>
+                        </div>
+                        <div class="text-left bg-gray-100 dark:bg-gray-800/20 p-4 rounded-lg text-sm text-gray-700 dark:text-gray-300 space-y-2">
+                            <p><strong class="font-semibold text-gray-900 dark:text-white">Polinomios ingresados:</strong></p>
+                            <code class="block bg-gray-200 dark:bg-gray-700 px-3 py-2 rounded text-xs">{calculo}</code>
+                        </div>
+                    </div>
+                </div>
             </div>
         </>
 
