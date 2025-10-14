@@ -1,4 +1,8 @@
+import FacadeDriver from "../../FacadeDriver";
+
 export default class Grobner{
+
+    private pasoPasoUsuarioG: any;
 
     private basesG: Termino[][] = [[
         { coeficiente: 1, variables: [['x', 3]] },
@@ -11,17 +15,33 @@ export default class Grobner{
 
     constructor(polinomios: Termino[][]){
         this.basesG = polinomios; 
+        localStorage.removeItem('groebner_pasos');
+        localStorage.setItem('groebner_pasos', "");
         this.construirBaseGroebner();
         this.mostrarBaseFinal();
     }
 
     private mostrarProcesoSPolinomio(i: number, j: number, base: Termino[][], resto: Termino[]): void{
 
-        console.log(`\n S-polinomio de (P${i}, P${j}):`);
-        console.log(`   P${i}:`, base[i].map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   P${j}:`, base[j].map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   Resto:`, resto.map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   Es cero?:`, this.esCero(resto));
+        console.log(`\n S-polinomio de (P${i}, P${j}):|`);
+        console.log(`   
+            P${i}:`, base[i].map(t => this.terminoAString(t)).join(" + "));
+        console.log(`   |P${j}: `, base[j].map(t => this.terminoAString(t)).join(" + "));
+        console.log(`   |Resto: `, resto.map(t => this.terminoAString(t)).join(" + "));
+        console.log(`   |Es cero?: `, this.esCero(resto));
+
+        let pasoPasoUsuario = `\n |S-polinomio de (P${i}, P${j}): `; 
+        pasoPasoUsuario += `   |P${i}: `; 
+        pasoPasoUsuario += base[i].map(t => this.terminoAString(t)).join(" + "); 
+        pasoPasoUsuario += `   |P${j}: `; 
+        pasoPasoUsuario += base[j].map(t => this.terminoAString(t)).join(" + "); 
+        pasoPasoUsuario += `   |Resto: `; 
+        pasoPasoUsuario += resto.map(t => this.terminoAString(t)).join(" + "); 
+        pasoPasoUsuario += `   |Es cero?: `; 
+        pasoPasoUsuario += this.esCero(resto);
+
+        this.pasoPasoUsuarioG += pasoPasoUsuario;  
+        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
 
     }
 
@@ -378,12 +398,19 @@ export default class Grobner{
 
     }
 
-    private mostrarBaseFinal(): void{
+    public mostrarBaseFinal(): void{
 
         console.log("\n BASE DE GRÖBNER FINAL:");
+        this.pasoPasoUsuarioG += "\n |BASE DE GRÖBNER FINAL:";  
+        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
+
         this.basesG.forEach((polinomio, i) => {
             console.log(`   P${i + 1}:`, polinomio.map(t => this.terminoAString(t)).join(" + "));
+            this.pasoPasoUsuarioG += `  | P${i + 1}:`;
+            this.pasoPasoUsuarioG +=  polinomio.map(t => this.terminoAString(t)).join(" + "); 
         });
+
+        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
 
     }
 
@@ -393,6 +420,8 @@ export default class Grobner{
     let cambiado = true;
     
     console.log(" Construyendo base de Gröbner...");
+    this.pasoPasoUsuarioG += " |Construyendo base de Gröbner...";
+    localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
 
     while (cambiado){
 
@@ -413,7 +442,8 @@ export default class Grobner{
         for (let [i, j] of nuevosPares){
 
             console.log(`\nProcesando par (${i}, ${j})`);
-            
+            this.pasoPasoUsuarioG += `\n |Procesando par (${i}, ${j})`; 
+            localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
         
             const mcm = this.calcularMCM(
                 this.encontrarTerminoLider(base[i]),
@@ -436,16 +466,22 @@ export default class Grobner{
             if (this.esCero(resto)){
 
                 console.log("   S-polinomio se redujo a 0");
+                this.pasoPasoUsuarioG += "   |S-polinomio se redujo a 0";
+                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
 
             } else if (this.esConstanteNoCero(resto)){
 
                 console.log("    SISTEMA INCONSISTENTE");
+                this.pasoPasoUsuarioG += "    |SISTEMA INCONSISTENTE"; 
+                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
                 this.basesG = [resto];
                 return;
 
             } else{
 
                 console.log("    Agregando nuevo polinomio a la base");
+                this.pasoPasoUsuarioG += "    |Agregando nuevo polinomio a la base"; 
+                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
                 base.push(resto);
                 cambiado = true; 
                 break; 
@@ -458,6 +494,8 @@ export default class Grobner{
     
     this.basesG = base;
     console.log(" Base de Gröbner completada");
+    this.pasoPasoUsuarioG += " |Base de Gröbner completada"; 
+    localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
 }
 
 

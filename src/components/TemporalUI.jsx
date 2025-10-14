@@ -6,9 +6,13 @@ function TemporalUI(){
     const [calculo, setCalculo] = useState("");
     const [resultado, setResultado] = useState(""); 
     const [historial, setHistorial] = useState("");
+    const [esVisible, setVisible] = useState(false);
+    
+
+    let pasoPasoG = localStorage.getItem('groebner_pasos') || "Aquí van los resultados." ;
 
     function clickCalculo(){
-
+        localStorage.setItem('groebner_pasos', "");
         let motor = new FacadeDriver(1, calculo); 
         motor.runOp(); 
         setResultado("Resultado actual: " + motor.getRespuesta()); 
@@ -16,8 +20,12 @@ function TemporalUI(){
 
     }
 
+    function cerrarModal(){
+        setVisible(false);
+    }
+
     function cambiandoValor(event){
-        if(event.target.value.startWidth('G')){
+        if(event.target.value.includes('G')){
             mostrarBox(); 
         }
         setCalculo(event.target.value); 
@@ -25,9 +33,13 @@ function TemporalUI(){
 
     function mostrarBox(){
 
-
+        setVisible(true);
 
     }
+    
+    const pasos = pasoPasoG.split('|').filter(Boolean);  
+
+    
 
     return (
 
@@ -87,18 +99,27 @@ function TemporalUI(){
 
 
 
-                <div class="fixed top-14 right-8 w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 max-h-[700px] overflow-y-auto">
+                
+
+                {esVisible && (
+
+                    <div class="fixed top-14 right-8 w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 max-h-[500px] overflow-y-auto">
                     <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Procesando resultados</h3>
-                        <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{resultado ? 'Procesando resultado.': 'Esperando datos...'}</h3>
+                        <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={cerrarModal}>
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
                         </button>
                     </div>
                     <div class="space-y-4">
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Tus bases de grobner están en progreso, aguarda un momento.</p>
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            {resultado ? 'Tus bases de grobner están en progreso, aguarda un momento.': 'Aguardando a que ingreses las ecuaciones a verificar.'}
+                            
+                        </p>
                         <div class="bg-gray-100 dark:bg-gray-900/50 p-4 rounded-lg">
-                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">Calculos. <span class="text-primary">Procesando...</span></p>
-                                <p>Aquí van los calculos</p>
+                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">Calculos. <span class="text-primary">{resultado ? 'Procesando...': 'En espera de datos.'}</span></p>
+                                {pasos.map((paso, index) => (
+                                    <p key={index}>{paso} <br /> </p>
+                                ))}
                         </div>
                         <div class="text-left bg-gray-100 dark:bg-gray-800/20 p-4 rounded-lg text-sm text-gray-700 dark:text-gray-300 space-y-2">
                             <p><strong class="font-semibold text-gray-900 dark:text-white">Polinomios ingresados:</strong></p>
@@ -106,6 +127,9 @@ function TemporalUI(){
                         </div>
                     </div>
                 </div>
+
+                )}
+
             </div>
         </>
 
