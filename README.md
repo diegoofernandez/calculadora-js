@@ -10,6 +10,8 @@
 ## 🎯 **LOGRO PRINCIPAL: ¡BASE DE GRÖBNER IMPLEMENTADA!**
 
 ### 📸 Demostración en Vivo:
+![Captura de Consola - RomiMath Online](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionfront.jpeg)
+![Captura de Consola - RomiMath Online](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionmodal.jpg)
 ![Captura de Consola - Gröbner Funcionando](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner4.jpg)
 
 *Sistema polinomial complejo resuelto por el motor Romi Math*
