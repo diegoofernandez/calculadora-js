@@ -21,7 +21,7 @@ export class ObjetosUtiles {
     const factors: number[] = [];
     let n = Math.abs(num);
     
-    // Factor out 2s
+    
     while (n % 2 === 0) {
 
       factors.push(2);
@@ -29,7 +29,7 @@ export class ObjetosUtiles {
 
     }
     
-    // Factor out odd numbers
+    
     for (let i = 3; i * i <= n; i += 2) {
 
       while (n % i === 0) {
@@ -41,7 +41,7 @@ export class ObjetosUtiles {
 
     }
     
-    // If n is still greater than 1, it's prime
+    
     if (n > 1) {
 
       factors.push(n);
@@ -58,18 +58,18 @@ export class ObjetosUtiles {
     
     if (discriminant < 0) {
 
-      return []; // No real solutions
+      return []; 
 
     } else if (discriminant === 0) {
 
-      return [-b / (2 * a)]; // One solution
+      return [-b / (2 * a)]; 
 
     } else {
 
       return [
         (-b + Math.sqrt(discriminant)) / (2 * a),
         (-b - Math.sqrt(discriminant)) / (2 * a)
-      ]; // Two solutions
+      ]; 
 
     }
   }

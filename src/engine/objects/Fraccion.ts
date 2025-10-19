@@ -1,15 +1,17 @@
 import { Euclides } from "../utils/Euclides";
+
 export interface ProcesamientoFraccion{
 
-    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string;
+    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string | number | bigint;
 
 }
+
 export class Fraccion{
 
-    protected numerador: string | number; 
-    protected denominador: string | number; 
+    protected numerador: string | number | bigint; 
+    protected denominador: string | number | bigint; 
 
-    constructor(numerador: string | number , denominador: string | number ){
+    constructor(numerador: string | number | bigint, denominador: string | number | bigint){
 
         this.numerador = numerador; 
         this.denominador = denominador; 

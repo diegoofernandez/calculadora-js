@@ -1,4 +1,5 @@
 import { ParserInteligente } from "./ParserInteligente";
+type Operador = "*" | "+" | "/" |"-" | ":"; 
 export default class Parser{
 
     protected infija: string[]= [];

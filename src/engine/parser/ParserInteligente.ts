@@ -1,4 +1,8 @@
 import Grobner from "../objects/grobner/Grobner";
+type Termino = {
+    coeficiente: number, 
+    variables: Array<[string, number]>
+}
 
 export class ParserInteligente{
 

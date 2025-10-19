@@ -1,5 +1,11 @@
 import { Euclides } from "../utils/Euclides";
+import { Fraccion } from "./Fraccion";
 
+
+type Termino = {
+    coeficiente: number | Fraccion, 
+    variables: Array<[string, number]>
+}
 
 export interface ProcesamientoPolinomio{
 
@@ -9,21 +15,24 @@ export interface ProcesamientoPolinomio{
 
 export default class Polinomio{
 
-	private p: string[][] = []; 
+	private p: Termino[][] = []; 
 
 
-	constructor(...polin: string[][]){
+	constructor(...polins: Termino[][]){
 
-		if(polin){
-			polin.forEach(pI => {
+		if(polins){
+			polins.forEach(pI => {
 				this.p.push(pI);
 			});
-		}else{
-			this.p.push(["vacío"]); 
 		}
 
 	}
 
+	public static monomioMayor(){ 
+
+		
+
+	}
 
 }
 
@@ -31,6 +40,8 @@ export class SumarPolinomio implements ProcesamientoPolinomio{
 
 
 	operacion(p1: Polinomio, p2: Polinomio): string{
+
+
 
 		return ""; 
 
