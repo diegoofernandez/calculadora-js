@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
 import TeX from '@matejmazur/react-katex'; 
+import ConvertKatexToJson from '../libs/ConvertKatexToJson';
 
 function Home(){
 
     const [stringParse, setStringParse] = useState(''); 
-    const [calculoMuestra, setCalculoMuestra] = useState(true); 
+    const [calculoMuestra, setCalculoMuestra] = useState(true);
+    
+    const formater = new ConvertKatexToJson(); 
+
+    function runFormater(){
+
+        let datosInput = document.getElementById('inputString'); 
+        let entradaToJson = formater.katexToSystem(datosInput.value); 
+        console.log(JSON.stringify(entradaToJson, null, 2));
+
+    }
+
 
     function driverInput(e){ 
 
@@ -20,7 +32,7 @@ function Home(){
                 <section class="flex flex-col items-center justify-center text-center py-12 md:py-20" id="hero">
                     <div class="flex flex-col items-center gap-6 w-full max-w-3xl">
                         <h1 class="text-white text-4xl md:text-5xl font-bold leading-tight tracking-tighter">
-                            Álgebra más potente del mundo, ahora accesible para todos.
+                            El Álgebra más potente del mundo, ahora accesible para todos.
                         </h1>
                         <p class="text-white/70 text-base md:text-lg max-w-2xl">
                             Acceda a conocimiento y cómputo de nivel experto en física, finanzas, logística y más con el motor algebraico RomiMath.
@@ -33,8 +45,8 @@ function Home(){
                         </div>
                         <div class="w-full mt-4">
                             <div class="relative flex items-center">
-                                <input class="w-full h-14 pl-5 pr-16 rounded-lg bg-[#191933] text-white font-mono border-2 border-[#323267] focus:border-primary focus:outline-none focus:ring-0 transition-colors" placeholder="Introduce tu cálculo..." onChange={driverInput}/>
-                                <button class="absolute right-2 flex items-center justify-center size-10 rounded-md bg-primary hover:bg-violet-500 text-white transition-colors">
+                                <input id="inputString" class="w-full h-14 pl-5 pr-16 rounded-lg bg-[#191933] text-white font-mono border-2 border-[#323267] focus:border-primary focus:outline-none focus:ring-0 transition-colors" placeholder="Introduce tu cálculo..." onChange={driverInput}/>
+                                <button onClick={runFormater} class="absolute right-2 flex items-center justify-center size-10 rounded-md bg-primary hover:bg-violet-500 text-white transition-colors">
                                 <span class="material-symbols-outlined">=</span>
                                 </button>
                             </div>
@@ -97,7 +109,7 @@ function Home(){
                     <div class="flex flex-col gap-4 text-center items-center">
                         <h2 class="text-white text-3xl font-bold tracking-tighter">Explora Nuestros Algoritmos</h2>
                         <p class="text-white/70 text-base max-w-3xl">
-                            Navegue a través de nuestra extensa biblioteca de algoritmos. Desde los principios fundamentales de la física hasta las complejidades de la optimización financiera y logística.
+                            Navegue a través de nuestra extensa biblioteca de algoritmos.
                         </p>
                     </div>
                     <div class="flex flex-col gap-8">
@@ -112,8 +124,8 @@ function Home(){
                                         </div>
                                     </div>
                                     <div class="flex-1">
-                                        <h3 class="text-white text-2xl font-bold">Bases de Gröbner: Nuestra Mayor Potencia</h3>
-                                        <p class="text-white/70">La joya de la corona de RomiMath. Un algoritmo revolucionario para resolver sistemas de ecuaciones polinómicas no lineales.</p>
+                                        <h3 class="text-white text-2xl font-bold">Bases de Gröbner: Nuestra Mayor Potencia, la precisión perfecta.</h3>
+                                        <p class="text-white/70">El Algoritmo de la Verdad para Sistemas de Reglas Complejas.</p>
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-4">
@@ -126,11 +138,23 @@ function Home(){
                                         <p class="text-white/70 text-sm">Transforma un sistema de ecuaciones polinómicas en un sistema equivalente (la Base de Gröbner) que tiene una estructura triangular, facilitando la resolución sucesiva de las variables.</p>
                                     </div>
                                     <div>
-                                        <h4 class="text-primary font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                        <pre class="bg-[#0A0A1A] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Resolver el sistema:
-                                            x^2 + y + z = 1
-                                            x + y^2 + z = 1
-                                            x + y + z^2 = 1
+                                        <h4 class="text-primary font-bold mb-2">DEFINICIÓN</h4>
+                                        <p class="text-white/70 text-sm">Este motor implementa Bases de Gröbner con Aritmética Racional Exacta (BigInt). Esto garantiza la Certeza Absoluta en la solución y la detección irrefutable de inconsistencias lógicas (1=0), eliminando el 100% del error de punto flotante.</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-primary font-bold mb-2">VENTAJA</h4>
+                                        <p class="text-white/70 text-sm">Certeza Ilimitada: Precisión infinita en cada cálculo (no hay errores de float).</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-primary font-bold mb-2">CAMPO DE ACCIÓN</h4>
+                                        <p class="text-white/70 text-sm">Validación de Lógica: Prueba si sus reglas de negocio son consistentes, previniendo fallos en modelos de riesgo o regulatorios.</p>
+                                    </div>
+                                    <div>
+                                        <h4 class="text-primary font-bold mb-2">EJEMPLO PRACTICO</h4>
+                                        <pre class="bg-[#0A0A1A] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Resolver el sistema:<br/>
+                                            <TeX block math="x^2 + y + z = 1"></TeX>
+                                            <TeX block math="x + y^2 + z = 1"></TeX>
+                                            <TeX block math="x + y + z^2 = 1"></TeX>
                                             Una Base de Gröbner lo convierte en un problema manejable, encontrando todas las soluciones posibles, incluyendo las complejas.</code></pre>
                                     </div>
                                     <div>

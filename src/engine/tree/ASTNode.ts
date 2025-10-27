@@ -2,6 +2,7 @@ type NodeType = 'Numero'|'Variable'|'Fraccion'|'Id'|'+'|'-'|'*'|':'|'='|'Potenci
 
 
 
+
 interface ASTNode{
 
     type: NodeType; 

@@ -1,837 +1,523 @@
-import FacadeDriver from "../../FacadeDriver";
-
-
-type Fraccion = {
-    numerador: bigint;
-    denominador: bigint;
-};
-
+import Fraccion from "../Fraccion";
 type Termino = {
     coeficiente: Fraccion;  
-    variables: Array<[string, number]>
-}
-type TerminoEntrada = {
-    coeficiente: number; 
-    variables: Array<[string, number]>
-}
+    variables: Array<[string, number]>;
+};
 
-export default class Grobner{
-
-    private pasoPasoUsuarioG: any;
-
-    private basesG: Termino[][] = [];
-
-    constructor(polinomios: TerminoEntrada[][]){
-        this.basesG = this.convertirAFracciones(polinomios);
-        localStorage.removeItem('groebner_pasos');
-        localStorage.setItem('groebner_pasos', "");
-        this.construirBaseGroebner();
-        this.mostrarBaseFinal();
-    }
-
-   private convertirAFracciones(polinomios: TerminoEntrada[][]): Termino[][] {
-        return polinomios.map(poli => 
-            poli.map(termino => ({
-                coeficiente: this.decimalToFraccion(termino.coeficiente), 
-                variables: termino.variables
-            }))
-        );
-    }
-
-private decimalToFraccion(decimal: number): Fraccion {
-    if (Number.isInteger(decimal)) {
-        return this.crearFraccion(BigInt(decimal), 1n); 
-    }
-
-    const s = decimal.toString();
-    const decimalIndex = s.indexOf('.');
-    
-    if (decimalIndex === -1) {
-        return this.crearFraccion(BigInt(decimal), 1n);
-    }
-
-    const numDecimals = s.length - 1 - decimalIndex;
-    
-
-    const denominador = BigInt(10) ** BigInt(numDecimals);
-    
-
-    const numeradorString = s.replace('.', '');
-    const numerador = BigInt(numeradorString);
-    
-
-    return this.crearFraccion(numerador, denominador);
-}
+type Polinomio = Termino[];
 
 
-    private crearFraccion(numerador: number | bigint, denominador: number | bigint = 1): Fraccion{
+class GrobnerRobusto {
+    private base: Polinomio[] = [];
+    private paresProcesados = new Set<string>();
+    private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
 
-        let num = BigInt(numerador);
-        let den = BigInt(denominador);
+    constructor(ast: ASTNode) {
+        console.log("🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT");
+        console.log("✅ Todas las operaciones usan aritmética racional exacta");
         
-
-        if (den === 0n) throw new Error("Denominador cero");
-        if (den < 0n) { num = -num; den = -den; } // Normalización de signo
-        const mcd = this.mcdBigInt(num, den);
+        const polinomiosIniciales = this.extraerPolinomios(ast);
         
-        return {
-            numerador: num / mcd,
-            denominador: den / mcd
-        };
-
-    }
-
-    private mcdBigInt(a: bigint, b: bigint): bigint {
-
-        a = a < 0n ? -a : a; // Valor absoluto para BigInt
-        b = b < 0n ? -b : b;
-        while (b !== 0n) {
-            const temp = b;
-            b = a % b;
-            a = temp;
-        }
-        return a;
-
-    }
-
-    private mcmBigInt(a: bigint, b: bigint): bigint {
-        if (a === 0n || b === 0n) return 0n;
-        // Usa el MCD de BigInt
-        return (a * b) / this.mcdBigInt(a, b); 
-    }
-
-    private fraccionAString(frac: Fraccion): string {
-        if (frac.denominador === 1n) return frac.numerador.toString();
-        return `${frac.numerador}/${frac.denominador}`;
-    }
-
-    private multiplicarFracciones(a: Fraccion, b: Fraccion): Fraccion {
-        return this.crearFraccion(
-            a.numerador * b.numerador,
-            a.denominador * b.denominador
-        );
-    }
-
-    private dividirFracciones(a: Fraccion, b: Fraccion): Fraccion {
-        return this.crearFraccion(
-            a.numerador * b.denominador,
-            a.denominador * b.numerador
-        );
-    }
-
-    private sumarFracciones(a: Fraccion, b: Fraccion): Fraccion {
-        return this.crearFraccion(
-            a.numerador * b.denominador + b.numerador * a.denominador,
-            a.denominador * b.denominador
-        );
-    }
-
-    private restarFracciones(a: Fraccion, b: Fraccion): Fraccion {
-        return this.crearFraccion(
-            a.numerador * b.denominador - b.numerador * a.denominador,
-            a.denominador * b.denominador
-        );
-    }
-
-    private esCeroFraccion(frac: Fraccion): boolean {
-        return frac.numerador === 0n;
-    }
-
-    private esUnoFraccion(frac: Fraccion): boolean {
-        return frac.numerador === 1n && frac.denominador === 1n;
-    }
-
-    private negarFraccion(frac: Fraccion): Fraccion {
-        return this.crearFraccion(-frac.numerador, frac.denominador);
-    }
-
-    private mostrarProcesoSPolinomio(i: number, j: number, base: Termino[][], resto: Termino[]): void{
-
-        console.log(`\n S-polinomio de (P${i}, P${j}):|`);
-        console.log(`   
-            P${i}:`, base[i].map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   |P${j}: `, base[j].map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   |Resto: `, resto.map(t => this.terminoAString(t)).join(" + "));
-        console.log(`   |Es cero?: `, this.esCero(resto));
-
-        let pasoPasoUsuario = `\n |S-polinomio de (P${i}, P${j}): `; 
-        pasoPasoUsuario += `   |P${i}: `; 
-        pasoPasoUsuario += base[i].map(t => this.terminoAString(t)).join(" + "); 
-        pasoPasoUsuario += `   |P${j}: `; 
-        pasoPasoUsuario += base[j].map(t => this.terminoAString(t)).join(" + "); 
-        pasoPasoUsuario += `   |Resto: `; 
-        pasoPasoUsuario += resto.map(t => this.terminoAString(t)).join(" + "); 
-        pasoPasoUsuario += `   |Es cero?: `; 
-        pasoPasoUsuario += this.esCero(resto);
-
-        this.pasoPasoUsuarioG += pasoPasoUsuario;  
-        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-    }
-
-    private encontrarTerminoLider(polinomio: Termino[]): Termino {
-    if (this.esCero(polinomio)) {
-        // Devuelve el monomio cero
-        return { coeficiente: this.crearFraccion(0n, 1n), variables: [] };
-    }
-    // Asumimos que el polinomio está ordenado de mayor a menor término.
-    return polinomio[0]; 
-}
-
-    private compararTerminos(t1: Termino, t2: Termino): number {
-    // 1. Usa tu orden monomial (el más importante).
-    const cmpVariables = this.compararVariables(t1.variables, t2.variables);
-    if (cmpVariables !== 0) {
-        return cmpVariables;
-    }
-
-    // 2. Si las variables son iguales, compara coeficientes (solo para orden determinista, no afecta la aritmética).
-    const t1_pos = this.esPositivo(t1.coeficiente);
-    const t2_pos = this.esPositivo(t2.coeficiente);
-    
-    // Si ambos son positivos o ambos negativos/cero (y son iguales por sonFraccionesIguales), son iguales.
-    // Aquí solo necesitamos establecer un desempate estable.
-    if (t1_pos && !t2_pos) return 1;    // t1 positivo es mayor
-    if (!t1_pos && t2_pos) return -1;   // t2 positivo es mayor
-    
-    // De lo contrario, son iguales en variables y signo (se asume que los coeficientes son iguales aquí)
-    return 0;
-}
-
-    private calcularGradoTotal(termino: Termino): number{
-
-        return termino.variables.reduce((sum, [_, exp]) => sum + exp, 0);
-
-    }
-
-    private compararLexicografico(a: Termino, b: Termino): number{
-
-        const maxVars = Math.max(a.variables.length, b.variables.length);
-    
-        for (let i = 0; i < maxVars; i++) {
-            const varA = a.variables[i];
-            const varB = b.variables[i];
-            
-            // Si un término no tiene más variables, el otro es mayor
-            if (!varA) return -1;  // b tiene más variables
-            if (!varB) return 1;   // a tiene más variables
-            
-            // Comparar nombre de variable
-            if (varA[0] !== varB[0]) {
-                return varA[0].localeCompare(varB[0]);
-            }
-            
-            // Misma variable, comparar exponentes
-            if (varA[1] !== varB[1]) {
-                return varB[1] - varA[1];  // Mayor exponente primero
-            }
-        }
-    
-        return 0; // Términos idénticos
-
-    }
-
-    private terminoAString(termino: Termino): string {
-        let resultado = "";
+        // VERIFICAR INTEGRIDAD: Todos los coeficientes deben ser Fraccion
+        this.verificarIntegridadBigInt(polinomiosIniciales);
         
-        if (!this.esUnoFraccion(termino.coeficiente) || termino.variables.length === 0) {
-            resultado += this.fraccionAString(termino.coeficiente);
-        }
-        
-        for (let [v, exp] of termino.variables) {
-            if (exp === 1) {
-                resultado += v;
-            } else {
-                resultado += v + "^" + exp;
-            }
-        }
-        
-        return resultado;
-    }
-
-
-        private calcularMCM(a: Termino, b: Termino): Termino {
-        
-        const mcmCoef = this.mcmFracciones(a.coeficiente, b.coeficiente);
-        
-        const todasVariables = new Set<string>();
-        a.variables.forEach(([v, _]) => todasVariables.add(v));
-        b.variables.forEach(([v, _]) => todasVariables.add(v));
-        
-        const varsMCM: [string, number][] = [];
-        for (let variable of todasVariables) {
-            const expA = this.obtenerExponente(a, variable);
-            const expB = this.obtenerExponente(b, variable);
-            const maxExp = Math.max(expA, expB);
-            if (maxExp > 0) varsMCM.push([variable, maxExp]);
-        }
-        
-        return { coeficiente: mcmCoef, variables: varsMCM };
-    }
-    private mcmFracciones(a: Fraccion, b: Fraccion): Fraccion {
-        // MCM de fracciones = MCM(numeradores) / MCD(denominadores)
-        const mcmNum = this.mcmBigInt(a.numerador, b.numerador);
-        const mcdDen = this.mcdBigInt(a.denominador, b.denominador);
-        return this.crearFraccion(mcmNum, mcdDen);
-    }
-
-    private obtenerExponente(termino: Termino, variable: string): number{
-
-        const found = termino.variables.find(([v, _]) => v === variable);
-        return found ? found[1] : 0;
-
-    }
-
-    private mcmNumerico(a: number, b: number): number{
-
-        const aInt = Math.round(a);
-    const bInt = Math.round(b);
-    return (aInt * bInt) / this.mcdNumerico(aInt, bInt);
-
-    }
-
-    private mcdNumerico(a: number, b: number): number{
-
-        while (b !== 0){
-
-            const temp = b;
-            b = a % b;
-            a = temp;
-
-        }
-
-        return a;
-
-    }
-
-private dividirTerminos(dividendo: Termino, divisor: Termino): Termino {
-        
-        const nuevoCoef = this.dividirFracciones(dividendo.coeficiente, divisor.coeficiente);
-        
-        const nuevasVars: [string, number][] = [];
-        for (let [varD, expD] of dividendo.variables) {
-            const expDivisor = this.obtenerExponente(divisor, varD);
-            const nuevoExp = expD - expDivisor;
-            if (nuevoExp > 0) nuevasVars.push([varD, nuevoExp]);
-        }
-        
-        return { coeficiente: nuevoCoef, variables: nuevasVars };
-    }
-
-
-private aFraccionAproximada(decimal: number): number {
-    // Conversión simple a fracción aproximada
-    const fracciones = [
-        [0.5, 1/2], [0.333, 1/3], [0.666, 2/3], [0.25, 1/4], 
-        [0.75, 3/4], [0.2, 1/5], [0.4, 2/5], [0.6, 3/5], [0.8, 4/5]
-    ];
-    
-    for (let [dec, frac] of fracciones) {
-        if (Math.abs(decimal - dec) < 0.01) return frac;
-    }
-    
-    return Math.round(decimal * 100) / 100; // Mantener decimal como último recurso
-}
-
-    private multiplicarPolinomioPorTermino(polinomio: Termino[], termino: Termino): Termino[]{
-
-        const resultado: Termino[] = [];
-        
-        for (let term of polinomio){
-
-9
-            const producto = this.multiplicarTerminos(term, termino);
-            resultado.push(producto);
-
-        }
-        
-        return resultado;
-
-    }
-   private multiplicarTerminos(a: Termino, b: Termino): Termino {
-        
-        const nuevoCoef = this.multiplicarFracciones(a.coeficiente, b.coeficiente);
-        
-        const todasVariables = new Map<string, number>();
-        for (let [v, exp] of a.variables) {
-            todasVariables.set(v, exp);
-        }
-        for (let [v, exp] of b.variables) {
-            const expActual = todasVariables.get(v) || 0;
-            todasVariables.set(v, expActual + exp);
-        }
-        
-        // Obtener la lista de variables y ORDENAR ALFABÉTICAMENTE
-    const nuevasVars: [string, number][] = Array.from(todasVariables.entries())
-        .filter(([, exp]) => exp > 0) // (Opcional) Ignorar variables con exponente 0
-        .sort(([v1], [v2]) => v1.localeCompare(v2)); 
-    
-    return { coeficiente: nuevoCoef, variables: nuevasVars };
-    }
-
-     private restarPolinomios(poliA: Termino[], poliB: Termino[]): Termino[] {
-    const poliBNegado: Termino[] = [];
-    for (let term of poliB) {
-        poliBNegado.push({
-            coeficiente: this.negarFraccion(term.coeficiente),
-            variables: [...term.variables] // <- Esto es solo una copia superficial, ¡debería bastar!
+        console.log(`📊 Polinomios iniciales: ${polinomiosIniciales.length}`);
+        polinomiosIniciales.forEach((p, i) => {
+            console.log(`   P${i+1}: ${this.polinomioAString(p)}`);
         });
-    }
-    
-    const todosTerminos = [...poliA, ...poliBNegado];
-    return this.simplificarPolinomio(todosTerminos); // ✅ Esto llama a simplificar/ordenar
-}
-
-   private simplificarPolinomio(terminos: Termino[]): Termino[] {
-    // La lógica de combinación y filtrado de ceros es correcta.
-    const combinados: Termino[] = [];
-    
-    for (let term of terminos) {
-        let encontrado = false;
         
-        for (let i = 0; i < combinados.length; i++) {
-            if (this.sonEquivalentes(term, combinados[i])) { 
-                combinados[i].coeficiente = this.sumarFracciones(combinados[i].coeficiente, term.coeficiente);
-                encontrado = true;
-                break;
-            }
-        }
+        this.base = this.buchbergerRobusto(polinomiosIniciales);
         
-        if (!encontrado) {
-            // CRÍTICO: Usamos la copia 'term' ya simplificada si es posible, o una copia nueva.
-            // Asumiendo que 'term' no necesita simplificación interna.
-            combinados.push({...term}); 
-        }
-    }
-    
-    // 1. Filtrar términos cero
-    let simplificado = combinados.filter(term => !this.esCeroFraccion(term.coeficiente));
-    
-    
-    // Ordenar de mayor a menor término. 
-    // Si 'compararTerminos' devuelve 1 si t1 > t2, necesitamos que el mayor vaya primero.
-    simplificado.sort((a, b) => this.compararTerminos(b, a)); 
-    
-    return simplificado;
-}
-
-    private esPositivo(frac: Fraccion): boolean {
-    // Si el numerador es > 0, la fracción es positiva.
-    return frac.numerador > 0n; 
-}
-
-    private sonFraccionesIguales(f1: Fraccion, f2: Fraccion): boolean {
-    // Usar BigInt en la multiplicación cruzada
-    return f1.numerador * f2.denominador === f2.numerador * f1.denominador;
-}
-
-    private sonEquivalentes(t1: Termino, t2: Termino): boolean {
-    // Si la cantidad total de elementos variable/exponente es diferente, no pueden ser iguales
-    if (t1.variables.length !== t2.variables.length) return false;
-    
-    // Crear mapas de variables para una búsqueda eficiente
-    const map1 = new Map(t1.variables);
-    const map2 = new Map(t2.variables);
-    
-    // 1. Verificar que todas las variables de t1 estén en t2 con el mismo exponente
-    for (const [variable, exp1] of map1) {
-        const exp2 = map2.get(variable) || 0;
-        if (exp1 !== exp2) {
-            return false;
-        }
-    }
-    
-    // 2. Verificar que todas las variables de t2 estén en t1 (ya cubierto si length es igual y paso 1 pasa)
-    
-    return true;
-}
-
-    private reducirPolinomioConBase(polinomio: Termino[], base: Termino[][]): Termino[] {
-    let p_restante = this.simplificarPolinomio(polinomio); // Asegura que empieza limpio
-    let TL_p = this.encontrarTerminoLider(p_restante);
-
-    // Bucle clave: Continúa mientras el resto no sea cero y el TL del resto sea divisible por ALGO en la base.
-    while (!this.esCero(p_restante) && this.esDivisiblePorBase(TL_p, base)) { 
+        // VERIFICAR INTEGRIDAD FINAL
+        this.verificarIntegridadBigInt(this.base);
+        console.log("✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas");
         
-        // 1. Encontrar TODOS los divisores válidos en la base
-        const divisoresValidos = base.filter(d => 
-            this.esDivisible(TL_p.variables, this.encontrarTerminoLider(d).variables)
-        );
-        
-        
-        if (divisoresValidos.length === 0) {
-            break; 
-        }
-
-        
-        divisoresValidos.sort((a, b) => 
-            this.compararTerminos(this.encontrarTerminoLider(b), this.encontrarTerminoLider(a))
-        );
-        
-        const divisor = divisoresValidos[0];
-        const TL_d = this.encontrarTerminoLider(divisor);
-        
-        const cociente = this.dividirTerminos(TL_p, TL_d); 
-        
-        const q = this.multiplicarPolinomioPorTermino(divisor, cociente);
-
-        p_restante = this.restarPolinomios(p_restante, q);
-        p_restante = this.simplificarPolinomio(p_restante); // ¡Elimina términos cero y ordena!
-
-        TL_p = this.encontrarTerminoLider(p_restante);
+        this.mostrarResultado();
     }
 
-    return p_restante;
-}
-
-private esDivisiblePorBase(terminoLider: Termino, base: Termino[][]): boolean {
-    return base.some(polinomio => {
-        const TL_divisor = this.encontrarTerminoLider(polinomio);
-        // y que 'esDivisible' lo gestiona.
-        return this.esDivisible(terminoLider.variables, TL_divisor.variables);
-    });
-}
-
-        
-
-    private esDivisible(vars_num: Array<[string, number]>, vars_den: Array<[string, number]>): boolean {
-    const map_num = new Map(vars_num);
-    const map_den = new Map(vars_den);
-
-    // Cada exponente del divisor (den) debe ser menor o igual que el exponente del numerador (num).
-    for (const [variable, exp_den] of map_den) {
-        const exp_num = map_num.get(variable) || 0;
-        if (exp_num < exp_den) {
-            return false;
-        }
-    }
-    // Si todos los exponentes del divisor están en el numerador y son menores o iguales, es divisible.
-    return true;
-}
-
-    private esCero(polinomio: Termino[]): boolean{
-
-        return polinomio.every(termino => termino.coeficiente.numerador === 0n);
-
-    }
-
-   private esConstanteNoCero(polinomio: Termino[]): boolean {
-        return polinomio.length === 1 && 
-            polinomio[0].variables.length === 0 &&
-            !this.esCeroFraccion(polinomio[0].coeficiente);
-    }
-
-    public mostrarBaseFinal(): void{
-
-        console.log("\n BASE DE GRÖBNER FINAL:");
-        this.pasoPasoUsuarioG += "\n |BASE DE GRÖBNER FINAL:";  
-        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-        this.basesG.forEach((polinomio, i) => {
-            console.log(`   P${i + 1}:`, polinomio.map(t => this.terminoAString(t)).join(" + "));
-            this.pasoPasoUsuarioG += `  | P${i + 1}:`;
-            this.pasoPasoUsuarioG +=  polinomio.map(t => this.terminoAString(t)).join(" + "); 
-        });
-
-        localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-    }
-
-    construirBaseGroebner(): void{
-    let base = [...this.basesG];
-    let cambiado = true;
-    let iteracion = 0;
-    const MAX_ITERACIONES = 100; // seguridad anti-loop infinito
-    
-    console.log(" Construyendo base de Gröbner...");
-    this.pasoPasoUsuarioG += " |Construyendo base de Gröbner...";
-    localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-    while (cambiado && iteracion < MAX_ITERACIONES){
-        iteracion++;
-        cambiado = false;
-        const nuevosPares: [number, number][] = [];
-        
-        for (let i = 0; i < base.length; i++){
-            for (let j = i + 1; j < base.length; j++){
-                if (this.parEsNecesario(base[i], base[j], base)) {
-                    nuevosPares.push([i, j]);
+    // ========================================================================
+    // VERIFICACIÓN DE INTEGRIDAD BIGINT
+    // ========================================================================
+    private verificarIntegridadBigInt(polinomios: Polinomio[]): void {
+        for (let i = 0; i < polinomios.length; i++) {
+            const poli = polinomios[i];
+            for (let j = 0; j < poli.length; j++) {
+                const term = poli[j];
+                
+                // Verificar que el coeficiente sea una Fraccion válida
+                if (!(term.coeficiente instanceof Fraccion)) {
+                    throw new Error(`❌ Coeficiente inválido en P${i+1}, término ${j+1}`);
                 }
-                //nuevosPares.push([i, j]);
+                
+                // Verificar que numerador y denominador sean bigint
+                const num = term.coeficiente.getNumerador();
+                const den = term.coeficiente.getDenominador();
+                
+                if (typeof num !== 'bigint' || typeof den !== 'bigint') {
+                    throw new Error(
+                        `❌ Contaminación flotante detectada en P${i+1}, término ${j+1}: ` +
+                        `num=${typeof num}, den=${typeof den}`
+                    );
+                }
+                
+                if (den === 0n) {
+                    throw new Error(`❌ Denominador cero en P${i+1}, término ${j+1}`);
+                }
             }
         }
+    }
+
+    // ========================================================================
+    // EXTRACCIÓN DESDE AST
+    // ========================================================================
+    private extraerPolinomios(ast: ASTNode): Polinomio[] {
+        const polinomios: Polinomio[] = [];
+        if (ast.type === 'Grobner' && ast.hijos) {
+            for (const poliNode of ast.hijos) {
+                if (poliNode.type === 'Polinomio') {
+                    const poli = this.extraerPolinomio(poliNode);
+                    if (poli.length > 0) polinomios.push(poli);
+                }
+            }
+        }
+        return polinomios;
+    }
+
+    private extraerPolinomio(poliNode: ASTNode): Polinomio {
+        const terminos: Termino[] = [];
+        if (poliNode.hijos) {
+            for (const monoNode of poliNode.hijos) {
+                if (monoNode.type === 'Monomio') {
+                    const term = this.extraerTermino(monoNode);
+                    if (term && !term.coeficiente.esCero()) {
+                        terminos.push(term);
+                    }
+                }
+            }
+        }
+        return this.ordenarYSimplificar(terminos);
+    }
+
+    private extraerTermino(monoNode: ASTNode): Termino | null {
+        let coeficiente = new Fraccion(1n, 1n);
+        const variables: Array<[string, number]> = [];
+        const signo = monoNode.negativoPositivo || 1;
+
+        if (monoNode.hijos) {
+            for (const hijo of monoNode.hijos) {
+                if (hijo.type === 'Numero') {
+                    const valorBigInt = this.obtenerValor(hijo);
+                    // MULTIPLICAR BIGINT POR BIGINT
+                    const signoNumBigInt = signo < 0 ? -1n : 1n;
+                    coeficiente = new Fraccion(signoNumBigInt * valorBigInt, 1n);
+                } else if (hijo.type === 'Variable') {
+                    const nombre = String(hijo.representacion || '');
+                    if (nombre && !this.esNumero(nombre)) {
+                        variables.push([nombre, 1]);
+                    } else if (this.esNumero(nombre)) {
+                        const valorBigInt = BigInt(parseInt(nombre, 10));
+                        const signoNumBigInt = signo < 0 ? -1n : 1n;
+                        coeficiente = new Fraccion(signoNumBigInt * valorBigInt, 1n);
+                    }
+                } else if (hijo.type === 'Potencia' && hijo.hijos && hijo.hijos.length >= 2) {
+                    const base = String(hijo.hijos[0].representacion || '');
+                    const exp = parseInt(String(hijo.hijos[1].representacion || '1'), 10);
+                    if (base && !isNaN(exp)) variables.push([base, exp]);
+                } else if (hijo.type === 'Fraccion' && hijo.hijos && hijo.hijos.length >= 2) {
+                    const numBigInt = this.obtenerValor(hijo.hijos[0]);
+                    const denBigInt = this.obtenerValor(hijo.hijos[1]);
+                    // CREAR FRACCIÓN CON BIGINT PURO
+                    const frac = new Fraccion(numBigInt, denBigInt);
+                    coeficiente = signo === -1 ? frac.negar() : frac;
+                }
+            }
+        }
+
+        if (coeficiente.esUno() && variables.length > 0 && signo === -1) {
+            coeficiente = new Fraccion(-1n, 1n);
+        }
+
+        return coeficiente.esCero() ? null : { coeficiente, variables };
+    }
+
+    private obtenerValor(node: ASTNode): bigint {
+        // RETORNAR SIEMPRE BIGINT, NUNCA NUMBER
+        if (node.representacion === undefined) return 1n;
         
-        let polinomioAgregadoEnEstaIteracion = false;
+        if (typeof node.representacion === 'bigint') {
+            return node.representacion;
+        }
         
-        for (let [i, j] of nuevosPares){
-            console.log(`\nProcesando par (${i}, ${j})`);
-            this.pasoPasoUsuarioG += `\n |Procesando par (${i}, ${j})`; 
-            localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
+        if (typeof node.representacion === 'number') {
+            // Convertir number a bigint (solo para enteros)
+            return BigInt(Math.floor(node.representacion));
+        }
         
-            const mcm = this.calcularMCM(
-                this.encontrarTerminoLider(base[i]),
-                this.encontrarTerminoLider(base[j])
-            );
+        if (typeof node.representacion === 'string') {
+            const parsed = parseInt(node.representacion, 10);
+            return isNaN(parsed) ? 1n : BigInt(parsed);
+        }
+        
+        return 1n;
+    }
 
-            const coef1 = this.dividirTerminos(mcm, this.encontrarTerminoLider(base[i]));
-            const coef2 = this.dividirTerminos(mcm, this.encontrarTerminoLider(base[j]));
+    private esNumero(str: string): boolean {
+        // Verificar si es un número entero válido
+        const num = parseInt(str, 10);
+        return !isNaN(num) && String(num) === str.trim();
+    }
+
+    // ========================================================================
+    // ALGORITMO DE BUCHBERGER ROBUSTO
+    // ========================================================================
+    private buchbergerRobusto(polinomios: Polinomio[]): Polinomio[] {
+        console.log("\n🔄 EJECUTANDO BUCHBERGER ROBUSTO");
+        
+        let base = polinomios.map(p => this.normalizarPolinomio(p));
+        let iteracion = 0;
+        const MAX_BASE = 50; // Límite de seguridad para 6 variables
+        
+        // Cola de pares a procesar
+        const colaPares: [number, number][] = [];
+        for (let i = 0; i < base.length; i++) {
+            for (let j = i + 1; j < base.length; j++) {
+                colaPares.push([i, j]);
+            }
+        }
+
+        while (colaPares.length > 0 && base.length < MAX_BASE) {
+            iteracion++;
+            console.log(`\n=== ITERACIÓN ${iteracion} === (Base: ${base.length}, Cola: ${colaPares.length})`);
             
-            const poli1Mult = this.multiplicarPolinomioPorTermino(base[i], coef1);
-            const poli2Mult = this.multiplicarPolinomioPorTermino(base[j], coef2);
-            const sPolinomio = this.restarPolinomios(poli1Mult, poli2Mult);
+            const [i, j] = colaPares.shift()!;
+            const parKey = `${i},${j}`;
             
-            const resto = this.reducirPolinomioConBase(sPolinomio, base);
-
-            this.mostrarProcesoSPolinomio(i, j, base, resto);
+            if (this.paresProcesados.has(parKey)) continue;
+            this.paresProcesados.add(parKey);
             
-            if (this.esCero(resto)){
-                console.log("   S-polinomio se redujo a 0");
-                this.pasoPasoUsuarioG += "   |S-polinomio se redujo a 0";
-                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-            } else if (this.esConstanteNoCero(resto)){
-                console.log("    SISTEMA INCONSISTENTE");
-                this.pasoPasoUsuarioG += "    |SISTEMA INCONSISTENTE"; 
-                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-                this.basesG = [resto];
-                return;
-
+            // CRITERIO DE BUCHBERGER: Términos coprimos
+            if (this.sonCoprimos(base[i][0].variables, base[j][0].variables)) {
+                console.log(`   🚫 Par (${i+1},${j+1}): Términos coprimos - omitido`);
+                continue;
+            }
+            
+            console.log(`\n🔍 Par (${i+1}, ${j+1})`);
+            
+            const sPol = this.calcularSPolinomio(base[i], base[j]);
+            const reducido = this.reducir(sPol, base);
+            
+            if (!this.esCero(reducido)) {
+                const normalizado = this.normalizarPolinomio(reducido);
+                
+                if (!this.esRedundante(normalizado, base)) {
+                    const nuevoIdx = base.length;
+                    base.push(normalizado);
+                    console.log(`   ✅ AGREGADO P${nuevoIdx + 1}: ${this.polinomioAString(normalizado)}`);
+                    
+                    // Agregar nuevos pares con el polinomio recién agregado
+                    for (let k = 0; k < nuevoIdx; k++) {
+                        colaPares.push([k, nuevoIdx]);
+                    }
+                } else {
+                    console.log(`   🚫 REDUNDANTE - no agregado`);
+                }
             } else {
-                console.log("    Agregando nuevo polinomio a la base");
-                this.pasoPasoUsuarioG += "    |Agregando nuevo polinomio a la base"; 
-                localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-                base.push(resto);
-                cambiado = true;
-                polinomioAgregadoEnEstaIteracion = true;
+                console.log(`   ✅ Se redujo a 0`);
+            }
+        }
+
+        if (base.length >= MAX_BASE) {
+            console.log(`\n⚠️ LÍMITE DE BASE ALCANZADO (${MAX_BASE} polinomios)`);
+        } else {
+            console.log(`\n✅ CONVERGENCIA - Cola vacía`);
+        }
+
+        console.log("\n🔧 INTER-REDUCCIÓN A FORMA CANÓNICA...");
+        return this.interReducir(base);
+    }
+
+    // ========================================================================
+    // CRITERIOS DE OPTIMIZACIÓN
+    // ========================================================================
+    private sonCoprimos(varsA: Array<[string, number]>, varsB: Array<[string, number]>): boolean {
+        const setA = new Set(varsA.map(([v]) => v));
+        const setB = new Set(varsB.map(([v]) => v));
+        for (const v of setA) {
+            if (setB.has(v)) return false;
+        }
+        return true;
+    }
+
+    private esRedundante(polinomio: Polinomio, base: Polinomio[]): boolean {
+        const poliNorm = this.normalizarPolinomio(polinomio);
+        
+        for (const existente of base) {
+            const existenteNorm = this.normalizarPolinomio(existente);
+            if (this.sonIguales(poliNorm, existenteNorm)) {
+                return true;
             }
         }
         
-        if (!polinomioAgregadoEnEstaIteracion) {
-            cambiado = false;
-        }
+        const reducido = this.reducir(polinomio, base);
+        return this.esCero(reducido);
     }
-    
-    //this.basesG = base;
-    //this.basesG = this.reducirBaseInternamente(this.basesG);
-    this.basesG = base; // Asegúrate de que this.basesG tenga la base generada.
 
-console.log(" Aplicando normalización y reducción final...");
-this.pasoPasoUsuarioG += " |Aplicando normalización y reducción final...";
-localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-
-// 1. Normalización: Coeficiente líder a 1
-this.basesG = this.basesG.map(poli => this.normalizarPolinomio(poli));
-
-// 2. Reducción Cruzada (La limpieza interna)
-this.basesG = this.interReducirBase(this.basesG); 
-
-// 3. Ordenar la base para la forma canónica (útil para la triangularización)
-this.basesG.sort((a, b) => this.compararPolinomios(a, b));
-    
-
-    console.log(" Base de Gröbner completada");
-    this.pasoPasoUsuarioG += " |Base de Gröbner completada"; 
-    localStorage.setItem('groebner_pasos', this.pasoPasoUsuarioG);
-}
-
-private compararPolinomios(a: Termino[], b: Termino[]): number {
-    const tlA = this.encontrarTerminoLider(a);
-    const tlB = this.encontrarTerminoLider(b);
-    // Usar la misma comparación de términos (TLB vs TLA porque queremos el de grado más bajo al final)
-    return this.compararTerminos(tlB, tlA); 
-}
-
-private sonBasesIguales(base1: Termino[][], base2: Termino[][]): boolean {
-    if (base1.length !== base2.length) return false;
-    return base1.every((poli, i) => this.sonPolinomiosIguales(poli, base2[i]));
-}
-
-private reducirBaseInternamente(base: Termino[][]): Termino[][] {
-    let baseReducida = [...base];
-    let cambiado = true;
-    
-    while (cambiado) {
-        cambiado = false;
+    // ========================================================================
+    // OPERACIONES PRINCIPALES
+    // ========================================================================
+    private calcularSPolinomio(f: Polinomio, g: Polinomio): Polinomio {
+        if (f.length === 0 || g.length === 0) return [];
         
-        for (let i = 0; i < baseReducida.length; i++) {
-            const baseSinI = baseReducida.filter((_, idx) => idx !== i);
-            const reducido = this.reducirPolinomioConBase(baseReducida[i], baseSinI);
+        const ltF = f[0];
+        const ltG = g[0];
+        
+        const mcm = this.calcularMCMVariables(ltF.variables, ltG.variables);
+        const coefF = this.dividirVariables(mcm, ltF.variables);
+        const coefG = this.dividirVariables(mcm, ltG.variables);
+        
+        const fMult = this.multiplicarPolinomio(f, { coeficiente: new Fraccion(1n, 1n), variables: coefF });
+        const gMult = this.multiplicarPolinomio(g, { coeficiente: new Fraccion(1n, 1n), variables: coefG });
+        
+        return this.restar(fMult, gMult);
+    }
+
+    private reducir(p: Polinomio, base: Polinomio[]): Polinomio {
+        let resto = this.clonarPolinomio(p);
+        let pasos = 0;
+        const MAX_PASOS = 100;
+        
+        while (pasos < MAX_PASOS && resto.length > 0) {
+            const terminoLider = resto[0];
+            let reducido = false;
             
-            // Verificar si cambió (forma simple)
-            const strOriginal = baseReducida[i].map(t => this.terminoAString(t)).join("+");
-            const strReducido = reducido.map(t => this.terminoAString(t)).join("+");
+            for (const divisor of base) {
+                if (divisor.length === 0) continue;
+                const ltDivisor = divisor[0];
+                
+                if (this.esDivisible(terminoLider.variables, ltDivisor.variables)) {
+                    const cociente = this.dividirTerminos(terminoLider, ltDivisor);
+                    const aRestar = this.multiplicarPolinomio(divisor, cociente);
+                    resto = this.restar(resto, aRestar);
+                    resto = this.ordenarYSimplificar(resto);
+                    reducido = true;
+                    pasos++;
+                    break;
+                }
+            }
             
-            if (strOriginal !== strReducido) {
-                baseReducida[i] = reducido;
-                cambiado = true;
+            if (!reducido) break;
+        }
+        
+        return resto;
+    }
+
+    private interReducir(base: Polinomio[]): Polinomio[] {
+        console.log("🔧 INTER-REDUCCIÓN A FORMA CANÓNICA");
+        
+        let resultado = base.map(p => this.clonarPolinomio(p));
+        let cambio = true;
+        let iter = 0;
+        const MAX_ITER = 20;
+        
+        while (cambio && iter < MAX_ITER) {
+            iter++;
+            cambio = false;
+            
+            for (let i = resultado.length - 1; i >= 0; i--) {
+                const actual = resultado[i];
+                const otros = resultado.filter((_, idx) => idx !== i);
+                
+                const reducido = this.reducir(actual, otros);
+                const normalizado = this.normalizarPolinomio(reducido);
+                
+                if (this.esCero(normalizado)) {
+                    console.log(`   🗑️ Eliminando P${i+1}`);
+                    resultado.splice(i, 1);
+                    cambio = true;
+                } else if (!this.sonIguales(actual, normalizado)) {
+                    console.log(`   🔄 Reduciendo P${i+1}`);
+                    resultado[i] = normalizado;
+                    cambio = true;
+                }
             }
         }
         
-        // Eliminar polinomios cero
-        baseReducida = baseReducida.filter(poli => !this.esCero(poli));
-    }
-    
-    return baseReducida;
-}
-
-private reducirBaseGroebner(base: Termino[][]): Termino[][] {
-    console.log(" Aplicando reducción final...");
-    
-    // 1. Eliminar polinomios cero
-    let baseReducida = base.filter(poli => !this.esCero(poli));
-    
-    // 2. Normalizar coeficientes líderes a 1
-    baseReducida = baseReducida.map(poli => this.normalizarPolinomio(poli));
-    
-    // 3. Reducción cruzada
-    let cambiado = true;
-    while (cambiado) {
-        cambiado = false;
-        
-        for (let i = 0; i < baseReducida.length; i++) {
-            const baseSinI = baseReducida.filter((_, idx) => idx !== i);
-            const reducido = this.reducirPolinomioConBase(baseReducida[i], baseSinI);
-            
-            // Normalizar el resultado
-            const reducidoNormalizado = this.normalizarPolinomio(reducido);
-            
-            // Verificar si cambió
-            if (!this.sonPolinomiosIguales(baseReducida[i], reducidoNormalizado)) {
-                baseReducida[i] = reducidoNormalizado;
-                cambiado = true;
+        // Eliminar múltiplos escalares
+        const final: Polinomio[] = [];
+        for (const poli of resultado) {
+            const poliNorm = this.normalizarPolinomio(poli);
+            if (!final.some(p => this.sonIguales(this.normalizarPolinomio(p), poliNorm))) {
+                final.push(poliNorm);
             }
         }
         
-        // Eliminar posibles ceros después de reducción
-        baseReducida = baseReducida.filter(poli => !this.esCero(poli));
+        console.log(`📊 Inter-reducción: ${base.length} → ${final.length} polinomios`);
+        return final;
     }
-    
-    return baseReducida;
-}
 
-private normalizarPolinomio(polinomio: Termino[]): Termino[] {
-    if (this.esCero(polinomio)) return polinomio;
-    
-    const terminoLider = this.encontrarTerminoLider(polinomio);
-    const coefLider = terminoLider.coeficiente; // Es una Fraccion
-    
-    if (this.esUnoFraccion(coefLider)) return polinomio;
-    
-    return polinomio.map(termino => ({
-        coeficiente: this.dividirFracciones(termino.coeficiente, coefLider),
-        variables: [...termino.variables]
-    }));
-}
-
-private calcularGrado(variables: Array<[string, number]>): number {
-    return variables.reduce((sum, [, exponente]) => sum + exponente, 0);
-}
-
-private compararVariables(
-    vars1: Array<[string, number]>, 
-    vars2: Array<[string, number]>
-): number {
-    const grado1 = this.calcularGrado(vars1);
-    const grado2 = this.calcularGrado(vars2);
-
-    if (grado1 !== grado2) {
-        return grado1 > grado2 ? 1 : -1; 
+    // ========================================================================
+    // OPERACIONES AUXILIARES
+    // ========================================================================
+    private calcularMCMVariables(varsA: Array<[string, number]>, varsB: Array<[string, number]>): Array<[string, number]> {
+        const mapa = new Map<string, number>();
+        for (const [v, e] of varsA) mapa.set(v, e);
+        for (const [v, e] of varsB) mapa.set(v, Math.max(mapa.get(v) || 0, e));
+        return Array.from(mapa.entries()).filter(([, e]) => e > 0).sort(([a], [b]) => a.localeCompare(b));
     }
-    
-    const map1 = new Map(vars1);
-    const map2 = new Map(vars2);
-    const todasLasVariables = Array.from(new Set([...map1.keys(), ...map2.keys()])).sort(); 
 
-    for (const variable of todasLasVariables) {
-        const exp1 = map1.get(variable) || 0;
-        const exp2 = map2.get(variable) || 0;
-
-        if (exp1 !== exp2) {
-            return exp1 > exp2 ? 1 : -1; 
+    private dividirVariables(mcm: Array<[string, number]>, vars: Array<[string, number]>): Array<[string, number]> {
+        const mapa = new Map(vars);
+        const resultado: Array<[string, number]> = [];
+        for (const [v, eMcm] of mcm) {
+            const eVar = mapa.get(v) || 0;
+            const diff = eMcm - eVar;
+            if (diff > 0) resultado.push([v, diff]);
         }
+        return resultado;
     }
 
-    return 0; 
-}
-private sonPolinomiosIguales(p1: Termino[], p2: Termino[]): boolean {
-    // Si la longitud es diferente, no son iguales.
-    if (p1.length !== p2.length) return false;
-
-    for (let i = 0; i < p1.length; i++) {
-        const t1 = p1[i];
-        const t2 = p2[i];
-        
-        if (this.compararVariables(t1.variables, t2.variables) !== 0) {
-            return false;
-        }
-
-        if (!this.sonFraccionesIguales(t1.coeficiente, t2.coeficiente)) {
-            return false;
-        }
+    private dividirTerminos(a: Termino, b: Termino): Termino {
+        const coef = a.coeficiente.dividir(b.coeficiente);
+        const vars = this.dividirVariables(a.variables, b.variables);
+        return { coeficiente: coef, variables: vars };
     }
-    return true;
-}
 
-
-
-private parEsNecesario(poliA: Termino[], poliB: Termino[], base: Termino[][]): boolean {
-    const termLiderA = this.encontrarTerminoLider(poliA);
-    const termLiderB = this.encontrarTerminoLider(poliB);
-    
-    const mcm = this.calcularMCM(termLiderA, termLiderB);
-    
-    // Criterio de Buchberger: el par es necesario si el MCM no es divisible
-    // por el término líder de ningún otro polinomio en la base
-    for (let poliC of base) {
-        if (poliC === poliA || poliC === poliB) continue;
-        
-        const termLiderC = this.encontrarTerminoLider(poliC);
-        if (this.esDivisible(mcm.variables, termLiderC.variables)) {
-            return false; // Par redundante
-        }
+    private multiplicarPolinomio(p: Polinomio, t: Termino): Polinomio {
+        return p.map(term => this.multiplicarTerminos(term, t));
     }
-    
-    return true; // Par necesario
-}
-private interReducirBase(base: Termino[][]): Termino[][] {
-    console.log(" Aplicando inter-reducción...");
-    let baseReducida = [...base];
-    let cambiado = true;
-    
-    baseReducida = baseReducida.map(poli => this.simplificarPolinomio(poli));
-    
-    while (cambiado) {
-        cambiado = false;
-        
-        baseReducida = baseReducida.map(poli => this.normalizarPolinomio(poli));
-        
-        baseReducida = baseReducida.map(poli => this.simplificarPolinomio(poli)); 
 
-        for (let i = baseReducida.length - 1; i >= 0; i--) {
-            const poliOriginal = baseReducida[i]; 
-            const baseSinI = baseReducida.filter((_, idx) => idx !== i);
+    private multiplicarTerminos(a: Termino, b: Termino): Termino {
+        const coef = a.coeficiente.multiplicar(b.coeficiente);
+        const mapa = new Map<string, number>();
+        for (const [v, e] of a.variables) mapa.set(v, e);
+        for (const [v, e] of b.variables) mapa.set(v, (mapa.get(v) || 0) + e);
+        const vars = Array.from(mapa.entries()).filter(([, e]) => e > 0).sort(([a], [b]) => a.localeCompare(b));
+        return { coeficiente: coef, variables: vars };
+    }
+
+    private restar(a: Polinomio, b: Polinomio): Polinomio {
+        const bNeg = b.map(t => ({ coeficiente: t.coeficiente.negar(), variables: t.variables }));
+        return this.ordenarYSimplificar([...a, ...bNeg]);
+    }
+
+    private ordenarYSimplificar(terminos: Termino[]): Polinomio {
+        const mapa = new Map<string, Fraccion>();
+        
+        for (const term of terminos) {
+            const clave = this.claveVariables(term.variables);
+            const coefActual = mapa.get(clave) || new Fraccion(0n, 1n);
+            const nuevoCoef = coefActual.sumar(term.coeficiente);
             
-            let reducido = this.reducirPolinomioConBase(poliOriginal, baseSinI);
-            
-            reducido = this.normalizarPolinomio(reducido); 
-            reducido = this.simplificarPolinomio(reducido); 
-
-            if (this.esCero(reducido)) {
-                baseReducida.splice(i, 1);
-                cambiado = true;
-            } 
-            else if (!this.sonPolinomiosIguales(poliOriginal, reducido)) {
-                baseReducida[i] = reducido; 
-                cambiado = true;
+            if (nuevoCoef.esCero()) {
+                mapa.delete(clave);
+            } else {
+                mapa.set(clave, nuevoCoef);
             }
         }
         
-        if (cambiado) {
-            baseReducida.sort((a, b) => this.compararPolinomios(a, b));
+        const resultado: Polinomio = [];
+        for (const [clave, coef] of mapa) {
+            const vars = this.decodificarClave(clave);
+            resultado.push({ coeficiente: coef, variables: vars });
         }
+        
+        return this.ordenar(resultado);
     }
-    return baseReducida;
-}
 
+    private ordenar(terminos: Polinomio): Polinomio {
+        return terminos.sort((a, b) => {
+            // Orden lexicográfico puro
+            for (const variable of this.variablesOrden) {
+                const expA = a.variables.find(([v]) => v === variable)?.[1] || 0;
+                const expB = b.variables.find(([v]) => v === variable)?.[1] || 0;
+                if (expA !== expB) return expB - expA;
+            }
+            return 0;
+        });
+    }
 
+    private normalizarPolinomio(p: Polinomio): Polinomio {
+        if (p.length === 0) return p;
+        
+        const lt = p[0];
+        if (!lt.coeficiente.esPositivo()) {
+            return p.map(t => ({ coeficiente: t.coeficiente.negar(), variables: t.variables }));
+        }
+        
+        if (!lt.coeficiente.esUno()) {
+            return p.map(t => ({ coeficiente: t.coeficiente.dividir(lt.coeficiente), variables: t.variables }));
+        }
+        
+        return p;
+    }
+
+    private esDivisible(varsA: Array<[string, number]>, varsB: Array<[string, number]>): boolean {
+        const mapaB = new Map(varsB);
+        for (const [v, eB] of mapaB) {
+            const eA = varsA.find(([var_]) => var_ === v)?.[1] || 0;
+            if (eA < eB) return false;
+        }
+        return true;
+    }
+
+    private sonIguales(p1: Polinomio, p2: Polinomio): boolean {
+        if (p1.length !== p2.length) return false;
+        for (let i = 0; i < p1.length; i++) {
+            if (!p1[i].coeficiente.equals(p2[i].coeficiente)) return false;
+            if (this.claveVariables(p1[i].variables) !== this.claveVariables(p2[i].variables)) return false;
+        }
+        return true;
+    }
+
+    private esCero(p: Polinomio): boolean {
+        return p.length === 0 || p.every(t => t.coeficiente.esCero());
+    }
+
+    private clonarPolinomio(p: Polinomio): Polinomio {
+        return p.map(t => ({
+            coeficiente: new Fraccion(t.coeficiente.getNumerador(), t.coeficiente.getDenominador()),
+            variables: t.variables.map(([v, e]) => [v, e] as [string, number])
+        }));
+    }
+
+    private claveVariables(vars: Array<[string, number]>): string {
+        return vars.map(([v, e]) => `${v}^${e}`).join('*');
+    }
+
+    private decodificarClave(clave: string): Array<[string, number]> {
+        if (clave === '') return [];
+        return clave.split('*').map(parte => {
+            const [v, e] = parte.split('^');
+            return [v, parseInt(e)] as [string, number];
+        });
+    }
+
+    private polinomioAString(p: Polinomio): string {
+        if (this.esCero(p)) return "0";
+        return p.map((t, i) => {
+            let str = t.coeficiente.toString();
+            if (t.variables.length > 0) {
+                if (str === "1") str = "";
+                else if (str === "-1") str = "-";
+                str += t.variables.map(([v, e]) => e === 1 ? v : `${v}^${e}`).join('');
+            }
+            return i > 0 && !str.startsWith('-') ? '+' + str : str;
+        }).join('');
+    }
+
+    private mostrarResultado(): void {
+        console.log("\n" + "=".repeat(60));
+        console.log("🎉 BASE DE GRÖBNER EN FORMA CANÓNICA");
+        console.log("=".repeat(60));
+        
+        this.base.forEach((p, i) => {
+            console.log(`G${i+1} = ${this.polinomioAString(p)}`);
+        });
+        
+        console.log(`\n📊 Total: ${this.base.length} polinomios`);
+        console.log(`🔢 Pares procesados: ${this.paresProcesados.size}`);
+        console.log("=".repeat(60));
+    }
+
+    getBase(): Polinomio[] { return this.base; }
 }

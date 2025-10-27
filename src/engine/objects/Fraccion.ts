@@ -6,121 +6,108 @@ export interface ProcesamientoFraccion{
 
 }
 
-export class Fraccion{
 
-    protected numerador: string | number | bigint; 
-    protected denominador: string | number | bigint; 
+export default class Fraccion {
+    private numerador: bigint;
+    private denominador: bigint;
 
-    constructor(numerador: string | number | bigint, denominador: string | number | bigint){
-
-        this.numerador = numerador; 
-        this.denominador = denominador; 
-
-        if(denominador == 0){
-            throw new Error("El denominador no puede ser Cero"); 
-        }
-
-    }
-
-    simplificacion(){
-
-        let mcd= Euclides.maximoComunDivisor(this.numerador as bigint, this.denominador as bigint); 
-        let simplificada = (this.numerador as bigint / mcd) + "/" + (this.denominador as bigint / mcd);   
-        return simplificada;
-
-    }
-
-    getNumerador(){
-        return this.numerador; 
-    }
-    getDenominador(){
-        return this.denominador; 
-    }
-
-}
-export class FraccionSumar implements ProcesamientoFraccion{
-
-    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string{
-
-        if(fraccion1.getDenominador() == fraccion2.getDenominador()){
-            let numerador1 = fraccion1.getNumerador() as number; 
-            let numerador2 = fraccion2.getNumerador() as number; 
-            let resultado = new Fraccion(Number(numerador1) + Number(numerador2), fraccion1.getDenominador());
-             
-            return resultado.simplificacion();
-
-        }else{
-            let numerador1 = fraccion1.getNumerador() as number; 
-            let denominador1 = fraccion1.getDenominador() as number;
-            let numerador2 = fraccion2.getNumerador() as number;
-            let denominador2 = fraccion2.getDenominador() as number; 
-            let resultado = new Fraccion((numerador1 * denominador2) + (numerador2 * denominador1), denominador1 * denominador2);
-            
-            return resultado.simplificacion();
-
-        }
-
-    }
-
-}
-
-export class FraccionRestar implements ProcesamientoFraccion{
-
-    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string{
-
-        if(fraccion1.getDenominador() == fraccion2.getDenominador()){
-
-            let numerador1 = fraccion1.getNumerador() as number; 
-            let numerador2 = fraccion2.getNumerador() as number; 
-            let resultado = new Fraccion(numerador1 - numerador2, fraccion1.getDenominador());
+    constructor(numerador: number | bigint | string, denominador: number | bigint | string = 1n) {
+        // ✅ CONVERTIR TODO A BIGINT INMEDIATAMENTE
+        this.numerador = typeof numerador === 'bigint' ? numerador : BigInt(numerador);
+        this.denominador = typeof denominador === 'bigint' ? denominador : BigInt(denominador);
         
-            return resultado.simplificacion();
-
-        }else{
-
-            let numerador1 = fraccion1.getNumerador() as number; 
-            let denominador1 = fraccion1.getDenominador() as number;
-            let numerador2 = fraccion2.getNumerador() as number;
-            let denominador2 = fraccion2.getDenominador() as number; 
-            let resultado = new Fraccion((numerador1 * denominador2) - (numerador2 * denominador1), denominador1 * denominador2);
-
-            return resultado.simplificacion();
-
+        if (this.denominador === 0n) {
+            throw new Error("❌ Denominador cero detectado");
         }
-
-    }
-
-}
-
-export class FraccionMultiplicar implements ProcesamientoFraccion{
-
-    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string{
-
-        let numerador1 = fraccion1.getNumerador() as number; 
-        let denominador1 = fraccion1.getDenominador() as number;
-        let numerador2 = fraccion2.getNumerador() as number; 
-        let denominador2 = fraccion2.getDenominador() as number;
-        let resultado = new Fraccion(numerador1 * numerador2, denominador1 * denominador2);
         
-        return resultado.simplificacion();
-
+        // ✅ SIMPLIFICAR USANDO SOLO ARITMÉTICA BIGINT
+        this.simplificar();
     }
 
-}
-
-export class FraccionDividir implements ProcesamientoFraccion{
-
-    operacion(fraccion1: Fraccion, fraccion2: Fraccion): string{
-
-        let numerador1 = fraccion1.getNumerador() as number; 
-        let denominador1 = fraccion1.getDenominador() as number;
-        let numerador2 = fraccion2.getNumerador() as number; 
-        let denominador2 = fraccion2.getDenominador() as number;
-        let resultado = new Fraccion(numerador1 * denominador2, numerador2 * denominador1);
+    private simplificar(): void {
+        // Normalizar signo: denominador siempre positivo
+        if (this.denominador < 0n) {
+            this.numerador = -this.numerador;
+            this.denominador = -this.denominador;
+        }
         
-        return resultado.simplificacion();
-
+        // Calcular MCD usando algoritmo de Euclides con BigInt
+        const mcd = this.mcd(
+            this.numerador < 0n ? -this.numerador : this.numerador,
+            this.denominador
+        );
+        
+        // Simplificar por el MCD
+        if (mcd > 1n) {
+            this.numerador /= mcd;
+            this.denominador /= mcd;
+        }
     }
 
+    private mcd(a: bigint, b: bigint): bigint {
+        // ✅ ALGORITMO DE EUCLIDES CON BIGINT PURO
+        while (b !== 0n) {
+            [a, b] = [b, a % b];
+        }
+        return a;
+    }
+
+    sumar(otra: Fraccion): Fraccion {
+        // ✅ a/b + c/d = (ad + bc) / bd (todo BigInt)
+        return new Fraccion(
+            this.numerador * otra.denominador + otra.numerador * this.denominador,
+            this.denominador * otra.denominador
+        );
+    }
+
+    multiplicar(otra: Fraccion): Fraccion {
+        // ✅ a/b * c/d = ac / bd (todo BigInt)
+        return new Fraccion(
+            this.numerador * otra.numerador,
+            this.denominador * otra.denominador
+        );
+    }
+
+    dividir(otra: Fraccion): Fraccion {
+        // ✅ a/b ÷ c/d = ad / bc (todo BigInt)
+        return new Fraccion(
+            this.numerador * otra.denominador,
+            this.denominador * otra.numerador
+        );
+    }
+
+    negar(): Fraccion {
+        // ✅ Simple negación de numerador
+        return new Fraccion(-this.numerador, this.denominador);
+    }
+
+    esCero(): boolean { 
+        return this.numerador === 0n; 
+    }
+    
+    esUno(): boolean { 
+        return this.numerador === 1n && this.denominador === 1n; 
+    }
+    
+    esPositivo(): boolean {
+        if (this.numerador === 0n) return false;
+        // Ambos positivos o ambos negativos → positivo
+        return (this.numerador > 0n) === (this.denominador > 0n);
+    }
+    
+    equals(otra: Fraccion): boolean {
+        // ✅ Comparación exacta: a/b = c/d ⟺ ad = bc
+        return this.numerador * otra.denominador === otra.numerador * this.denominador;
+    }
+
+    toString(): string {
+        if (this.denominador === 1n) {
+            return this.numerador.toString();
+        }
+        return `${this.numerador}/${this.denominador}`;
+    }
+
+    getNumerador(): bigint { return this.numerador; }
+    getDenominador(): bigint { return this.denominador; }
 }
 

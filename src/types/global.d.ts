@@ -8,7 +8,7 @@ type ObjElemental = {
     derecha: number,
     operador: string
 }
-type Termino = {
+/*type Termino = {
     coeficiente: number, 
     variables: Array<[string, number]>
-}
+}*/
