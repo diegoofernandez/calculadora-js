@@ -1,5 +1,5 @@
 import { Euclides } from "../utils/Euclides";
-import { Fraccion } from "./Fraccion";
+import Fraccion from "./Fraccion";
 
 
 type Termino = {

@@ -1,9 +1,9 @@
 type NodeType = 'Numero'|'Variable'|'Fraccion'|'Potencia'|'Polinomio'|'Grobner'|'Monomio';
 
-interface ASTNode {
+interface ASTNodeG {
     type: NodeType; 
     negativoPositivo?: number;
-    hijos?: ASTNode[];
+    hijos?: ASTNodeG[];
     operable: boolean;
     representacion?: string | bigint | number;
     meta?: { 

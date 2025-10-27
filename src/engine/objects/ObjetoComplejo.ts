@@ -1,4 +1,4 @@
-import { Fraccion, FraccionDividir, FraccionMultiplicar, FraccionRestar, FraccionSumar, ProcesamientoFraccion } from "./Fraccion";
+import Fraccion from "./Fraccion";
 import { Potencia } from "./Potencia";
 
 export default class ObjetoComplejo{ 
@@ -52,7 +52,7 @@ export default class ObjetoComplejo{
                 let fraccion2 = new Fraccion(objeto2![0], objeto2![1]);
                 let strategy; 
                 
-                switch(operador){
+                /*switch(operador){
                     case '+':
                         strategy = new FraccionSumar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
@@ -65,7 +65,7 @@ export default class ObjetoComplejo{
                     case '*':
                         strategy = new FraccionMultiplicar(); 
                         return strategy.operacion(fraccion1, fraccion2); 
-                }
+                }*/
 
             }
 

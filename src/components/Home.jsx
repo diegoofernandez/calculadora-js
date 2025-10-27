@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import TeX from '@matejmazur/react-katex'; 
 import ConvertKatexToJson from '../libs/ConvertKatexToJson';
+import FacadeDriver from './../engine/FacadeDriver'; 
 
 function Home(){
 
@@ -13,7 +14,10 @@ function Home(){
 
         let datosInput = document.getElementById('inputString'); 
         let entradaToJson = formater.katexToSystem(datosInput.value); 
-        console.log(JSON.stringify(entradaToJson, null, 2));
+        
+        let operando = new FacadeDriver();
+        operando.init(entradaToJson);  
+
 
     }
 

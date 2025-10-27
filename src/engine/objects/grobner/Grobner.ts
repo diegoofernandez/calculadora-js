@@ -7,12 +7,12 @@ type Termino = {
 type Polinomio = Termino[];
 
 
-class GrobnerRobusto {
+export default class GrobnerRobusto {
     private base: Polinomio[] = [];
     private paresProcesados = new Set<string>();
     private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
 
-    constructor(ast: ASTNode) {
+    constructor(ast: ASTNodeG) {
         console.log("🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT");
         console.log("✅ Todas las operaciones usan aritmética racional exacta");
         
@@ -70,7 +70,7 @@ class GrobnerRobusto {
     // ========================================================================
     // EXTRACCIÓN DESDE AST
     // ========================================================================
-    private extraerPolinomios(ast: ASTNode): Polinomio[] {
+    private extraerPolinomios(ast: ASTNodeG): Polinomio[] {
         const polinomios: Polinomio[] = [];
         if (ast.type === 'Grobner' && ast.hijos) {
             for (const poliNode of ast.hijos) {
@@ -83,7 +83,7 @@ class GrobnerRobusto {
         return polinomios;
     }
 
-    private extraerPolinomio(poliNode: ASTNode): Polinomio {
+    private extraerPolinomio(poliNode: ASTNodeG): Polinomio {
         const terminos: Termino[] = [];
         if (poliNode.hijos) {
             for (const monoNode of poliNode.hijos) {
@@ -98,7 +98,7 @@ class GrobnerRobusto {
         return this.ordenarYSimplificar(terminos);
     }
 
-    private extraerTermino(monoNode: ASTNode): Termino | null {
+    private extraerTermino(monoNode: ASTNodeG): Termino | null {
         let coeficiente = new Fraccion(1n, 1n);
         const variables: Array<[string, number]> = [];
         const signo = monoNode.negativoPositivo || 1;
@@ -140,7 +140,7 @@ class GrobnerRobusto {
         return coeficiente.esCero() ? null : { coeficiente, variables };
     }
 
-    private obtenerValor(node: ASTNode): bigint {
+    private obtenerValor(node: ASTNodeG): bigint {
         // RETORNAR SIEMPRE BIGINT, NUNCA NUMBER
         if (node.representacion === undefined) return 1n;
         

@@ -52,7 +52,7 @@ export class ParserInteligente{
         case "G":
           entradaParseada = this.runGrobner(removeTipoInput); 
           console.log(entradaParseada); 
-          grobner = new Grobner(entradaParseada); 
+          //grobner = new Grobner(entradaParseada); 
           break;
 
       }

@@ -1,15 +1,15 @@
 export default class ASTConstrucG{
 
-    static construirAST(dataInput: any[]): ASTNode {
-        const polinomiosAST: ASTNode[] = [];
+    static construirAST(dataInput: any[]): ASTNodeG {
+        const polinomiosAST: ASTNodeG[] = [];
 
         for(let i = 1; i < dataInput.length; i++) {
             const polinomio = dataInput[i];
-            const monomiosAST: ASTNode[] = [];
+            const monomiosAST: ASTNodeG[] = [];
 
             for(let j = 0; j < polinomio.length; j++) {
                 const monomio = polinomio[j];
-                const hijos: ASTNode[] = [];
+                const hijos: ASTNodeG[] = [];
 
                 if(monomio.coeficiente !== undefined) {
                     if(Array.isArray(monomio.coeficiente)) {
