@@ -24,8 +24,8 @@ export class Fraccion{
 
     simplificacion(){
 
-        let mcd= Euclides.maximoComunDivisor(this.numerador as number, this.denominador as number); 
-        let simplificada = (this.numerador as number / mcd) + "/" + (this.denominador as number / mcd);   
+        let mcd= Euclides.maximoComunDivisor(this.numerador as bigint, this.denominador as bigint); 
+        let simplificada = (this.numerador as bigint / mcd) + "/" + (this.denominador as bigint / mcd);   
         return simplificada;
 
     }

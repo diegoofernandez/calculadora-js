@@ -64,37 +64,41 @@ private decimalToFraccion(decimal: number): Fraccion {
 }
 
 
-    private crearFraccion(numerador: number | bigint, denominador: number | bigint = 1): Fraccion {
-    let num = BigInt(numerador);
-    let den = BigInt(denominador);
-    
+    private crearFraccion(numerador: number | bigint, denominador: number | bigint = 1): Fraccion{
 
-    if (den === 0n) throw new Error("Denominador cero");
-    if (den < 0n) { num = -num; den = -den; } // Normalización de signo
-    const mcd = this.mcdBigInt(num, den);
-    
-    return {
-        numerador: num / mcd,
-        denominador: den / mcd
-    };
-}
+        let num = BigInt(numerador);
+        let den = BigInt(denominador);
+        
 
-private mcdBigInt(a: bigint, b: bigint): bigint {
-    a = a < 0n ? -a : a; // Valor absoluto para BigInt
-    b = b < 0n ? -b : b;
-    while (b !== 0n) {
-        const temp = b;
-        b = a % b;
-        a = temp;
+        if (den === 0n) throw new Error("Denominador cero");
+        if (den < 0n) { num = -num; den = -den; } // Normalización de signo
+        const mcd = this.mcdBigInt(num, den);
+        
+        return {
+            numerador: num / mcd,
+            denominador: den / mcd
+        };
+
     }
-    return a;
-}
 
-private mcmBigInt(a: bigint, b: bigint): bigint {
-    if (a === 0n || b === 0n) return 0n;
-    // Usa el MCD de BigInt
-    return (a * b) / this.mcdBigInt(a, b); 
-}
+    private mcdBigInt(a: bigint, b: bigint): bigint {
+
+        a = a < 0n ? -a : a; // Valor absoluto para BigInt
+        b = b < 0n ? -b : b;
+        while (b !== 0n) {
+            const temp = b;
+            b = a % b;
+            a = temp;
+        }
+        return a;
+
+    }
+
+    private mcmBigInt(a: bigint, b: bigint): bigint {
+        if (a === 0n || b === 0n) return 0n;
+        // Usa el MCD de BigInt
+        return (a * b) / this.mcdBigInt(a, b); 
+    }
 
     private fraccionAString(frac: Fraccion): string {
         if (frac.denominador === 1n) return frac.numerador.toString();

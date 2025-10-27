@@ -383,7 +383,7 @@ function obtenerGradoPorVariable(monomio: any, ordenVars: string[]): {[key: stri
 }
 
 
-// AGREGAR ESTA FUNCIÓN AL FINAL DE TU CÓDIGO (sin modificar nada más)
+
 
 function mostrarASTCompleto(ast: ASTNode, nivel: number = 0): void {
     // VERIFICAR SI EL NODO ES VÁLIDO
