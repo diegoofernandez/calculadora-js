@@ -233,141 +233,47 @@ function Home(){
                             </div>
                         </div>
                         <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Mecánica Clásica</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
+                            <h3 class="text-primary text-2xl font-bold mb-4">🤝 #1 - Únete al Desarrollo</h3>
+                            <div class="grid md:grid-cols-1 gap-6">
                                 <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Estudia el movimiento de los cuerpos y las fuerzas que lo causan, basándose en las leyes de Newton.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Utiliza ecuaciones de movimiento para predecir la trayectoria, velocidad y aceleración de objetos bajo la influencia de fuerzas conocidas.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Calcular la trayectoria de un proyectil conociendo su velocidad inicial y el ángulo de lanzamiento.
-                                        F = m * a
-                                        v_f = v_i + a * t</code></pre>
+                                    <h4 class="text-white/80 font-bold mb-2">"Este motor es de código abierto"</h4>
+                                    <p class="text-white/70 text-sm">¿Eres desarrollador o matemático? ¡Tu experiencia es valiosa! Contribuye con código, reporta bugs, sugiere mejoras o ayuda a documentar. Juntos podemos hacer herramientas matemáticas más accesibles.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Relatividad</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
+                            <h3 class="text-primary text-2xl font-bold mb-4">💙 #2 - Soporte Voluntario</h3>
+                            <div class="grid md:grid-cols-1 gap-6">
                                 <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Teoría de Einstein que describe la física del movimiento en ausencia de gravedad (Especial) y la gravedad como una curvatura del espaciotiempo (General).</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Modifica las leyes de Newton para objetos que se mueven a velocidades cercanas a la de la luz y para cuerpos en campos gravitatorios intensos.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Corregir el tiempo en los satélites GPS, que se ven afectados tanto por la relatividad especial (velocidad) como por la general (gravedad).
-                                    E = mc^2</code></pre>
+                                    <h4 class="text-white/80 font-bold mb-2">"La integración es gratuita, el soporte se agradece"</h4>
+                                    <p class="text-white/70 text-sm">No cobramos por usar el motor, pero si te sirve y querés apoyar su desarrollo, aceptamos donaciones. Cada aporte ayuda a mantener el proyecto activo y mejorar su performance.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Física Cuántica</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
+                            <h3 class="text-primary text-2xl font-bold mb-4">🌍 #3 - Open Source & Transparencia</h3>
+                            <div class="grid md:grid-cols-1 gap-6">
                                 <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Describe el comportamiento de la materia y la energía a escala atómica y subatómica.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Utiliza la ecuación de Schrödinger para describir cómo el estado cuántico de un sistema físico cambia con el tiempo. Introduce conceptos como la dualidad onda-partícula y la cuantización.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Desarrollo de láseres y transistores, que se basan en las propiedades cuánticas de los electrones en los materiales.
-                                    iħ(∂ψ/∂t) = Hψ</code></pre>
+                                    <h4 class="text-white/80 font-bold mb-2">"Código 100% abierto, decisiones 100% transparentes"</h4>
+                                    <p class="text-white/70 text-sm">Todo el código está disponible en GitHub bajo licencia MIT. Creemos en el software libre y la colaboración abierta. Revisá, auditá y contribuí sin restricciones.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Inventario</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
+                            <h3 class="text-primary text-2xl font-bold mb-4">🎯 #4 - Sponsors & Empresas</h3>
+                            <div class="grid md:grid-cols-1 gap-6">
                                 <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Gestión y control de las existencias de bienes y productos. Incluye modelos como la Clasificación ABC y el Modelo Newsvendor.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Utiliza algoritmos para optimizar la cantidad de stock, minimizar costos de almacenamiento y ruptura, y clasificar productos según su importancia.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Una tienda de retail usa la Clasificación ABC para priorizar la gestión de sus productos más vendidos y rentables.</code></pre>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">POR QUÉ VENDERLO</h4>
-                                    <p class="text-white/70 text-sm">Permite a las empresas reducir capital inmovilizado, mejorar la eficiencia del servicio al cliente y tomar decisiones estratégicas sobre su surtido de productos.</p>
+                                    <h4 class="text-white/80 font-bold mb-2">"¿Usás el motor en tu empresa? Sé nuestro sponsor"</h4>
+                                    <p class="text-white/70 text-sm">Si implementás el motor en proyectos comerciales, considerá sponsorear el desarrollo. Ofrecemos visibilidad, prioridad en features y soporte personalizado.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Logística</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
+                            <h3 class="text-primary text-2xl font-bold mb-4">📚 #5 - Educación & Divulgación</h3>
+                            <div class="grid md:grid-cols-1 gap-6">
                                 <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Planificación, ejecución y control del movimiento y almacenamiento de bienes. Incluye problemas como el Flujo Máximo y el Algoritmo de Hungría para asignación.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Aplica algoritmos de optimización para resolver problemas de enrutamiento, asignación de tareas y maximización de la capacidad de redes de distribución.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Una empresa de reparto utiliza algoritmos para encontrar las rutas más eficientes y asignar los paquetes a los vehículos adecuados.</code></pre>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">POR QUÉ VENDERLO</h4>
-                                    <p class="text-white/70 text-sm">Reduce costos operativos, mejora los tiempos de entrega y aumenta la satisfacción del cliente a través de una cadena de suministro más eficiente.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Finanzas</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Aplicación de modelos matemáticos para la toma de decisiones financieras. Incluye el Modelo Markowitz para carteras y los Precios Hedónicos para valoración.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Utiliza la estadística y la optimización para analizar riesgos, valorar activos y construir carteras de inversión que equilibren riesgo y rendimiento.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Un gestor de fondos utiliza el Modelo Markowitz para diversificar las inversiones de sus clientes y maximizar los retornos esperados.</code></pre>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">POR QUÉ VENDERLO</h4>
-                                    <p class="text-white/70 text-sm">Proporciona herramientas cuantitativas para la gestión de inversiones, la valoración de activos complejos y la mitigación de riesgos financieros.</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="bg-[#191933] rounded-xl border border-[#323267] p-6">
-                            <h3 class="text-primary text-2xl font-bold mb-4">Utilidad</h3>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CONCEPTO</h4>
-                                    <p class="text-white/70 text-sm">Conjunto de herramientas algorítmicas de propósito general. Incluye el Suavizado Exponencial para pronósticos, Simulación Montecarlo y Clustering K-Means.</p>
-                                </div>
-                                <div>
-                                    <h4 class="text-white/80 font-bold mb-2">CÓMO FUNCIONA</h4>
-                                    <p class="text-white/70 text-sm">Ofrece soluciones para una amplia gama de problemas, desde la predicción de series temporales y la simulación de escenarios hasta la segmentación de datos.</p>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">EJEMPLO PRÁCTICO</h4>
-                                    <pre class="bg-[#111122] p-3 rounded-lg text-sm overflow-x-auto"><code class="font-mono text-white/90 whitespace-pre">Una empresa de marketing usa Clustering K-Means para segmentar a sus clientes y personalizar sus campañas publicitarias.</code></pre>
-                                </div>
-                                <div class="md:col-span-2">
-                                    <h4 class="text-white/80 font-bold mb-2">POR QUÉ VENDERLO</h4>
-                                    <p class="text-white/70 text-sm">Brinda una caja de herramientas versátil que se puede aplicar a diversos dominios de negocio para mejorar la toma de decisiones, prever tendencias y descubrir patrones ocultos en los datos.</p>
+                                    <h4 class="text-white/80 font-bold mb-2">"Llevemos las matemáticas a más personas"</h4>
+                                    <p class="text-white/70 text-sm">¿Das clases o hacés divulgación? Te ayudamos a integrar el motor en tus materiales educativos. Compartamos el conocimiento sin barreras.</p>
                                 </div>
                             </div>
                         </div>

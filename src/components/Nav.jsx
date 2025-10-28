@@ -52,15 +52,11 @@ function Nav(){
                 <h3 class="text-lg font-bold text-white" >Menú</h3>
                 </div>
                 <nav class="flex-grow p-4 space-y-2">
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Home</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Algoritmos (Casos de Uso)</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Panel Soluciones Comerciales</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Calculadora</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">RomiMath para Empresas</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Blog</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Documentación</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">Mi Panel</a>
-                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="#">El Creador</a>
+                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="/">Home</a>
+                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="/algoritmos">Algoritmos</a>
+                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="/empresas">Empresas</a>
+                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="/creador">Creador</a>
+                <a class="block px-4 py-2 text-white/80 rounded-md hover:bg-primary hover:text-white transition-colors" href="/contacto">Contacto</a>
                 </nav>
                 <div class="p-4 border-t border-t-[#232348] space-y-2">
                 <a class="block text-center w-full px-4 py-2 text-white/80 rounded-md border border-primary/50 hover:bg-primary/20 transition-colors" href="#">Login</a>

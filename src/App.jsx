@@ -6,6 +6,9 @@ import Home from './components/Home'
 import Nav from './components/Nav';
 import Blog from './components/Blog'; 
 import Creador from './components/Creador';
+import Empresas from './components/Empresas';
+import Algoritmos from './components/Algoritmos';
+import Contacto from './components/Contacto';
 
 
 function App() {
@@ -25,6 +28,9 @@ function App() {
           <Route path='/' element={<Home/>} />
           <Route path='/blog' element={<Blog />} />
           <Route path='/creador' element={<Creador />} />
+          <Route path='/empresas' element={<Empresas />} />
+          <Route path='/algoritmos' element={<Algoritmos />} />
+          <Route path='/contacto' element={<Contacto />} />
 
         </Routes>
       
