@@ -14,7 +14,7 @@ function Home(){
 
         let datosInput = document.getElementById('inputString'); 
         let entradaToJson = formater.katexToSystem(datosInput.value); 
-        
+        clickCalculo(); 
         let operando = new FacadeDriver();
         operando.init(entradaToJson);  
 
@@ -29,10 +29,72 @@ function Home(){
 
     }
 
+    const [calculo, setCalculo] = useState("");
+    const [esVisible, setVisible] = useState(false);
+
+
+    let pasoPasoG = localStorage.getItem('groebner_pasos') || "Aquí van los resultados." ;
+    
+        function clickCalculo(){
+            localStorage.setItem('groebner_pasos', "Procesando...");
+            setVisible(true);
+    
+        }
+    
+        function cerrarModal(){
+            setVisible(false);
+            localStorage.setItem('groebner_pasos', "...");
+        }
+    
+        function mostrarBox(){
+    
+            setVisible(true);
+    
+        }
+        
+        const pasos = pasoPasoG.split('|').filter(Boolean);  
+
     return(
 
         <>
-            <main class="flex flex-col gap-10 py-10 px-4 md:px-10">
+            {esVisible && (
+
+                    <div class="fixed z-50 top-14 right-8 w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 max-h-[500px] overflow-y-auto">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Procesando...</h3>
+                        <button class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={cerrarModal}>
+                            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-sm text-gray-600 dark:text-gray-400">
+                            Tus calculos se mostrarán aquí...
+                            
+                        </p>
+                        <div class="bg-gray-100 dark:bg-gray-900/50 p-4 rounded-lg">
+                            <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">Calculos. <span class="text-primary">Procesando...</span></p>
+                                {pasos.map((paso, index) => (
+                                    <p key={index}>{paso} <br /> </p>
+                                ))}
+                        </div>
+                    </div>
+                </div>
+
+                )}
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <main class="flex flex-col gap-10 py-10 px-4 md:px-10 @container">
                 <section class="flex flex-col items-center justify-center text-center py-12 md:py-20" id="hero">
                     <div class="flex flex-col items-center gap-6 w-full max-w-3xl">
                         <h1 class="text-white text-4xl md:text-5xl font-bold leading-tight tracking-tighter">
@@ -61,6 +123,8 @@ function Home(){
                             <h3 class="text-primary text-2xl font-bold mb-4">Guía de Sintaxis KaTeX para RomiMath</h3>
                             <h4 class="text-white/80 font-bold mb-2">📝 Introducción</h4>
                             <p class="text-white/70 text-sm">
+                                Si vas a calcular bases de Grobner debes dividir cada polinomio con punto y coma (;) y colocar la letra G antes de escribir tus polinomios. Ej: <br/><br/>
+                                G w^2+x^2+y^2+z^2-1 = 0; w+x+y+z-1 = 0; wx+zw+xy+yz-1 = 0; wxy+zwx+yzw+xyz-1 = 0<br/><br/>
                                 Escribe expresiones matemáticas usando la sintaxis de KaTeX. Sigue la siguiente guía
                             </p>
                             <div class="grid md:grid-cols-2 gap-12">

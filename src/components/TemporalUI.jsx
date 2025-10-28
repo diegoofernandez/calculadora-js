@@ -12,7 +12,7 @@ function TemporalUI(){
     let pasoPasoG = localStorage.getItem('groebner_pasos') || "Aquí van los resultados." ;
 
     function clickCalculo(){
-        localStorage.setItem('groebner_pasos', "");
+        localStorage.setItem('groebner_pasos', "Procesando...");
         let motor = new FacadeDriver(1, calculo); 
         motor.runOp(); 
         setResultado("Resultado actual: " + motor.getRespuesta()); 

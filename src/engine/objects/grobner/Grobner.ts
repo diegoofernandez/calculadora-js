@@ -11,26 +11,39 @@ export default class GrobnerRobusto {
     private base: Polinomio[] = [];
     private paresProcesados = new Set<string>();
     private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
+    private infoUsuario = 'Comenzando\n';
 
     constructor(ast: ASTNodeG) {
-        console.log("🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT");
-        console.log("✅ Todas las operaciones usan aritmética racional exacta");
+        localStorage.setItem('groebner_pasos', '...'); 
+        //console.log("🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT");
+        //console.log("✅ Todas las operaciones usan aritmética racional exacta");
         
+        //INFO USER
+        this.infoUsuario += "🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT | \n"; 
+        this.infoUsuario += "✅ Todas las operaciones usan aritmética racional exacta | \n"; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
+
         const polinomiosIniciales = this.extraerPolinomios(ast);
         
         // VERIFICAR INTEGRIDAD: Todos los coeficientes deben ser Fraccion
         this.verificarIntegridadBigInt(polinomiosIniciales);
         
-        console.log(`📊 Polinomios iniciales: ${polinomiosIniciales.length}`);
+        //console.log(`📊 Polinomios iniciales: ${polinomiosIniciales.length}`);
+        this.infoUsuario += `📊 Polinomios iniciales: ${polinomiosIniciales.length} | \n`; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
         polinomiosIniciales.forEach((p, i) => {
-            console.log(`   P${i+1}: ${this.polinomioAString(p)}`);
+            //console.log(`   P${i+1}: ${this.polinomioAString(p)}`);
+            this.infoUsuario += `   P${i+1}: ${this.polinomioAString(p)} | `;
+            localStorage.setItem('groebner_pasos', this.infoUsuario);  
         });
         
         this.base = this.buchbergerRobusto(polinomiosIniciales);
         
         // VERIFICAR INTEGRIDAD FINAL
         this.verificarIntegridadBigInt(this.base);
-        console.log("✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas");
+        //console.log("✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas");
+        this.infoUsuario += "✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas |";
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
         
         this.mostrarResultado();
     }
@@ -171,7 +184,9 @@ export default class GrobnerRobusto {
     // ALGORITMO DE BUCHBERGER ROBUSTO
     // ========================================================================
     private buchbergerRobusto(polinomios: Polinomio[]): Polinomio[] {
-        console.log("\n🔄 EJECUTANDO BUCHBERGER ROBUSTO");
+        //console.log("\n🔄 EJECUTANDO BUCHBERGER ROBUSTO");
+        this.infoUsuario += "🔄 EJECUTANDO BUCHBERGER ROBUSTO |"; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
         
         let base = polinomios.map(p => this.normalizarPolinomio(p));
         let iteracion = 0;
@@ -187,8 +202,10 @@ export default class GrobnerRobusto {
 
         while (colaPares.length > 0 && base.length < MAX_BASE) {
             iteracion++;
-            console.log(`\n=== ITERACIÓN ${iteracion} === (Base: ${base.length}, Cola: ${colaPares.length})`);
-            
+            //console.log(`\n=== ITERACIÓN ${iteracion} === (Base: ${base.length}, Cola: ${colaPares.length})`);
+            this.infoUsuario += `=== ITERACIÓN ${iteracion} === (Base: ${base.length}, Cola: ${colaPares.length}) |`; 
+            localStorage.setItem('groebner_pasos', this.infoUsuario); 
+
             const [i, j] = colaPares.shift()!;
             const parKey = `${i},${j}`;
             
@@ -197,11 +214,16 @@ export default class GrobnerRobusto {
             
             // CRITERIO DE BUCHBERGER: Términos coprimos
             if (this.sonCoprimos(base[i][0].variables, base[j][0].variables)) {
-                console.log(`   🚫 Par (${i+1},${j+1}): Términos coprimos - omitido`);
+                //console.log(`   🚫 Par (${i+1},${j+1}): Términos coprimos - omitido`);
+                this.infoUsuario += `   🚫 Par (${i+1},${j+1}): Términos coprimos - omitido |`; 
+
+                localStorage.setItem('groebner_pasos', this.infoUsuario); 
                 continue;
             }
             
-            console.log(`\n🔍 Par (${i+1}, ${j+1})`);
+            //console.log(`\n🔍 Par (${i+1}, ${j+1})`);
+            this.infoUsuario += `🔍 Par (${i+1}, ${j+1}) |`;
+            localStorage.setItem('groebner_pasos', this.infoUsuario); 
             
             const sPol = this.calcularSPolinomio(base[i], base[j]);
             const reducido = this.reducir(sPol, base);
@@ -212,27 +234,39 @@ export default class GrobnerRobusto {
                 if (!this.esRedundante(normalizado, base)) {
                     const nuevoIdx = base.length;
                     base.push(normalizado);
-                    console.log(`   ✅ AGREGADO P${nuevoIdx + 1}: ${this.polinomioAString(normalizado)}`);
+                    //console.log(`   ✅ AGREGADO P${nuevoIdx + 1}: ${this.polinomioAString(normalizado)}`);
+                    this.infoUsuario += `   ✅ AGREGADO P${nuevoIdx + 1}: ${this.polinomioAString(normalizado)} |`;
+                    localStorage.setItem('groebner_pasos', this.infoUsuario); 
                     
                     // Agregar nuevos pares con el polinomio recién agregado
                     for (let k = 0; k < nuevoIdx; k++) {
                         colaPares.push([k, nuevoIdx]);
                     }
                 } else {
-                    console.log(`   🚫 REDUNDANTE - no agregado`);
+                    //console.log(`   🚫 REDUNDANTE - no agregado`);
+                    this.infoUsuario += `   🚫 REDUNDANTE - no agregado |`; 
+                    localStorage.setItem('groebner_pasos', this.infoUsuario); 
                 }
             } else {
-                console.log(`   ✅ Se redujo a 0`);
+                //console.log(`   ✅ Se redujo a 0`);
+                this.infoUsuario += `   ✅ Se redujo a 0 |`;
+                localStorage.setItem('groebner_pasos', this.infoUsuario); 
             }
         }
 
         if (base.length >= MAX_BASE) {
-            console.log(`\n⚠️ LÍMITE DE BASE ALCANZADO (${MAX_BASE} polinomios)`);
+            //console.log(`\n⚠️ LÍMITE DE BASE ALCANZADO (${MAX_BASE} polinomios)`);
+            this.infoUsuario += `⚠️ LÍMITE DE BASE ALCANZADO (${MAX_BASE} polinomios) |`;
+            localStorage.setItem('groebner_pasos', this.infoUsuario); 
         } else {
-            console.log(`\n✅ CONVERGENCIA - Cola vacía`);
+            //console.log(`\n✅ CONVERGENCIA - Cola vacía`);
+            this.infoUsuario += `✅ CONVERGENCIA - Cola vacía |`; 
+            localStorage.setItem('groebner_pasos', this.infoUsuario); 
         }
 
-        console.log("\n🔧 INTER-REDUCCIÓN A FORMA CANÓNICA...");
+        //console.log("\n🔧 INTER-REDUCCIÓN A FORMA CANÓNICA...");
+        this.infoUsuario += "🔧 INTER-REDUCCIÓN A FORMA CANÓNICA... |"; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
         return this.interReducir(base);
     }
 
@@ -312,7 +346,9 @@ export default class GrobnerRobusto {
     }
 
     private interReducir(base: Polinomio[]): Polinomio[] {
-        console.log("🔧 INTER-REDUCCIÓN A FORMA CANÓNICA");
+        //console.log("🔧 INTER-REDUCCIÓN A FORMA CANÓNICA");
+        this.infoUsuario += "🔧 INTER-REDUCCIÓN A FORMA CANÓNICA |";
+        localStorage.setItem('groebner_pasos', this.infoUsuario);
         
         let resultado = base.map(p => this.clonarPolinomio(p));
         let cambio = true;
@@ -331,11 +367,15 @@ export default class GrobnerRobusto {
                 const normalizado = this.normalizarPolinomio(reducido);
                 
                 if (this.esCero(normalizado)) {
-                    console.log(`   🗑️ Eliminando P${i+1}`);
+                    //console.log(`   🗑️ Eliminando P${i+1}`);
+                    this.infoUsuario += `   🗑️ Eliminando P${i+1} |`;
+                    localStorage.setItem('groebner_pasos', this.infoUsuario);
                     resultado.splice(i, 1);
                     cambio = true;
                 } else if (!this.sonIguales(actual, normalizado)) {
-                    console.log(`   🔄 Reduciendo P${i+1}`);
+                    //console.log(`   🔄 Reduciendo P${i+1}`);
+                    this.infoUsuario += `   🔄 Reduciendo P${i+1} |`; 
+                    localStorage.setItem('groebner_pasos', this.infoUsuario);
                     resultado[i] = normalizado;
                     cambio = true;
                 }
@@ -351,7 +391,9 @@ export default class GrobnerRobusto {
             }
         }
         
-        console.log(`📊 Inter-reducción: ${base.length} → ${final.length} polinomios`);
+        //console.log(`📊 Inter-reducción: ${base.length} → ${final.length} polinomios`);
+        this.infoUsuario += `📊 Inter-reducción: ${base.length} → ${final.length} polinomios |`;
+        localStorage.setItem('groebner_pasos', this.infoUsuario);
         return final;
     }
 
@@ -506,17 +548,24 @@ export default class GrobnerRobusto {
     }
 
     private mostrarResultado(): void {
-        console.log("\n" + "=".repeat(60));
-        console.log("🎉 BASE DE GRÖBNER EN FORMA CANÓNICA");
-        console.log("=".repeat(60));
+        //console.log("\n" + "=".repeat(60));
+        //console.log("🎉 BASE DE GRÖBNER EN FORMA CANÓNICA");
+        this.infoUsuario += "🎉 BASE DE GRÖBNER EN FORMA CANÓNICA |"; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario);
+        //console.log("=".repeat(60));
         
         this.base.forEach((p, i) => {
-            console.log(`G${i+1} = ${this.polinomioAString(p)}`);
+            //console.log(`G${i+1} = ${this.polinomioAString(p)}`);
+            this.infoUsuario += `G${i+1} = ${this.polinomioAString(p)} |`;
+            localStorage.setItem('groebner_pasos', this.infoUsuario);
         });
         
-        console.log(`\n📊 Total: ${this.base.length} polinomios`);
+        /*console.log(`\n📊 Total: ${this.base.length} polinomios`);
         console.log(`🔢 Pares procesados: ${this.paresProcesados.size}`);
-        console.log("=".repeat(60));
+        console.log("=".repeat(60));*/
+        this.infoUsuario += `📊 Total: ${this.base.length} polinomios`; 
+        this.infoUsuario += `🔢 Pares procesados: ${this.paresProcesados.size} |`; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario);
     }
 
     getBase(): Polinomio[] { return this.base; }
