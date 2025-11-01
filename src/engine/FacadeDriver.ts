@@ -28,6 +28,26 @@ export default class FacadeDriver{
 			let nuevoAST = ASTConstrucG.construirAST(input); 
 			let bases = new GrobnerRobusto(nuevoAST); 
 
+			localStorage.setItem('bases', JSON.stringify(bases.getBase(), null, 2)); 
+
+		}else if(this.verifyOp(input) === 'F'){
+			console.log("Se operarán fracciones, desde FacadeDriver");
+			console.log(JSON.stringify(input, null, 2)); 
+		}else if(this.verifyOp(input) === 'P'){
+			console.log("Se operarán polinomios, desde FacadeDriver");
+			console.log(JSON.stringify(input, null, 2)); 
+		}else if(this.verifyOp(input) === 'EC'){
+			console.log('Se operará una ecuación lineal');
+			console.log(JSON.stringify(input, null, 2)); 
+		}else if(this.verifyOp(input) === 'ER'){
+			console.log('Se operará una ecuación racional');
+			console.log(JSON.stringify(input, null, 2)); 
+		}else if(this.verifyOp(input) === 'PO'){
+			console.log('Se operará una potencia'); 
+			console.log(JSON.stringify(input, null, 2));
+		}else if(this.verifyOp(input) === 'RA'){
+			console.log('Se operará una raíz'); 
+			console.log(JSON.stringify(input, null, 2));
 		}
 
 	}
@@ -35,12 +55,27 @@ export default class FacadeDriver{
 	private verifyOp(input: any): any{
 
 		let stop = 1; 
-
 		for (let i = 0; i < stop; i++) {
 
 			let actual = input[i]; 
 			if(actual[0].operacion == "Grobner"){
 				return "G"; 
+			}else if(actual[0].operacion == "Fracciones"){
+				return "F";
+			}else if(actual[0].operacion == "Polinomios"){
+				return "P"; 
+			}else if(actual[0].operacion == "EcuacionesLineales"){
+				return "EC"; 
+			}else if(actual[0].operacion == "EcuacionesRacionales"){
+				return "ER"; 
+			}else if(actual[0].operacion == "Potencias"){
+				return "PO"; 
+			}else if(actual[0].operacion == "Raices"){
+				return "RA"; 
+			}else if(actual[0].operacion == "Simplificar"){
+				return "S"; 
+			}else if(actual[0].operacion == "Evaluar"){
+				return "SOL"; 
 			}
 			
 		}

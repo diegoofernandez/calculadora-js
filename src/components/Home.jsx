@@ -12,6 +12,7 @@ function Home(){
 
     function runFormater(){
 
+        localStorage.setItem('groebner_pasos', "Procesando...");
         let datosInput = document.getElementById('inputString'); 
         let entradaToJson = formater.katexToSystem(datosInput.value); 
         clickCalculo(); 

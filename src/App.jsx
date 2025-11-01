@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import TemporalUI from './components/TemporalUI'
 import 'katex/dist/katex.min.css';
 import Home from './components/Home'
 import Nav from './components/Nav';
@@ -9,6 +8,7 @@ import Creador from './components/Creador';
 import Empresas from './components/Empresas';
 import Algoritmos from './components/Algoritmos';
 import Contacto from './components/Contacto';
+import Construccion from './components/CasosUso/Construccion'; 
 
 
 function App() {
@@ -31,6 +31,7 @@ function App() {
           <Route path='/empresas' element={<Empresas />} />
           <Route path='/algoritmos' element={<Algoritmos />} />
           <Route path='/contacto' element={<Contacto />} />
+          <Route path='/construccion' element={<Construccion />} />
 
         </Routes>
       

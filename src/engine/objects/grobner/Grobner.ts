@@ -12,6 +12,7 @@ export default class GrobnerRobusto {
     private paresProcesados = new Set<string>();
     private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
     private infoUsuario = 'Comenzando\n';
+    private basesCasosUso = [];  
 
     constructor(ast: ASTNodeG) {
         localStorage.setItem('groebner_pasos', '...'); 
@@ -557,6 +558,7 @@ export default class GrobnerRobusto {
         this.base.forEach((p, i) => {
             //console.log(`G${i+1} = ${this.polinomioAString(p)}`);
             this.infoUsuario += `G${i+1} = ${this.polinomioAString(p)} |`;
+            this.basesCasosUso.push(this.polinomioAString(p)); 
             localStorage.setItem('groebner_pasos', this.infoUsuario);
         });
         
@@ -568,5 +570,5 @@ export default class GrobnerRobusto {
         localStorage.setItem('groebner_pasos', this.infoUsuario);
     }
 
-    getBase(): Polinomio[] { return this.base; }
+    getBase(): Polinomio[] { return this.basesCasosUso; }
 }
