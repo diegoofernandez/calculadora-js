@@ -1,5 +1,10 @@
+import FacadeDriver from './../../engine/FacadeDriver'; 
+import ConvertKatexToJson from '../../libs/ConvertKatexToJson';
+//import VarConstruccion from './Analizers/VarConstruccion';
+
 function Construccion(){
 
+	//variables base optima
 	const baseOptima = {
 		w: 1000000, //presupuesto
 		x: 550000, //materiales
@@ -9,16 +14,6 @@ function Construccion(){
 		b: 50000, //contingencia
 		c: 100000 //margen o ganancia
 	}; 
-	/*
-	"materiales - 0.55 * presupuesto",
-  "mano_obra - 0.25 * presupuesto", 
-  "equipos - 0.10 * presupuesto",
-  "impuestos - 0.05 * presupuesto",
-  "contingencia - 0.05 * presupuesto",
-  "margen - 0.10 * presupuesto
-
-	*/
-
 	let variables = {
 		"presupuesto": 0, //w
 		"materiales": 0, //x
@@ -28,9 +23,17 @@ function Construccion(){
 		"contingencia": 0, //b
 		"margen": 0 //c
 	}
+	const basesGrobnerOptimas = ["w-20/11x", "x-11/5y", "y-5/2z", "z-2a", "a-b", "b-1/2c"]; 
+	let basesOptimasVectorizada = []; 
+
+
+	let basesGrobnerUsuario = []; 
+	let basesUsiarioVectorizada = []; 
+
 
 	let polinomiosParaBase = ""; 
 
+	//construye las variables
 	function cambiandoValor(e){
 
 		let campo = e.target.id; 
@@ -59,10 +62,10 @@ function Construccion(){
 			console.log(variables); 
 		}
 
-		stringToBase();
+		polinomiosParaBase = stringToBase();
 
 	}
-
+	//formatea la consulta al motor
 	function stringToBase(){
 
 		let tempString = "G "; 
@@ -70,43 +73,77 @@ function Construccion(){
 		for (const variable in variables){
 
 			if(variable != 'presupuesto' && variables[variable] != undefined && variables[variable] != 0){ 
-				//let operation = Math.round(Number(variables[variable] * 100 / variables.presupuesto)); 
+				
 				let operation = variables[variable]; 
-				console.log("resultado: " + variable + " " + operation + "%");
 
 				switch(variable){
 
 					case 'materiales':
-						tempString += `${variables.presupuesto}x^1 - ${operation}w1 = 0;`; 
+						tempString += `${variables.presupuesto}x^1 - ${operation}w^1 = 0;`; 
 						break; 
 
 					case 'mano_obra': 
-						tempString += `${variables.presupuesto}y^1 - ${operation}w1 = 0;`; 
+						tempString += `${variables.presupuesto}y^1 - ${operation}w^1 = 0;`; 
 						break; 
 
 					case 'herramientas':
-						tempString += `${variables.presupuesto}z^1 - ${operation}w1 = 0;`; 
+						tempString += `${variables.presupuesto}z^1 - ${operation}w^1 = 0;`; 
 						break; 
 
 					case 'impuestos':
-						tempString += `${variables.presupuesto}a^1 - ${operation}w1 = 0;`;
+						tempString += `${variables.presupuesto}a^1 - ${operation}w^1 = 0;`;
 						break; 
 
 					case 'contingencia': 
-						tempString += `${variables.presupuesto}b^1 - ${operation}w1 = 0;`; 
+						tempString += `${variables.presupuesto}b^1 - ${operation}w^1 = 0;`; 
 						break; 
 
 					case 'margen':
-						tempString += `${variables.presupuesto}c^1 - ${operation}w1 = 0`;  
+						tempString += `${variables.presupuesto}c^1 - ${operation}w^1 = 0`;  
 						break; 
 				}
-
-
-				console.log(tempString); 
 
 			}
 
 		}
+
+		return tempString; 
+
+	}
+
+	//envia la consulta
+	function creandoBaseUsuario(){
+
+		let parser = new ConvertKatexToJson(); 
+		let resultadoParser = parser.katexToSystem(polinomiosParaBase); 
+		let motor = new FacadeDriver(); 
+
+		motor.init(resultadoParser); 	
+
+		recuperarBaseUsuario(); 
+
+	}
+
+	function recuperarBaseUsuario(){
+
+		let token = localStorage.getItem('bases'); 
+		let arrayToken = token.split(','); 
+
+		for (let i = 0; i < arrayToken.length; i++) {
+
+			let limpieza1 = arrayToken[i].replace(/\[/g, "").replace(/\]/g, "").replace(/\"/g, ""); 
+			let limpieza2 = limpieza1.replace(/\n/g, "").trim(); 
+			basesGrobnerUsuario.push(limpieza2); 
+
+		}
+
+		vectorizarBases(); 
+
+	}
+
+	function vectorizarBases(){
+
+		
 
 	}
 
@@ -166,7 +203,7 @@ function Construccion(){
 									<p class="pt-1 text-xs text-gray-400">Escribe valor númerico. Este campo representa el valor absoluto que se destina a impuestos.</p>
 								</label>
 							</div>
-							<button class="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark" type="button">
+							<button class="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark" type="button" onClick={creandoBaseUsuario}>
 								<span class="material-symbols-outlined">analytics</span>
 							        Analizar Sistema
 							</button>

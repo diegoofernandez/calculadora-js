@@ -12,7 +12,7 @@ export default class GrobnerRobusto {
     private paresProcesados = new Set<string>();
     private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
     private infoUsuario = 'Comenzando\n';
-    private basesCasosUso = [];  
+    private basesCasosUso: any = [];  
 
     constructor(ast: ASTNodeG) {
         localStorage.setItem('groebner_pasos', '...'); 
