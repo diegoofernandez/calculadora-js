@@ -234,25 +234,25 @@ export default class VarConstruccion {
                             diferencia <= 0.3 ? "🟡 ACEPTABLE" : 
                             diferencia <= 0.5 ? "🟠 PROBLEMÁTICO" : "🔴 CRÍTICO";
             
-            this.dataInforme.push(`📊 **${nombres[i]}** (${polinomio})`);
+            this.dataInforme.push(`📊 ${nombres[i]} (${polinomio})`);
             this.dataInforme.push(`   Puntaje: ${analisisUsuario.puntaje.toFixed(2)} vs Ideal: ${analisisIdeal.puntaje.toFixed(2)}`);
             this.dataInforme.push(`   Diferencia: ${diferencia.toFixed(2)} - ${categoria}\n`);
             
             // Mostrar análisis técnico original
-            this.dataInforme.push(`   🔧 **ANÁLISIS TÉCNICO:**`);
+            this.dataInforme.push(`   🔧 ANÁLISIS TÉCNICO:`);
             analisisUsuario.analisis.forEach((mensaje, j) => {
                 this.dataInforme.push(`   ${mensaje}`);
             });
 
             // Mostrar análisis de relaciones para empresarios
-            this.dataInforme.push(`\n   💼 **ANÁLISIS GERENCIAL:**`);
+            this.dataInforme.push(`\n   💼 ANÁLISIS GERENCIAL:`);
             relaciones.forEach((mensaje, j) => {
                 this.dataInforme.push(`   ${mensaje}`);
             });
             
             // Recomendación si hay diferencia significativa
             if (diferencia > 0.2) {
-                this.dataInforme.push(`\n   🚨 **RECOMENDACIÓN:** ${this.generarRecomendacion(diferencia, nombres[i])}`);
+                this.dataInforme.push(`\n   🚨 RECOMENDACIÓN: ${this.generarRecomendacion(diferencia, nombres[i])}`);
             }
             
             this.dataInforme.push("\n   ─────────────────────────");

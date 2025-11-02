@@ -29,7 +29,7 @@ function Nav(){
                 <nav class="hidden md:flex flex-1 justify-end gap-6 items-center">
                     <Link to="/" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Home</Link>
                     <Link to="/creador" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Creador</Link>
-                    <Link to="/casos-uso" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Casos de uso</Link>
+                    <Link to="/construccion" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Casos de uso</Link>
                     <Link to="/empresas" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Empresas</Link>
                     <Link to="/algoritmos" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Algoritmos</Link>
                     <Link to="/blog" className="text-white/80 text-sm font-medium leading-normal hover:text-primary transition-colors">Blog</Link>

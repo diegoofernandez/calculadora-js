@@ -11,6 +11,8 @@ function Construccion(){
 	const [data, setData] = useState([]); 
 	const [dataLine, setDataLine] = useState([]); 
 	const [aig, setAig] = useState(); 
+	const [trueBtn, setBtn] = useState(false); 
+	const [puntaje, setPuntaje] = useState(''); 
 
 	const [informe, setInforme] = useState([]);  
 
@@ -49,25 +51,18 @@ function Construccion(){
 
 		if(campo == "campoPresupuesto"){
 			variables.presupuesto = valor; 
-			console.log(variables);
 		}else if(campo == "campoMateriales"){
 			variables.materiales = valor; 
-			console.log(variables); 
 		}else if(campo == "campoManoObra"){
 			variables.mano_obra = valor; 
-			console.log(variables); 
 		}else if(campo == "campoHerramientas"){
 			variables.herramientas = valor; 
-			console.log(variables); 
 		}else if(campo == "campoContingencia"){
 			variables.contingencia = valor; 
-			console.log(variables); 
 		}else if(campo == "campoMargen"){
 			variables.margen = valor; 
-			console.log(variables); 
 		}else if(campo == "campoImpuestos"){
 			variables.impuestos = valor; 
-			console.log(variables); 
 		}
 
 		polinomiosParaBase = stringToBase();
@@ -77,7 +72,7 @@ function Construccion(){
 	function stringToBase(){
 
 		let tempString = "G "; 
-		//G 20x^1 - 11w^1=0; 4y^1 - 1w^1=0; 10z^1 - 1w^1=0; 20a^1 - 1w^1=0; 20b^1 - 1w^1=0; 10c^1- 1w^1=0
+
 		for (const variable in variables){
 
 			if(variable != 'presupuesto' && variables[variable] != undefined && variables[variable] != 0){ 
@@ -122,6 +117,12 @@ function Construccion(){
 	//envia la consulta
 	function creandoBaseUsuario(){
 
+		if(variables.contingencia == 0 || variables.herramientas == 0 || variables.impuestos == 0 || variables.mano_obra == 0 || variables.margen == 0 || variables.materiales == 0 || variables.presupuesto ==  0){
+			
+			return alert("No puedes enviar campos vacíos");  
+
+		}
+
 		let parser = new ConvertKatexToJson(); 
 		let resultadoParser = parser.katexToSystem(polinomiosParaBase); 
 		let motor = new FacadeDriver(); 
@@ -160,6 +161,25 @@ function Construccion(){
 		setData( objetoAnalizer.generarDatosRadarChart(basesGrobnerOptimas, basesGrobnerUsuario, nombres));
 		setDataLine(objetoAnalizer.generarDatosBarChartCompleto(basesGrobnerOptimas, basesGrobnerUsuario, nombres)); 
 		setAig( objetoAnalizer.generarDatosGraficosConIAG(basesGrobnerOptimas, basesGrobnerUsuario, nombres) ); 
+
+		setPuntaje(objetoAnalizer.calcularIndiceAlgebraicoGlobal(basesGrobnerOptimas, basesGrobnerUsuario)); 
+
+		resetForm(); 
+
+	}
+
+	function resetForm(){
+
+		document.getElementById('campoPresupuesto').value = '';
+		document.getElementById('campoMateriales').value = ''; 
+		document.getElementById('campoManoObra').value = ''; 
+		document.getElementById('campoHerramientas').value = ''; 
+		document.getElementById('campoContingencia').value = ''; 
+		document.getElementById('campoMargen').value = ''; 
+		document.getElementById('campoImpuestos').value = '';  
+
+		setBtn(false); 
+
 	}
 
 
@@ -218,7 +238,7 @@ function Construccion(){
 									<p class="pt-1 text-xs text-gray-400">Escribe valor númerico. Este campo representa el valor absoluto que se destina a impuestos.</p>
 								</label>
 							</div>
-							<button class="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark" type="button" onClick={creandoBaseUsuario}>
+							<button class="mt-2 flex h-12 items-center justify-center gap-2 rounded-lg bg-primary px-6 text-base font-bold text-white shadow-lg shadow-primary/30 transition-all hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark" type="button" onClick={creandoBaseUsuario} disabled={trueBtn}>
 								<span class="material-symbols-outlined">analytics</span>
 							        Analizar Sistema
 							</button>
@@ -237,6 +257,12 @@ function Construccion(){
 													aig
 												}
 											</p>
+											<br /><br />
+											<h1 className="text-white text-xl font-bold leading-tight tracking-[-0.015em]">
+												{
+													puntaje
+												}
+											</h1>
 										</div>
 									</div>
 								</div>
@@ -302,7 +328,24 @@ function Construccion(){
 						<div class="flex items-start gap-3">
 						<div>
 						<p class="text-sm text-gray-400">
-							{informe}
+							{
+								informe.map((item, index) => {
+
+									if(item.includes("ANÁLISIS ALGEBRAICO DETALLADO") || item.includes("Materiales") || item.includes("Mano de obra") || item.includes("Equipos") || item.includes("Impuestos") || item.includes("Contingencia") || item.includes("Margen")){
+
+										return <h3 className='text-lg font-bold text-white'>{item}</h3> 
+
+									}
+
+									if(item.includes("ANÁLISIS TÉCNICO") || item.includes("ANÁLISIS GERENCIAL")){
+
+										return <h4 className='text-lg font-bold text-white'>{item}</h4> 
+
+									}
+
+									return <p className="text-sm text-gray-400" key={index}>- {item}</p>
+								})
+							}
 						</p>
 						</div>
 						</div>
