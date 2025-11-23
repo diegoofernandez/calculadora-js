@@ -40,7 +40,7 @@ function Creador(){
                     <section>
                         <h2 class="text-white text-2xl md:text-3xl font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5 border-l-4 border-primary">El Origen del Proyecto</h2>
                         <p class="text-text-primary-dark text-base md:text-lg font-normal leading-relaxed pb-3 pt-4 px-4">
-                            Hace apenas dos meses comencé a estudiar matemáticas de manera seria, empezando desde lo más básico: operaciones con fracciones. Este motor nació como un proyecto para consolidar ese aprendizaje y construir un portfolio profesional. En el camino, descubrí el poder de las bases de Gröbner y el proyecto evolucionó hacia algo mucho más ambicioso.
+                            A finales de Agosto del 2025 comencé a estudiar matemáticas de manera seria, empezando desde lo más básico: operaciones con fracciones. Este motor nació como un proyecto para consolidar ese aprendizaje y construir un portfolio profesional. En el camino, descubrí el poder de las bases de Gröbner y el proyecto evolucionó hacia algo mucho más ambicioso.
                         </p>
                     </section>
                 <section>
