@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"  class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/LOGO.png" />
@@ -8,43 +8,15 @@
     <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
     <link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Space+Grotesk:wght@400;500;700" onload="this.rel='stylesheet'" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link rel="stylesheet" href="src/assets/utils/normalice.css">
   </head>
-  <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200" id="page-container">
-    <div class="relative flex h-auto min-h-screen w-full flex-col bg-background-dark dark group/design-root overflow-x-hidden">
-    <div class="layout-container flex h-full grow flex-col">
-    <div class="flex flex-1 justify-center">
-    <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+  <body>
+    
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script id="tailwind-config">
-        tailwind.config = {
-          darkMode: "class",
-          theme: {
-            extend: {
-              colors: {
-                "primary": "#195de6",
-                "background-light": "#f6f6f8",
-                "background-dark": "#111621",
-              },
-              fontFamily: {
-                "display": ["Space Grotesk"]
-              },
-              borderRadius: {
-                "DEFAULT": "0.25rem",
-                "lg": "0.5rem",
-                "xl": "0.75rem",
-                "full": "9999px"
-              },
-            },
-          },
-        }
-    </script>
-    </div>
-    </div>
-    </div>
-</div>
+    <link rel="stylesheet" href="src/assets/utils/normalice.css">
+
   </body>
 </html>

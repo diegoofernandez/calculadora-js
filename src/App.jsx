@@ -36,13 +36,13 @@ function App() {
       
       </BrowserRouter>
 
-      <footer class="border-t border-solid border-t-[#232348] px-4 sm:px-10 py-8 mt-10">
-        <div class="flex flex-col md:flex-row justify-between items-center text-white gap-4">
-          <p class="text-sm text-white/60 text-center md:text-left">© 2025 RomiMath. Todos los derechos reservados. Creador por Diego Fernández</p>
-          <div class="flex flex-wrap justify-center items-center gap-4 md:gap-6">
-            <a class="text-sm text-white/80 hover:text-primary transition-colors" href="#">Términos de Servicio</a>
-            <a class="text-sm text-white/80 hover:text-primary transition-colors" href="#">Política de Privacidad</a>
-            <a class="text-sm text-white/80 hover:text-primary transition-colors" href="#contact">Contacto</a>
+      <footer>
+        <div>
+          <p>© 2025 RomiMath. Creador por Diego Fernández</p>
+          <div>
+            <a href="/creador">Creador</a>
+            <a href="/empresas">Empresas</a>
+            <a href="/contacto">Contacto</a>
           </div>
         </div>
       </footer>

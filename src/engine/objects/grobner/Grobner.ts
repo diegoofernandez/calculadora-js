@@ -49,6 +49,92 @@ export default class GrobnerRobusto {
         this.mostrarResultado();
     }
 
+
+    // ========================================================================
+    // VECTORIZACIÓN DE BASES 
+    // ========================================================================
+
+
+    private obtenerBaseMonomial(polinomios: Polinomio[]): string[] {
+        const monomiosSet = new Set<string>();
+        for (const poli of polinomios) {
+            for (const termino of poli) {
+                const clave = this.claveVariables(termino.variables);
+                monomiosSet.add(clave);
+            }
+        }
+
+        // Ordenar el conjunto de monomios usando el mismo orden monomial (Term Order)
+        // que usa el motor, garantizando que los vectores son consistentes.
+        const monomiosArray = Array.from(monomiosSet).map(clave => this.decodificarClave(clave));
+  
+        // Convertimos las claves de vuelta para ordenar y luego las volvemos a cadena
+        monomiosArray.sort((a, b) => this.compararTerminosParaOrden(a, b)); 
+  
+        return monomiosArray.map(vars => this.claveVariables(vars));
+    }
+
+    // Función auxiliar para ordenar (copia la lógica de tu método 'ordenar')
+    private compararTerminosParaOrden(varsA: Array<[string, number]>, varsB: Array<[string, number]>): number {
+        for (const variable of this.variablesOrden) {
+            const expA = varsA.find(([v]) => v === variable)?.[1] || 0;
+            const expB = varsB.find(([v]) => v === variable)?.[1] || 0;
+            if (expA !== expB) return expB - expA;
+        }
+        return 0;
+    }
+
+    /**
+    * Convierte un Polinomio en un vector de coeficientes Fraccion.
+    * @param poli El Polinomio a vectorizar.
+    * @param baseMonomial El array ordenado de las claves de los monomios (la base de R^n).
+    * @returns Vector de coeficientes Fraccion.
+    */
+    private vectorizarPolinomio(poli: Polinomio, baseMonomial: string[]): Fraccion[] {
+      const vector: Fraccion[] = new Array(baseMonomial.length).fill(new Fraccion(0n));
+      const mapaCoeficientes = new Map<string, Fraccion>();
+
+      // 1. Mapear los coeficientes del polinomio a su monomio clave
+      for (const termino of poli) {
+        const clave = this.claveVariables(termino.variables);
+        mapaCoeficientes.set(clave, termino.coeficiente);
+      }
+
+      // 2. Llenar el vector según el orden de la base monomial
+      for (let i = 0; i < baseMonomial.length; i++) {
+        const clave = baseMonomial[i];
+        const coeficiente = mapaCoeficientes.get(clave);
+        if (coeficiente) {
+          vector[i] = coeficiente;
+        }
+      }
+
+      return vector;
+    }
+
+    /**
+    * 🎯 PUNTO DE INTEGRACIÓN: Devuelve los vectores y la base para la simulación.
+    * @returns { optimalVectors: Fraccion[][], monomialBasis: string[] }
+    */
+    public obtenerBaseVectorialOptima() {
+      const baseMonomial = this.obtenerBaseMonomial(this.base);
+      const optimalVectors = this.base.map(poli => this.vectorizarPolinomio(poli, baseMonomial));
+      
+      // Nota: Si this.base está vacía, el Ideal es {0}. El análisis no es viable.
+      const isViable = optimalVectors.length > 0;
+      
+      return {
+        isViable: isViable,
+        monomialBasis: baseMonomial, // Las 'dimensiones' del R^n
+        optimalVectors: optimalVectors // Los vectores base (v1, v2, v3, ...)
+      };
+    }
+
+
+    // ========================================================================
+    // FIN DE VECTORIZACIÓN DE BASES
+    // ========================================================================
+
     // ========================================================================
     // VERIFICACIÓN DE INTEGRIDAD BIGINT
     // ========================================================================

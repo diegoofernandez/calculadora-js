@@ -107,6 +107,12 @@ export default class Fraccion {
         return `${this.numerador}/${this.denominador}`;
     }
 
+    // Método para obtener el valor decimal (necesario para la raíz cuadrada final) para vectorizado
+    toFloat(): number {
+      // Convertimos a number al final, asumiendo que los BigInt no desbordan
+      return Number(this.numerador) / Number(this.denominador);
+    }
+
     getNumerador(): bigint { return this.numerador; }
     getDenominador(): bigint { return this.denominador; }
 }
