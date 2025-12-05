@@ -1,6 +1,4 @@
 import { useState, useRef, useEffect } from 'react';
-import TeX from '@matejmazur/react-katex'; 
-import ConvertKatexToJson from '../libs/ConvertKatexToJson';
 import FacadeDriver from '../engine/FacadeDriver'; 
 
 
@@ -17,13 +15,11 @@ function Home(){
     const [calculoMuestra, setCalculoMuestra] = useState(true);
     const [usarCalculadora, setUsarCalculadora] = useState(false); 
     
-    const formater = new ConvertKatexToJson(); 
 
     function runFormater(){
 
         localStorage.setItem('groebner_pasos', "Procesando...");
         let datosInput = document.getElementById('inputString'); 
-        let entradaToJson = formater.katexToSystem(datosInput.value); 
         clickCalculo(); 
         let operando = new FacadeDriver();
         operando.init(entradaToJson);  
