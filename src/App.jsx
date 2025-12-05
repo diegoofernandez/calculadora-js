@@ -21,30 +21,16 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Nav />
         <Routes>
 
           <Route path='/' element={<Home/>} />
-          <Route path='https://blog.romimath.site' />
-          <Route path='/creador' element={<Creador />} />
-          <Route path='/empresas' element={<Empresas />} />
-          <Route path='/algoritmos' element={<Algoritmos />} />
-          <Route path='/contacto' element={<Contacto />} />
-          <Route path='/construccion' element={<Construccion />} />
 
         </Routes>
       
       </BrowserRouter>
 
       <footer>
-        <div>
           <p>© 2025 RomiMath. Creador por Diego Fernández</p>
-          <div>
-            <a href="/creador">Creador</a>
-            <a href="/empresas">Empresas</a>
-            <a href="/contacto">Contacto</a>
-          </div>
-        </div>
       </footer>
       
     </>

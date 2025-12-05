@@ -2,11 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import TeX from '@matejmazur/react-katex'; 
 import ConvertKatexToJson from '../libs/ConvertKatexToJson';
 import FacadeDriver from '../engine/FacadeDriver'; 
-import AnalisisCompleto from './AnalisisCompleto'; 
-import JsonViewEditor from '@uiw/react-json-view';
-import { vscodeTheme } from '@uiw/react-json-view/vscode';
-import SemicolonProps  from '@uiw/react-json-view';
-import useHighlight from '@uiw/react-json-view'
 
 
 function Home(){
@@ -118,10 +113,15 @@ function Home(){
                             {JSON.stringify(jsonData, null, 2)}
                         </code>
                     </pre>
+                    <button><ion-icon name="calculator-outline"></ion-icon> REALIZAR CALCULO</button>
                 </div>
                 <div className="ViewsResult">
                     
-
+                    <div class="tabsViews">
+                        <button><ion-icon name="stats-chart-outline"></ion-icon> Gráficas</button>
+                        <button><ion-icon name="tv-outline"></ion-icon> Consola</button>
+                        <button><ion-icon name="text-outline"></ion-icon> Texto</button>
+                    </div>
 
                 </div>
 
