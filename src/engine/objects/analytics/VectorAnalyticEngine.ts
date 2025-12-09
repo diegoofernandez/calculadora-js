@@ -5,7 +5,7 @@ class VectorAnalyticEngine {
   // 1. Cálculo de la Distancia Euclidiana al Cuadrado (Mantiene precisión Fraccion)
   private calcularDistanciaCuadrada(u: Fraccion[], v: Fraccion[]): Fraccion {
     if (u.length !== v.length) {
-      throw new Error("❌ Los vectores deben tener la misma dimensión.");
+      throw new Error(" Los vectores deben tener la misma dimensión.");
     }
 
     let sumaCuadrados = new Fraccion(0n);
@@ -25,7 +25,7 @@ class VectorAnalyticEngine {
   }
 
   /**
-   * 🎯 FUNCIÓN CRÍTICA: Calcula la distancia mínima de v_real al espacio S.
+   * FUNCIÓN CRÍTICA: Calcula la distancia mínima de v_real al espacio S.
    * @param v_real El vector real de la empresa (Fraccion[]).
    * @param S El conjunto de vectores óptimos simulados (Fraccion[][]).
    * @returns La distancia Euclidiana mínima (como un número decimal).
@@ -96,7 +96,7 @@ class VectorAnalyticEngine {
             }
             S.push(sk);
         }
-        console.log(`✅ Generados ${numSimulaciones} vectores de simulación S en R^${dim}`);
+        console.log(` Generados ${numSimulaciones} vectores de simulación S en R^${dim}`);
         return S;
     }
 

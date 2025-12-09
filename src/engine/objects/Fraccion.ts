@@ -12,7 +12,7 @@ export default class Fraccion {
     private denominador: bigint;
 
     constructor(numerador: number | bigint | string, denominador: number | bigint | string = 1n) {
-        // ✅ CONVERTIR TODO A BIGINT INMEDIATAMENTE
+        //  CONVERTIR TODO A BIGINT INMEDIATAMENTE
         this.numerador = typeof numerador === 'bigint' ? numerador : BigInt(numerador);
         this.denominador = typeof denominador === 'bigint' ? denominador : BigInt(denominador);
         
@@ -20,7 +20,7 @@ export default class Fraccion {
             throw new Error("❌ Denominador cero detectado");
         }
         
-        // ✅ SIMPLIFICAR USANDO SOLO ARITMÉTICA BIGINT
+        //  SIMPLIFICAR USANDO SOLO ARITMÉTICA BIGINT
         this.simplificar();
     }
 
@@ -45,7 +45,7 @@ export default class Fraccion {
     }
 
     private mcd(a: bigint, b: bigint): bigint {
-        // ✅ ALGORITMO DE EUCLIDES CON BIGINT PURO
+        // ALGORITMO DE EUCLIDES CON BIGINT PURO
         while (b !== 0n) {
             [a, b] = [b, a % b];
         }
@@ -53,7 +53,7 @@ export default class Fraccion {
     }
 
     sumar(otra: Fraccion): Fraccion {
-        // ✅ a/b + c/d = (ad + bc) / bd (todo BigInt)
+        // a/b + c/d = (ad + bc) / bd (todo BigInt)
         return new Fraccion(
             this.numerador * otra.denominador + otra.numerador * this.denominador,
             this.denominador * otra.denominador
@@ -61,7 +61,7 @@ export default class Fraccion {
     }
 
     multiplicar(otra: Fraccion): Fraccion {
-        // ✅ a/b * c/d = ac / bd (todo BigInt)
+        // a/b * c/d = ac / bd (todo BigInt)
         return new Fraccion(
             this.numerador * otra.numerador,
             this.denominador * otra.denominador
@@ -69,7 +69,7 @@ export default class Fraccion {
     }
 
     dividir(otra: Fraccion): Fraccion {
-        // ✅ a/b ÷ c/d = ad / bc (todo BigInt)
+        //  a/b ÷ c/d = ad / bc (todo BigInt)
         return new Fraccion(
             this.numerador * otra.denominador,
             this.denominador * otra.numerador
@@ -77,7 +77,7 @@ export default class Fraccion {
     }
 
     negar(): Fraccion {
-        // ✅ Simple negación de numerador
+        // Simple negación de numerador
         return new Fraccion(-this.numerador, this.denominador);
     }
 
@@ -96,7 +96,7 @@ export default class Fraccion {
     }
     
     equals(otra: Fraccion): boolean {
-        // ✅ Comparación exacta: a/b = c/d ⟺ ad = bc
+        // Comparación exacta: a/b = c/d ⟺ ad = bc
         return this.numerador * otra.denominador === otra.numerador * this.denominador;
     }
 

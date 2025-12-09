@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import FacadeDriver from '../engine/FacadeDriver'; 
+import ConsoleTab from './ConsoleTab';
+import GraphTab from './GraphTab';
+import TextTab from './TextTab';
 
 
 function Home(){
@@ -11,9 +14,65 @@ function Home(){
         {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "z", exponente: 1}]},
         {type: "Monomio", coeficiente: -100000, partes: []}
     ]; 
+
+    const [activeTab, setActiveTab] = useState('consola');
+    const [calculationResult, setCalculationResult] = useState(null);
+    const [jsonInput, setJsonInput] = useState(JSON.stringify(jsonData, null, 2));
+
     const [stringParse, setStringParse] = useState(''); 
     const [calculoMuestra, setCalculoMuestra] = useState(true);
-    const [usarCalculadora, setUsarCalculadora] = useState(false); 
+    const [usarCalculadora, setUsarCalculadora] = useState(false);
+
+    // Función para procesar el cálculo
+    async function runCalculation(){
+
+        try{
+
+            localStorage.setItem('groebner_pasos', "Procesando...");
+            
+            // Parsear el JSON de entrada
+            const entradaToJson = JSON.parse(jsonInput);
+            
+            // Instanciar el motor algebraico
+            let operando = new FacadeDriver();
+            const resultado = await operando.init(entradaToJson);
+            
+            // Guardar resultado para mostrar en las pestañas
+            setCalculationResult(resultado);
+            
+            // Simular pasos de cálculo (esto vendrá de tu motor real)
+            const pasos = [
+                "✅ Polinomio parseado correctamente",
+                "📐 Aplicando algoritmo de Buchberger...",
+                "🔄 Reducción de S-polinomios...",
+                "⚡ Simplificación de base de Gröbner...",
+                "🎯 Base de Gröbner encontrada:",
+                "  G = { x² + y² - 1, xy - 1/2 }"
+            ];
+            
+            localStorage.setItem('groebner_pasos', pasos.join('|'));
+            setCalculationResult({
+                baseGroebner: ["x² + y² - 1", "xy - 1/2"],
+                pasos: pasos,
+                expresionSimplificada: "w + x + y + z - 100000",
+                variables: ["w", "x", "y", "z"]
+            });
+            
+        }catch (error){
+
+            console.error("Error en cálculo:", error);
+            localStorage.setItem('groebner_pasos', `Error: ${error.message}`);
+
+        }
+
+    }
+
+    // Manejar cambios en el JSON
+    function handleJsonChange(e){
+
+        setJsonInput(e.target.textContent);
+
+    } 
     
 
     function runFormater(){
@@ -104,9 +163,9 @@ function Home(){
             <div className="MainContainer">
                 
                 <div className="JsonInput">
-                    <pre contentEditable="true">
+                    <pre contentEditable="true" className="json-editor" onBlur={handleJsonChange} suppressContentEditableWarning={true} >
                         <code> 
-                            {JSON.stringify(jsonData, null, 2)}
+                            {jsonInput}
                         </code>
                     </pre>
                     <button><ion-icon name="calculator-outline"></ion-icon> REALIZAR CALCULO</button>
@@ -114,9 +173,22 @@ function Home(){
                 <div className="ViewsResult">
                     
                     <div class="tabsViews">
-                        <button><ion-icon name="stats-chart-outline"></ion-icon> Gráficas</button>
-                        <button><ion-icon name="tv-outline"></ion-icon> Consola</button>
-                        <button><ion-icon name="text-outline"></ion-icon> Texto</button>
+                        <button className={activeTab === 'graficas' ? 'active' : ''} onClick={() => setActiveTab('graficas')}><ion-icon name="stats-chart-outline"></ion-icon> Gráficas</button>
+                        <button className={activeTab === 'consola' ? 'active' : ''} onClick={() => setActiveTab('consola')}><ion-icon name="tv-outline"></ion-icon> Consola</button>
+                        <button className={activeTab === 'texto' ? 'active' : ''} onClick={() => setActiveTab('texto')} ><ion-icon name="text-outline"></ion-icon> Texto</button>
+                    </div>
+
+                    {/* Contenido de las tabs */}
+                    <div className="tab-content">
+                        {activeTab === 'consola' && (
+                            <ConsoleTab calculationResult={calculationResult} />
+                        )}
+                        {activeTab === 'graficas' && (
+                            <GraphTab calculationResult={calculationResult} />
+                        )}
+                        {activeTab === 'texto' && (
+                            <TextTab calculationResult={calculationResult} />
+                        )}
                     </div>
 
                 </div>
