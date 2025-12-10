@@ -1,197 +1,224 @@
 import { useState, useRef, useEffect } from 'react';
-import FacadeDriver from '../engine/FacadeDriver'; 
-import ConsoleTab from './ConsoleTab';
-import GraphTab from './GraphTab';
-import TextTab from './TextTab';
+import FacadeDriver from '../engine/FacadeDriver';
+import AproximationEngine from '../engine/AproximationEngine';  
 
 
 function Home(){
 
-    const jsonData = [
-        {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "w", exponente: 1}]},
-        {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "x", exponente: 1}]},
-        {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "y", exponente: 1}]},
-        {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "z", exponente: 1}]},
-        {type: "Monomio", coeficiente: -100000, partes: []}
-    ]; 
+    const defaultInput = JSON.stringify([
+        [{operacion: "Grobner"}],
+        [ // 3x³ + 2x²y + xy² + 2y - 140 = 0
+    {type: "Monomio", coeficiente: 3, partes: [{objeto: "Potencia", base: "x", exponente: 3}]},
+    {type: "Monomio", coeficiente: 2, partes: [
+      {objeto: "Potencia", base: "x", exponente: 2},
+      {objeto: "Potencia", base: "y", exponente: 1}
+    ]},
+    {type: "Monomio", coeficiente: 1, partes: [
+      {objeto: "Potencia", base: "x", exponente: 1},
+      {objeto: "Potencia", base: "y", exponente: 2}
+    ]},
+    {type: "Monomio", coeficiente: 2, partes: [{objeto: "Potencia", base: "y", exponente: 1}]},
+    {type: "Monomio", coeficiente: -140, partes: []}
+  ],
+  [ // x²y + 3xy + y² - 80 = 0
+    {type: "Monomio", coeficiente: 1, partes: [
+      {objeto: "Potencia", base: "x", exponente: 2},
+      {objeto: "Potencia", base: "y", exponente: 1}
+    ]},
+    {type: "Monomio", coeficiente: 3, partes: [
+      {objeto: "Potencia", base: "x", exponente: 1},
+      {objeto: "Potencia", base: "y", exponente: 1}
+    ]},
+    {type: "Monomio", coeficiente: 1, partes: [{objeto: "Potencia", base: "y", exponente: 2}]},
+    {type: "Monomio", coeficiente: -80, partes: []}
+  ]
+    ], null, 2);
 
-    const [activeTab, setActiveTab] = useState('consola');
-    const [calculationResult, setCalculationResult] = useState(null);
-    const [jsonInput, setJsonInput] = useState(JSON.stringify(jsonData, null, 2));
+    const [inputJSON, setInputJSON] = useState(defaultInput);
+    const [outputJSON, setOutputJSON] = useState('{}');
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [error, setError] = useState(null);
 
-    const [stringParse, setStringParse] = useState(''); 
-    const [calculoMuestra, setCalculoMuestra] = useState(true);
-    const [usarCalculadora, setUsarCalculadora] = useState(false);
+    // Referencia al motor
+    const engineRef = useRef(null);
 
-    // Función para procesar el cálculo
-    async function runCalculation(){
 
-        try{
+    // Función para procesar
+    async function processAlgebra() {
+        if (!engineRef.current) {
+            engineRef.current = new AproximationEngine();
+        }
 
-            localStorage.setItem('groebner_pasos', "Procesando...");
-            
-            // Parsear el JSON de entrada
-            const entradaToJson = JSON.parse(jsonInput);
-            
-            // Instanciar el motor algebraico
-            let operando = new FacadeDriver();
-            const resultado = await operando.init(entradaToJson);
-            
-            // Guardar resultado para mostrar en las pestañas
-            setCalculationResult(resultado);
-            
-            // Simular pasos de cálculo (esto vendrá de tu motor real)
-            const pasos = [
-                "✅ Polinomio parseado correctamente",
-                "📐 Aplicando algoritmo de Buchberger...",
-                "🔄 Reducción de S-polinomios...",
-                "⚡ Simplificación de base de Gröbner...",
-                "🎯 Base de Gröbner encontrada:",
-                "  G = { x² + y² - 1, xy - 1/2 }"
-            ];
-            
-            localStorage.setItem('groebner_pasos', pasos.join('|'));
-            setCalculationResult({
-                baseGroebner: ["x² + y² - 1", "xy - 1/2"],
-                pasos: pasos,
-                expresionSimplificada: "w + x + y + z - 100000",
-                variables: ["w", "x", "y", "z"]
+        setIsProcessing(true);
+        setError(null);
+        setOutputJSON('{"status": "processing"}');
+
+        try {
+            // Parsear entrada
+            let inputData;
+            try {
+                inputData = JSON.parse(inputJSON);
+            } catch (err) {
+                throw new Error('JSON inválido: ' + err.message);
+            }
+
+            // Validar formato mínimo
+            if (!Array.isArray(inputData) || inputData.length < 2) {
+                throw new Error('Formato incorrecto. Debe ser un array con al menos 2 polinomios.');
+            }
+
+            // Ejecutar simulación
+            const result = await engineRef.current.runCompleteSimulation(inputData, {
+                targetVectors: 300,
+                showSteps: true
             });
+
+            const formattedResult = JSON.stringify(result, null, 2);
+            // Mostrar resultado
+            setOutputJSON(formattedResult);
             
-        }catch (error){
-
-            console.error("Error en cálculo:", error);
-            localStorage.setItem('groebner_pasos', `Error: ${error.message}`);
-
+        } catch (err) {
+            console.error('Error:', err);
+            setError(err.message);
+            setOutputJSON(JSON.stringify({
+                error: err.message,
+                timestamp: new Date().toISOString()
+            }, null, 2));
+        } finally {
+            setIsProcessing(false);
         }
-
     }
 
-    // Manejar cambios en el JSON
-    function handleJsonChange(e){
-
-        setJsonInput(e.target.textContent);
-
-    } 
-    
-
-    function runFormater(){
-
-        localStorage.setItem('groebner_pasos', "Procesando...");
-        let datosInput = document.getElementById('inputString'); 
-        clickCalculo(); 
-        let operando = new FacadeDriver();
-        operando.init(entradaToJson);  
-
-
+     // Manejar cambio en el editor
+    function handleEditorChange(e) {
+        setInputJSON(e.target.textContent);
     }
 
-    function mostrarCampoCalculadora(){
-
-        if(usarCalculadora){
-            setUsarCalculadora(false); 
-        }else{
-            setUsarCalculadora(true);
-        }
-
+    // Función para restablecer al ejemplo
+    function resetToExample() {
+        setInputJSON(defaultInput);
+        setOutputJSON('{}');
+        setError(null);
     }
 
-
-    function driverInput(e){ 
-
-        setStringParse(e.target.value);
-        setCalculoMuestra(false); 
-
+    // Función auxiliar para validar JSON
+    function validateJSON() {
+        try {
+            JSON.parse(inputJSON);
+            return true;
+        } catch {
+            return false;
+        }
     }
 
-    const [calculo, setCalculo] = useState("");
-    const [esVisible, setVisible] = useState(false);
-
-
-    let pasoPasoG = localStorage.getItem('groebner_pasos') || "Aquí van los resultados." ;
-    
-        function clickCalculo(){
-            localStorage.setItem('groebner_pasos', "Procesando...");
-            setVisible(true);
-    
-        }
-    
-        function cerrarModal(){
-            setVisible(false);
-            localStorage.setItem('groebner_pasos', "...");
-        }
-    
-        function mostrarBox(){
-    
-            setVisible(true);
-    
-        }
-        
-        const pasos = pasoPasoG.split('|').filter(Boolean);  
+    // Función para descargar resultado
+    function downloadResult() {
+        const blob = new Blob([outputJSON], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analisis-algebraico-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
 
     return(
 
         <>
-
-
-
-            {esVisible && (
-
-                    <div className="fixed z-50 top-14 right-8 w-full max-w-sm bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 max-h-[500px] overflow-y-auto">
-                    <div className="flex items-center justify-between mb-4">
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Procesando...</h3>
-                        <button className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" onClick={cerrarModal}>
-                            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <p className="TextoAblog">Visita el blog para información técnica y asesoramiento sobre el motor. <a href="https://blog.romimath.site" target="_blank">Ir al blog</a></p>
+            <div className="MainContainer">
+                <div className="JsonInput">
+                    <div className="editor-header">
+                        <h3><ion-icon name="infinite-outline"></ion-icon> ENTRADA ALGEBRAICA</h3>
+                        <div className="header-actions">
+                        <button 
+                            className="action-btn"
+                            onClick={resetToExample}
+                        >
+                            <ion-icon name="refresh-outline"></ion-icon> Restablecer
+                        </button>
+                        <button 
+                            className="action-btn"
+                            onClick={() => {
+                                try {
+                                    JSON.parse(inputJSON);
+                                    alert('✅ JSON válido');
+                                } catch {
+                                    alert('❌ JSON inválido');
+                                }
+                            }}
+                        >
+                            <ion-icon name="checkmark-outline"></ion-icon> Validar
                         </button>
                     </div>
-                    <div className="space-y-4">
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
-                            Tus calculos se mostrarán aquí...
-                            
-                        </p>
-                        <div className="bg-gray-100 dark:bg-gray-900/50 p-4 rounded-lg">
-                            <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">Calculos. <span className="text-primary">Procesando...</span></p>
-                                {pasos.map((paso, index) => (
-                                    <p key={index}>{paso} <br /> </p>
-                                ))}
-                        </div>
                     </div>
-                </div>
-
-                )}
-
-            <div className="MainContainer">
-                
-                <div className="JsonInput">
-                    <pre contentEditable="true" className="json-editor" onBlur={handleJsonChange} suppressContentEditableWarning={true} >
-                        <code> 
-                            {jsonInput}
-                        </code>
+                    <pre className="json-editor"contentEditable="true" suppressContentEditableWarning={true} onBlur={handleEditorChange} onKeyDown={(e) => {
+                            // Auto-indentación con Tab
+                            if (e.key === 'Tab') {
+                                e.preventDefault();
+                                document.execCommand('insertText', false, '  ');
+                            }
+                        }}>
+                        <code>{inputJSON}</code>
                     </pre>
-                    <button><ion-icon name="calculator-outline"></ion-icon> REALIZAR CALCULO</button>
-                </div>
-                <div className="ViewsResult">
                     
-                    <div class="tabsViews">
-                        <button className={activeTab === 'graficas' ? 'active' : ''} onClick={() => setActiveTab('graficas')}><ion-icon name="stats-chart-outline"></ion-icon> Gráficas</button>
-                        <button className={activeTab === 'consola' ? 'active' : ''} onClick={() => setActiveTab('consola')}><ion-icon name="tv-outline"></ion-icon> Consola</button>
-                        <button className={activeTab === 'texto' ? 'active' : ''} onClick={() => setActiveTab('texto')} ><ion-icon name="text-outline"></ion-icon> Texto</button>
-                    </div>
-
-                    {/* Contenido de las tabs */}
-                    <div className="tab-content">
-                        {activeTab === 'consola' && (
-                            <ConsoleTab calculationResult={calculationResult} />
+                    <div className="input-footer">
+                    <button 
+                        className="process-btn"
+                        onClick={processAlgebra}
+                        disabled={isProcessing}
+                    >   <ion-icon name="rocket-outline"></ion-icon>
+                        {isProcessing ? (
+                            <>
+                                <span className="spinner"></span>
+                                ⚡ PROCESANDO...
+                            </>
+                        ) : (
+                            'EJECUTAR ANÁLISIS'
                         )}
-                        {activeTab === 'graficas' && (
-                            <GraphTab calculationResult={calculationResult} />
-                        )}
-                        {activeTab === 'texto' && (
-                            <TextTab calculationResult={calculationResult} />
-                        )}
-                    </div>
+                    </button>
+                    
+                    {error && (
+                        <div className="error-message">
+                            ❌ {error}
+                        </div>
+                    )}
+                </div>
 
                 </div>
+                    
+                    <div className="JsonOutput">
+                        <div className="output-header">
+                            <h3><ion-icon name="cube-outline"></ion-icon> RESULTADO MATEMÁTICO</h3>
+                            <div className="output-actions">
+                                <button  className="action-btn"
+                                    onClick={() => navigator.clipboard.writeText(outputJSON)}
+                                    disabled={outputJSON === '{}'}
+                                >
+                                    <ion-icon name="copy-outline"></ion-icon> Copiar
+                                </button>
+                                <button className="action-btn"
+                                    onClick={downloadResult}
+                                    disabled={outputJSON === '{}'}
+                                >
+                                    <ion-icon name="cloud-download-outline"></ion-icon> Descargar
+                                </button>
+                            </div>
+                        </div>
+                
+                        <pre className="json-output">
+                            <code>{outputJSON}</code>
+                        </pre>
+                        
+                        {outputJSON !== '{}' && !isProcessing && (
+                            <div className="output-info">
+                                <small>
+                                    ✅ Análisis completado • {new Date().toLocaleTimeString()} • 
+                                    {Math.round(outputJSON.length / 1024)} KB
+                                </small>
+                            </div>
+                        )}
+                    </div>
 
             </div>
 
