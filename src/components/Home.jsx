@@ -122,6 +122,21 @@ function Home(){
         URL.revokeObjectURL(url);
     }
 
+    //descarga power BI 
+    function downloadPowerBi(){
+
+        //let pedidoPowerBi = engineRef.generatePowerBiExport(outputJSON); 
+
+        const blob = new Blob([localStorage.getItem('algebra_sim_powerbi_export')], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `analisis-algebraico-power-bi-${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+
+    }
+
     return(
 
         <>
@@ -201,7 +216,13 @@ function Home(){
                                     onClick={downloadResult}
                                     disabled={outputJSON === '{}'}
                                 >
-                                    <ion-icon name="cloud-download-outline"></ion-icon> Descargar
+                                    <ion-icon name="cloud-download-outline"></ion-icon> JSON
+                                </button>
+                                <button className="action-btn"
+                                    onClick={downloadPowerBi}
+                                    disabled={outputJSON === '{}'}
+                                >
+                                    <ion-icon name="cloud-download-outline"></ion-icon> PowerBI
                                 </button>
                             </div>
                         </div>
