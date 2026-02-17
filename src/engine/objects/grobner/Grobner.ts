@@ -10,44 +10,171 @@ type Polinomio = Termino[];
 export default class GrobnerRobusto {
     private base: Polinomio[] = [];
     private paresProcesados = new Set<string>();
-    private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
+    //private variablesOrden = ['w', 'x', 'y', 'z', 'a', 'b', 'c']; // Hasta 7 variables
+    //modificación 
+    private variablesOrden: string[] = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    //fin de modificación
     private infoUsuario = 'Comenzando\n';
     private basesCasosUso: any = [];  
 
-    constructor(ast: ASTNodeG) {
+    constructor() {
         localStorage.setItem('groebner_pasos', '...'); 
-        //console.log("🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT");
-        //console.log("✅ Todas las operaciones usan aritmética racional exacta");
+        // Inicializamos vacío
+        this.base = [];
+        this.infoUsuario = 'Comenzando\n';
+        this.basesCasosUso = [];
         
-        //INFO USER
-        this.infoUsuario += "🚀 MOTOR GRÖBNER ROBUSTO - PRECISIÓN PERFECTA CON BIGINT | \n"; 
-        this.infoUsuario += "✅ Todas las operaciones usan aritmética racional exacta | \n"; 
-        localStorage.setItem('groebner_pasos', this.infoUsuario); 
+    }
 
+    //modificación con initAsync
+    // MÉTODOS ASÍNCRONOS Y LÍMITES
+    public async initAsync(ast: any): Promise<void> {
+        this.infoUsuario += "🚀 INICIANDO MOTOR GRÖBNER ASÍNCRONO |\n";
+        
         const polinomiosIniciales = this.extraerPolinomios(ast);
         
-        // VERIFICAR INTEGRIDAD: Todos los coeficientes deben ser Fraccion
+        // Verificación de integridad de tu motor original
         this.verificarIntegridadBigInt(polinomiosIniciales);
         
-        //console.log(`📊 Polinomios iniciales: ${polinomiosIniciales.length}`);
-        this.infoUsuario += `📊 Polinomios iniciales: ${polinomiosIniciales.length} | \n`; 
-        localStorage.setItem('groebner_pasos', this.infoUsuario); 
-        polinomiosIniciales.forEach((p, i) => {
-            //console.log(`   P${i+1}: ${this.polinomioAString(p)}`);
-            this.infoUsuario += `   P${i+1}: ${this.polinomioAString(p)} | `;
-            localStorage.setItem('groebner_pasos', this.infoUsuario);  
-        });
+        this.extraerVariablesDinamicas(polinomiosIniciales);
+        const { varsCount, maxGrado } = this.analizarSistema(polinomiosIniciales);
         
-        this.base = this.buchbergerRobusto(polinomiosIniciales);
+        // 🎯 LÍMITES INTELIGENTES PARA EMPRESAS
+        let limiteBases = Infinity;
+        if (varsCount > 7) {
+            if (maxGrado > 2) limiteBases = 3;
+            else if (maxGrado === 2) limiteBases = 7;
+        }
+
+        this.infoUsuario += `📊 Análisis: ${varsCount} variables, Grado Max: ${maxGrado}. Límite extra: ${limiteBases} |\n`;
+        localStorage.setItem('groebner_pasos', this.infoUsuario);
+
+        // Llamamos a TU motor robusto, pero en versión asíncrona
+        this.base = await this.buchbergerRobustoAsync(polinomiosIniciales, limiteBases);
         
-        // VERIFICAR INTEGRIDAD FINAL
         this.verificarIntegridadBigInt(this.base);
-        //console.log("✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas");
-        this.infoUsuario += "✅ Verificación de integridad: TODOS los coeficientes son fracciones exactas |";
-        localStorage.setItem('groebner_pasos', this.infoUsuario); 
-        
         this.mostrarResultado();
     }
+    private analizarSistema(polinomios: Polinomio[]) {
+        let maxGrado = 0;
+        const variablesUnicas = new Set<string>();
+        
+        for (const p of polinomios) {
+            for (const t of p) {
+                let gradoTermino = 0;
+                for (const [v, exp] of t.variables) {
+                    variablesUnicas.add(v);
+                    gradoTermino += exp;
+                }
+                if (gradoTermino > maxGrado) maxGrado = gradoTermino;
+            }
+        }
+        return { varsCount: variablesUnicas.size, maxGrado };
+    }
+    private extraerVariablesDinamicas(polinomios: Polinomio[]) {
+        const vars = new Set<string>();
+        polinomios.forEach(p => p.forEach(t => t.variables.forEach(([v]) => vars.add(v))));
+        this.variablesOrden = Array.from(vars).sort(); // Orden lexicográfico básico
+    }
+
+    
+    private async buchbergerRobustoAsync(polinomios: Polinomio[], limiteBases: number): Promise<Polinomio[]> {
+        this.infoUsuario += "🔄 EJECUTANDO BUCHBERGER ROBUSTO ASÍNCRONO |"; 
+        localStorage.setItem('groebner_pasos', this.infoUsuario); 
+        
+        let base = polinomios.map(p => this.normalizarPolinomio(p));
+        let iteracion = 0;
+        
+        //Si no hay límite (Infinity), usamos 50 por seguridad. Si hay, le sumamos el tamaño inicial.
+        const MAX_BASE = limiteBases === Infinity ? 50 : polinomios.length + limiteBases;
+        
+        // Cola de pares a procesar
+        const colaPares: [number, number][] = [];
+        for (let i = 0; i < base.length; i++) {
+            for (let j = i + 1; j < base.length; j++) {
+                colaPares.push([i, j]);
+            }
+        }
+
+        while (colaPares.length > 0 && base.length < MAX_BASE) {
+            iteracion++;
+            
+            //Dejamos que el navegador respire cada 5 ciclos
+            if (iteracion % 5 === 0) {
+                await new Promise(resolve => setTimeout(resolve, 0));
+            }
+            
+            // Actualizar interfaz del frontend
+            localStorage.setItem('simulation_status', `📐 Gröbner: Iteración ${iteracion} | Cola: ${colaPares.length} | Bases: ${base.length}`);
+
+            this.infoUsuario += `=== ITERACIÓN ${iteracion} === (Base: ${base.length}, Cola: ${colaPares.length}) |`; 
+            localStorage.setItem('groebner_pasos', this.infoUsuario); 
+
+            const [i, j] = colaPares.shift()!;
+            const parKey = `${i},${j}`;
+            
+            if (this.paresProcesados.has(parKey)) continue;
+            this.paresProcesados.add(parKey);
+            
+            // CRITERIO DE BUCHBERGER: Términos coprimos (Tu código de élite)
+            if (this.sonCoprimos(base[i][0].variables, base[j][0].variables)) {
+                this.infoUsuario += `   🚫 Par (${i+1},${j+1}): Términos coprimos - omitido |`; 
+                continue;
+            }
+            
+            this.infoUsuario += `🔍 Par (${i+1}, ${j+1}) |`;
+            
+            const sPol = this.calcularSPolinomio(base[i], base[j]);
+            const reducido = this.reducir(sPol, base);
+            
+            if (!this.esCero(reducido)) {
+                const normalizado = this.normalizarPolinomio(reducido);
+                
+                if (!this.esRedundante(normalizado, base)) {
+                    const nuevoIdx = base.length;
+                    base.push(normalizado);
+                    this.infoUsuario += `   ✅ AGREGADO P${nuevoIdx + 1}: ${this.polinomioAString(normalizado)} |`;
+                    
+                    for (let k = 0; k < nuevoIdx; k++) {
+                        colaPares.push([k, nuevoIdx]);
+                    }
+                } else {
+                    this.infoUsuario += `   🚫 REDUNDANTE - no agregado |`; 
+                }
+            } else {
+                this.infoUsuario += `   ✅ Se redujo a 0 |`;
+            }
+        }
+
+        if (base.length >= MAX_BASE) {
+            this.infoUsuario += `⚠️ LÍMITE DE BASE ALCANZADO (${MAX_BASE} polinomios) |`;
+            localStorage.setItem('simulation_status', `⚠️ Límite de computo alcanzado. Inter-reduciendo...`);
+        } else {
+            this.infoUsuario += `✅ CONVERGENCIA - Cola vacía |`; 
+            localStorage.setItem('simulation_status', `✅ Convergencia lograda. Inter-reduciendo...`);
+        }
+
+        // Respirar un toque antes de inter-reducir porque es un proceso pesado
+        await new Promise(resolve => setTimeout(resolve, 10));
+
+        this.infoUsuario += "🔧 INTER-REDUCCIÓN A FORMA CANÓNICA... |"; 
+        return this.interReducir(base);
+    }
+
+    // 🎯 TRAZABILIDAD EN VECTORIZACIÓN
+    public obtenerBaseVectorialOptima() {
+        const baseMonomial = this.obtenerBaseMonomial(this.base); // Ej: ["x^2", "xy", "y"]
+        const optimalVectors = this.base.map(poli => this.vectorizarPolinomio(poli, baseMonomial));
+
+        return { 
+            optimalVectors, 
+            baseMonomial, 
+            isViable: optimalVectors.length > 0 
+        };
+    }
+    //fin de modificaciones
+
+
 
 
     // ========================================================================
@@ -111,25 +238,6 @@ export default class GrobnerRobusto {
 
       return vector;
     }
-
-    /**
-    * 🎯 PUNTO DE INTEGRACIÓN: Devuelve los vectores y la base para la simulación.
-    * @returns { optimalVectors: Fraccion[][], monomialBasis: string[] }
-    */
-    public obtenerBaseVectorialOptima() {
-      const baseMonomial = this.obtenerBaseMonomial(this.base);
-      const optimalVectors = this.base.map(poli => this.vectorizarPolinomio(poli, baseMonomial));
-      
-      // Nota: Si this.base está vacía, el Ideal es {0}. El análisis no es viable.
-      const isViable = optimalVectors.length > 0;
-      
-      return {
-        isViable: isViable,
-        monomialBasis: baseMonomial, // Las 'dimensiones' del R^n
-        optimalVectors: optimalVectors // Los vectores base (v1, v2, v3, ...)
-      };
-    }
-
 
     // ========================================================================
     // FIN DE VECTORIZACIÓN DE BASES

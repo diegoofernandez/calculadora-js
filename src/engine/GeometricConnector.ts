@@ -8,11 +8,59 @@ export default class GeometricConnector {
     private simulationStrategy: string = 'optimal';
     private strictMode: boolean = true;
     
+    //modificacion 
+    private centroideCono: number[] = [];
+    private anguloMaximoCono: number = Math.PI / 6; // 30 grados (Ajustable)
 
     private vectorCache: Map<string, boolean> = new Map();
+
+    private calcularCentroideCono() {
+        if (this.baseVectors.length === 0) return;
+        const dim = this.baseVectors[0].length;
+        this.centroideCono = new Array(dim).fill(0);
+
+        // Promediar usando tu método toFloat() que ya existe en Fraccion
+        for (const vec of this.baseVectors) {
+            for (let i = 0; i < dim; i++) {
+                this.centroideCono[i] += vec[i].toFloat(); 
+            }
+        }
+        for (let i = 0; i < dim; i++) {
+            this.centroideCono[i] /= this.baseVectors.length;
+        }
+    }
+
+    // Nueva función de pertenencia basada en cono
+    esVectorViable(nuevoVector: Vector): boolean {
+        // Convertir nuevoVector a numérico limpio usando toFloat()
+        const vecNum = nuevoVector.map(v => v.toFloat());
+        
+        let dotProduct = 0;
+        let magCentroide = 0;
+        let magVec = 0;
+
+        for (let i = 0; i < vecNum.length; i++) {
+            dotProduct += vecNum[i] * this.centroideCono[i];
+            magCentroide += Math.pow(this.centroideCono[i], 2);
+            magVec += Math.pow(vecNum[i], 2);
+        }
+
+        magCentroide = Math.sqrt(magCentroide);
+        magVec = Math.sqrt(magVec);
+
+        if (magCentroide === 0 || magVec === 0) return false;
+
+        const cosTheta = dotProduct / (magCentroide * magVec);
+        const angulo = Math.acos(Math.max(-1, Math.min(1, cosTheta)));
+
+        // Si el ángulo es menor que el de nuestro cono, pertenece.
+        return angulo <= this.anguloMaximoCono;
+    }
     
     setBaseVectors(vectors: Vector[]): void {
-        if (vectors.length < 1) {
+        this.baseVectors = vectors;
+        this.calcularCentroideCono();
+        /*if (vectors.length < 1) {
             throw new Error("Se requiere al menos 1 vector base");
         }
         
@@ -23,7 +71,7 @@ export default class GeometricConnector {
         
         this.baseVectors = vectors;
         this.vectorCache.clear(); // Limpiar cache
-        //console.log(`Vectores base configurados: ${vectors.length} vector(es)`);
+        //console.log(`Vectores base configurados: ${vectors.length} vector(es)`);*/
     }
     
     setSimulationStrategy(strategy: string): void {

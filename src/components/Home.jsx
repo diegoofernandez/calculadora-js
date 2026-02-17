@@ -6,7 +6,7 @@ import AproximationEngine from '../engine/AproximationEngine';
 function Home(){
 
     const defaultInput = JSON.stringify([
-        [{operacion: "Grobner"}],
+        [{operacion: "Grobner", simulaciones:20}],
         [ // 3x³ + 2x²y + xy² + 2y - 140 = 0
     {type: "Monomio", coeficiente: 3, partes: [{objeto: "Potencia", base: "x", exponente: 3}]},
     {type: "Monomio", coeficiente: 2, partes: [
@@ -39,15 +39,41 @@ function Home(){
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
 
-    // Referencia al motor
+    //Referencia al motor
     const engineRef = useRef(null);
 
+    //Estado para el texto de progreso en tiempo real
+    const [simulationStatus, setSimulationStatus] = useState('Iniciando motor matemático...');
+
+    //NUEVO: El "Radar" que lee el localStorage cada 100ms mientras procesa
+    useEffect(() => {
+        let intervalId;
+        
+        if (isProcessing) {
+            // Arrancamos el radar
+            intervalId = setInterval(() => {
+                const currentStatus = localStorage.getItem('simulation_status');
+                if (currentStatus) {
+                    setSimulationStatus(currentStatus);
+                }
+            }, 100); // Revisa 10 veces por segundo
+        } else {
+            // Limpiamos cuando termina
+            setSimulationStatus('Iniciando motor matemático...');
+            localStorage.removeItem('simulation_status');
+        }
+
+        return () => clearInterval(intervalId); // Cleanup al desmontar
+    }, [isProcessing]);
 
     // Función para procesar
     async function processAlgebra() {
         if (!engineRef.current) {
             engineRef.current = new AproximationEngine();
         }
+
+        setIsProcessing(true);
+        localStorage.setItem('simulation_status', '📐 Validando topología del sistema...');
 
         setIsProcessing(true);
         setError(null);
@@ -226,7 +252,17 @@ function Home(){
                                 </button>
                             </div>
                         </div>
-                
+                        
+                        {/* 🎯 NUEVO: Visualización de Estado (Solo se ve si está procesando) */}
+                        {isProcessing && (
+                            <div className="processing-info" style={{ margin: '20px 0', padding: '15px', background: '#2a2a2a', borderRadius: '8px' }}>
+                                <div className="spinner"></div>
+                                <span style={{ color: '#F2D34E', fontFamily: 'monospace', fontSize: '14px' }}>
+                                    {simulationStatus}
+                                </span>
+                            </div>
+                        )}
+
                         <pre className="json-output">
                             <code>{outputJSON}</code>
                         </pre>

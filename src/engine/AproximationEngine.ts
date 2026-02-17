@@ -134,10 +134,17 @@ export default class AproximationEngine {
             console.log(`📊 Grobner devolvió: ${optimalVectors.length} vector(es) viable=${isViable}`);
             
             const minRequired = options.minVectorsForSimulation || 3;
-            let baseVectors: Vector[];
-            let simulationStrategy: string;
-            let adaptationInfo: string;
-            
+            //let baseVectors: Vector[];
+            //let simulationStrategy: string;
+            //let adaptationInfo: string;
+
+            let baseVectors = optimalVectors; // USAR TODAS LAS BASES QUE SALIERON
+            let simulationStrategy = 'optimal';
+            let adaptationInfo = `Usando la totalidad de ${optimalVectors.length} vectores extraídos de Gröbner.`;
+
+            console.log(`✅ ${adaptationInfo}`);
+
+            /*
             if (optimalVectors.length >= minRequired) {
                 baseVectors = optimalVectors.slice(0, minRequired);
                 simulationStrategy = 'optimal';
@@ -167,7 +174,7 @@ export default class AproximationEngine {
                 simulationStrategy = 'complementary';
                 adaptationInfo = `Generada base complementaria (${optimalVectors.length} → ${minRequired})`;
                 console.log(`🎭 ${adaptationInfo}`);
-            }
+            }*/
             
             try {
                 this.geometricConnector.setBaseVectors(baseVectors);
@@ -176,14 +183,39 @@ export default class AproximationEngine {
                 console.warn(`Error configurando conector: ${error.message}`);
             }
             
+
+            // 1. Intentamos leer la cantidad de simulaciones desde el propio JSON
+            // 1. Lectura a prueba de balas del JSON
+            let simulacionesDelJSON = undefined;
+            try {
+                if (Array.isArray(polinomiosInput) && polinomiosInput.length > 0) {
+                    // Si la posición 0 es un arreglo (como manda Home.jsx), sacamos el objeto de adentro [0][0]
+                    const configObj = Array.isArray(polinomiosInput[0]) ? polinomiosInput[0][0] : polinomiosInput[0];
+                    
+                    if (configObj && configObj.simulaciones) {
+                        simulacionesDelJSON = Number(configObj.simulaciones);
+                    }
+                }
+            } catch (e) {
+                console.warn("No se pudo leer configuración extra del JSON");
+            }
             // OPTIMIZACIÓN: Ajustar target más conservadoramente
-            let targetVectors = options.targetVectors || 50;
+            //let targetVectors = options.targetVectors || 50;
+            // 2. Definimos el target con prioridades:
+            //    1° El valor del JSON (manda siempre)
+            //    2° El valor de options pasado por UI
+            //    3° Un default de 500 si no hay nada
+            let targetVectors = simulacionesDelJSON || options.targetVectors || 500;
             if (simulationStrategy !== 'optimal') {
                 targetVectors = Math.floor(targetVectors * 0.6); // Reducido de 0.7
             }
             
             // Limitar máximo de vectores
-            targetVectors = Math.min(targetVectors, 200); // Límite absoluto
+            //targetVectors = Math.min(targetVectors, 500); // Límite absoluto
+            // 3. Un límite absoluto de seguridad por si alguien pone "simulaciones": 9999999
+            targetVectors = Math.min(targetVectors, 2000); 
+            
+            console.log(`🎯 Target final: ${targetVectors} vectores (JSON: ${simulacionesDelJSON ? 'Sí' : 'No'})`);
             
             console.log(`🎯 Target: ${targetVectors} vectores (estrategia: ${simulationStrategy})`);
             
@@ -376,15 +408,51 @@ export default class AproximationEngine {
         
         return result;
     }
-    
+    /*
+    private async calculateGroebnerBase(input: any[]): Promise<{
+        basePolynomials?: any[];
+        vectorialData?: any;
+    }> {
+
+        try {
+            const ast = ASTConstrucG.construirAST(input);
+            const grobner = new GrobnerRobusto();
+            
+            const vectorialData = grobner.obtenerBaseVectorialOptima();
+            
+            let basePolynomials: any[] = [];
+            if (typeof grobner.getBase === 'function') {
+                basePolynomials = grobner.getBase();
+            }
+            
+            return {
+                basePolynomials,
+                vectorialData
+            };
+            
+        } catch (error) {
+            console.error('Error en cálculo de Gröbner:', error);
+            throw error;
+        }
+    }*/
+
     private async calculateGroebnerBase(input: any[]): Promise<{
         basePolynomials?: any[];
         vectorialData?: any;
     }> {
         try {
-            const ast = ASTConstrucG.construirAST(input);
-            const grobner = new GrobnerRobusto(ast);
+            // 🛡️ ESCUDO ANTI-MUTACIÓN: Clonamos el input
+            // Si FacadeDriver o el AST anterior lo consumieron, aquí tenemos una copia fresca y pura.
+            const inputFresco = JSON.parse(JSON.stringify(input));
+            const ast = ASTConstrucG.construirAST(inputFresco);
             
+            // 1. Instanciamos el motor vacío
+            const grobner = new GrobnerRobusto(); 
+            
+            // 2. 🚀 IGNICIÓN
+            await grobner.initAsync(ast); 
+            
+            // 3. Obtener datos reales
             const vectorialData = grobner.obtenerBaseVectorialOptima();
             
             let basePolynomials: any[] = [];

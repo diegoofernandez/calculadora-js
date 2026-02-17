@@ -20,17 +20,24 @@ export default class FacadeDriver{
 
 	}
 
-	public init(input: any){
-
+	public async init(input: any){
 
 		if(this.verifyOp(input) === 'G'){
+    let nuevoAST = ASTConstrucG.construirAST(input); 
+    
+    let bases = new GrobnerRobusto(); // 1. Creamos la instancia vacía
+    await bases.initAsync(nuevoAST);  // 2. Ejecutamos el motor pesado (con await)
+    
+    localStorage.setItem('bases', JSON.stringify(bases.getBase(), null, 2)); 
+}
+		/*if(this.verifyOp(input) === 'G'){
 
 			let nuevoAST = ASTConstrucG.construirAST(input); 
 			let bases = new GrobnerRobusto(nuevoAST); 
 
 			localStorage.setItem('bases', JSON.stringify(bases.getBase(), null, 2)); 
 
-		}else if(this.verifyOp(input) === 'F'){
+		}*/else if(this.verifyOp(input) === 'F'){
 			console.log("Se operarán fracciones, desde FacadeDriver");
 			console.log(JSON.stringify(input, null, 2)); 
 		}else if(this.verifyOp(input) === 'P'){
