@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import FacadeDriver from '../engine/FacadeDriver';
 import AproximationEngine from '../engine/AproximationEngine';  
+import Modal from './Modal';  
 
 
 function Home(){
@@ -34,6 +35,10 @@ function Home(){
   ]
     ], null, 2);
 
+    const [resilienceReport, setResilienceReport] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [rawResult, setRawResult] = useState(null);
+    //const [resilienceReport, setResilienceReport] = useState([]);
     const [inputJSON, setInputJSON] = useState(defaultInput);
     const [outputJSON, setOutputJSON] = useState('{}');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -93,12 +98,13 @@ function Home(){
                 throw new Error('Formato incorrecto. Debe ser un array con al menos 2 polinomios.');
             }
 
+           
             // Ejecutar simulación
             const result = await engineRef.current.runCompleteSimulation(inputData, {
                 targetVectors: 300,
                 showSteps: true
             });
-
+             setRawResult(result);
             const formattedResult = JSON.stringify(result, null, 2);
             // Mostrar resultado
             setOutputJSON(formattedResult);
@@ -114,6 +120,78 @@ function Home(){
             setIsProcessing(false);
         }
     }
+
+
+    async function runResilienceAnalysis() {
+    if (!engineRef.current || !inputJSON) return;
+    
+    setIsProcessing(true);
+    setResilienceReport(null); // Limpiamos reporte anterior
+    
+    let report = [];
+    let baseInput;
+    
+    try {
+        baseInput = JSON.parse(inputJSON);
+    } catch (e) {
+        alert("JSON inválido para el test de resiliencia.");
+        setIsProcessing(false);
+        return;
+    }
+
+    // El loop de la tortura: 5 niveles de estrés
+    for (let i = 0; i <= 4; i++) {
+        setSimulationStatus(`🛡️ Test de Impacto Dinámico: Nivel ${i + 1}/5...`);
+        
+        // Clonamos el JSON original
+        let modifiedInput = JSON.parse(JSON.stringify(baseInput));
+        
+        // Buscamos el último polinomio (asumiendo que ahí está la regla financiera)
+        let lastPoly = modifiedInput[modifiedInput.length - 1];
+        
+        // Buscamos el monomio que NO tiene variables (el término independiente, ej: -500)
+        let constantMonomial = lastPoly.find(m => m.partes.length === 0);
+        
+        if (constantMonomial) {
+            // Le restamos 2 puntos de estrés por cada iteración
+            constantMonomial.coeficiente -= (i * 2); 
+        }
+
+        try {
+            // Corremos el motor pero solo pidiendo 100 vectores para que sea rápido
+            const res = await engineRef.current.runCompleteSimulation(modifiedInput, {
+                targetVectors: 100, 
+                showSteps: false
+            });
+            
+            const conectividad = (res.results.geometricProperties.connectivityRate * 100).toFixed(2);
+            let estado = "Estable";
+            if (conectividad < 20) estado = "Tensionado";
+            if (conectividad < 5) estado = "Frágil";
+            if (conectividad == 0) estado = "Colapso";
+
+            report.push({
+                nivel: i,
+                stress: constantMonomial ? constantMonomial.coeficiente : "N/A",
+                conectividad: conectividad,
+                distancia: res.results.geometricProperties.averageDistance.toFixed(2),
+                estado: estado
+            });
+        } catch (e) {
+            report.push({ 
+                nivel: i, 
+                stress: "FALLO", 
+                conectividad: "0.00", 
+                distancia: "---", 
+                estado: "COLAPSO ESTRUCTURAL" 
+            });
+        }
+    }
+    
+    setResilienceReport(report);
+    setIsProcessing(false);
+    setSimulationStatus('Iniciando motor matemático...');
+}
 
      // Manejar cambio en el editor
     function handleEditorChange(e) {
@@ -191,6 +269,13 @@ function Home(){
                         >
                             <ion-icon name="checkmark-outline"></ion-icon> Validar
                         </button>
+                        <button className="action-btn"
+    style={{ background: '#121212', border: '1px solid #dc2626', color: '#dc2626', fontWeight: 'bold' }}
+    onClick={runResilienceAnalysis}
+    disabled={outputJSON === '{}' || isProcessing}
+>
+    <ion-icon name="shield-half-outline"></ion-icon> TEST DE ESTRÉS
+</button>
                     </div>
                     </div>
                     <pre className="json-editor"contentEditable="true" suppressContentEditableWarning={true} onBlur={handleEditorChange} onKeyDown={(e) => {
@@ -250,6 +335,12 @@ function Home(){
                                 >
                                     <ion-icon name="cloud-download-outline"></ion-icon> PowerBI
                                 </button>
+                                <button className="action-btn" 
+                                        onClick={() => setIsModalOpen(true)} 
+                                        disabled={!rawResult}
+                                        style={{background: '#dc2626', color: 'white', border: 'none'}}>
+                                    <ion-icon name="map-outline"></ion-icon> VER MAPA
+                                </button>
                             </div>
                         </div>
                         
@@ -266,6 +357,46 @@ function Home(){
                         <pre className="json-output">
                             <code>{outputJSON}</code>
                         </pre>
+
+                        {/* Debajo de tu <pre className="json-output">... */}
+
+{resilienceReport && (
+    <div className="resilience-report">
+        <h3 className="resilience-title">
+            <ion-icon name="warning-outline"></ion-icon> Reporte de Resiliencia Estructural
+        </h3>
+        
+        <div className="table-responsive">
+            <table className="resilience-table">
+                <thead>
+                    <tr>
+                        <th>Nivel de Estrés</th>
+                        <th>Coef. Crítico</th>
+                        <th>Conectividad</th>
+                        <th>Distancia Base</th>
+                        <th>Diagnóstico</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {resilienceReport.map((row, idx) => (
+                        <tr key={idx} className={row.estado === 'Colapso' || row.estado === 'COLAPSO ESTRUCTURAL' ? 'row-colapso' : ''}>
+                            <td>+ {row.nivel * 2} perturbaciones</td>
+                            <td style={{ fontWeight: 'bold' }}>{row.stress}</td>
+                            <td>{row.conectividad}%</td>
+                            <td>{row.distancia}</td>
+                            <td style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>
+                                {row.estado}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        <p className="resilience-note">
+            * El motor aplicó perturbaciones temporales al término constante del último polinomio para medir la resistencia del Atractor de Gröbner frente a cambios bruscos del mercado.
+        </p>
+    </div>
+)}
                         
                         {outputJSON !== '{}' && !isProcessing && (
                             <div className="output-info">
@@ -277,6 +408,11 @@ function Home(){
                         )}
                     </div>
 
+                <Modal 
+                    isOpen={isModalOpen} 
+                    onClose={() => setIsModalOpen(false)} 
+                    data={rawResult ? rawResult.results : null} 
+                />    
             </div>
 
         </>
