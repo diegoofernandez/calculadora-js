@@ -1,115 +1,76 @@
 body{
-
-	font-family: "Space Grotesk";
-	margin: 0;
-	background: var(--color-secundario);
-
+    font-family: "Space Grotesk";
+    margin: 0;
+    background: var(--color-secundario);
 }
 :root{
-
-	--texto-titulo: "Material Symbols Outlined";
-	--color-primario: #2272FF;
-	--color-secundario: #1d1d1d;
-	--color-contraste: #F2D34E;
-
+    --texto-titulo: "Material Symbols Outlined";
+    --color-primario: #2272FF;
+    --color-secundario: #1d1d1d;
+    --color-contraste: #F2D34E;
 }
 /*************************************
-*	ESTILOS MAIN CONTAINER					
+* ESTILOS MAIN CONTAINER                     
 **************************************/
 .MainContainer{
-
-	margin: 0;
-	background: var(--color-secundario);
-	display: flex;
-	justify-content: space-between;
-
+    margin: 0;
+    background: var(--color-secundario);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap; 
 }
 .JsonInput{
-
-	width: 50%;
-
+    width: 49%;
 }
 .JsonInput pre{
-
-	width: 100%;
-	overflow-y: auto;
-	max-height: 100vh;
-	min-height: 100vh;
-	color: #fff;
-	font-size: 1.2em;
-	font-family: monospace;
-
+    width: 100%;
+    overflow-y: auto;
+    max-height: 100vh;
+    min-height: 100vh;
+    color: #fff;
+    font-size: 1.2em;
+    font-family: monospace;
 }
 .ViewsResult{
-
-	width: 50%;
-
-}
-@media(max-width: 800px){
-
-	.MainContainer{
-
-		flex-direction: column;
-
-	}
-	.JsonInput{
-
-		width: 100%;
-
-	}	
-	.ViewsResult{
-
-		width: 100%;
-
-	}
-
+    width: 50%;
 }
 .JsonInput button{
-
-	width: 100%;
-	height: 35px;
-	background: var(--color-primario);
-	border: 3px solid transparent;
-	cursor: pointer;
-	border-radius: 4px;
-	color: #fff;
-	transition: 0.3s
-
+    width: 100%;
+    height: 35px;
+    background: var(--color-primario);
+    border: 3px solid transparent;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #fff;
+    transition: 0.3s
 }
 .JsonInput button:hover{
-
-	border: 3px solid var(--color-primario);
-	background: transparent;
-	color: var(--color-primario);
-
+    border: 3px solid var(--color-primario);
+    background: transparent;
+    color: var(--color-primario);
 }
 /*************************************
-*	ESTILOS PIE DE PÁGINA 					
+* ESTILOS PIE DE PÁGINA                      
 **************************************/
 footer{
-
-	width: 100%;
-	box-sizing: border-box;
-	background: var(--color-secundario);
-	padding-left: 5%;
-	padding-right: 5%;
-	padding-top: 25px;
-	padding-bottom: 25px;
-	display: flex;
-	justify-content: center;
-
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--color-secundario);
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 25px;
+    padding-bottom: 25px;
+    display: flex;
+    justify-content: center;
 }
 footer p{
-
-	color: #fff;
-
+    color: #fff;
 }
 .JsonInput, .JsonOutput {
-    width: 50%;
+    width: 49% !important;
     padding: 20px;
     box-sizing: border-box;
 }
-
 .json-editor, .json-output {
     width: 100%;
     height: calc(100vh - 150px);
@@ -131,7 +92,6 @@ footer p{
     border-color: var(--color-primario);
     outline: none;
 }
-
 .process-btn {
     width: 100%;
     height: 45px;
@@ -144,46 +104,27 @@ footer p{
     margin-top: 10px;
     transition: 0.3s;
 }
-
 .process-btn:hover {
     background: #1a5fd8;
 }
-
 .process-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-@media (max-width: 800px) {
-    .MainContainer {
-        flex-direction: column;
-    }
-    
-    .JsonInput, .JsonOutput {
-        width: 100%;
-        height: 50vh;
-    }
-}
-.JsonInput, .JsonOutput {
-    width: 50%;
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    box-sizing: border-box;
-}                
+}    
 .editor-header, .output-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 15px;
     color: white;
+}    
+.editor-header, .output-header h3{
+    font-size: 1em;
 }
-                
 .header-actions, .output-actions {
     display: flex;
     gap: 10px;
 }
-                
 .action-btn {
     background: #333;
     color: white;
@@ -201,23 +142,19 @@ footer p{
     margin-right: 10px;
     font-size: 1.5em;
 }
-                
 .action-btn:hover:not(:disabled) {
     background: var(--color-secundario);
 }
-                
 .action-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-                
 .editor-container, .output-container {
     flex: 1;
     overflow: hidden;
     border-radius: 5px;
     border: 2px solid #333;
 }
-                
 .json-editor, .json-output {
     width: 100%;
     height: 100%;
@@ -232,15 +169,12 @@ footer p{
     line-height: 1.5;
     outline: none;
 }
-                
 .json-editor:focus {
     border-color: var(--color-primario);
 }
-                
 .input-footer, .output-footer {
     margin-top: 15px;
 }
-                
 .process-btn {
     width: 100%;
     height: 45px;
@@ -257,16 +191,13 @@ footer p{
     align-items: center;
     gap: 10px;
 }
-                
 .process-btn:hover:not(:disabled) {
     background: #1a5fd8;
 }
-                
 .process-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
 }
-                
 .error-message {
     background: #ff4444;
     color: white;
@@ -275,7 +206,6 @@ footer p{
     margin-top: 10px;
     font-size: 14px;
 }
-                
 .output-info, .processing-info {
     color: #888;
     font-size: 12px;
@@ -284,7 +214,6 @@ footer p{
     justify-content: center;
     gap: 10px;
 }
-                
 .spinner {
     width: 20px;
     height: 20px;
@@ -293,26 +222,13 @@ footer p{
     border-top-color: white;
     animation: spin 1s linear infinite;
 }
-                
 .spinner.small {
     width: 14px;
     height: 14px;
     border-width: 2px;
 }
-                
 @keyframes spin {
     to { transform: rotate(360deg); }
-}
-                
-@media (max-width: 800px) {
-    .MainContainer {
-        flex-direction: column;
-    }
-                        
-    .JsonInput, .JsonOutput {
-        width: 100%;
-        height: 50vh;
-    }
 }
 .TextoAblog{
     width: 100%;
@@ -325,18 +241,14 @@ footer p{
 /*MODAL*/
 .fixed.inset-0 {
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro */
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 9999;
-    backdrop-filter: blur(4px); /* Desfoca lo que está atrás */
+    backdrop-filter: blur(4px);
 }
-
 .modal-content {
     background: #121212;
     border: 2px solid #dc2626;
@@ -347,9 +259,6 @@ footer p{
     overflow-y: auto;
     box-shadow: 0 0 40px rgba(220, 38, 38, 0.4);
 }
-/* =========================================
-   MODAL LIGHTBOX (MAPA ESTRUCTURAL)
-   ========================================= */
 .modal-overlay {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -361,7 +270,6 @@ footer p{
     z-index: 9999;
     padding: 1rem;
 }
-
 .modal-box {
     position: relative;
     width: 100%;
@@ -371,7 +279,6 @@ footer p{
     padding: 1.5rem;
     box-shadow: 0 0 40px rgba(220, 38, 38, 0.3);
 }
-
 .modal-header {
     display: flex;
     justify-content: space-between;
@@ -380,7 +287,6 @@ footer p{
     border-bottom: 1px solid #dc2626;
     padding-bottom: 0.5rem;
 }
-
 .modal-header h2 {
     font-size: 1.5rem;
     font-weight: 900;
@@ -388,7 +294,6 @@ footer p{
     text-transform: uppercase;
     margin: 0;
 }
-
 .close-btn {
     background: transparent;
     border: none;
@@ -398,11 +303,7 @@ footer p{
     font-family: monospace;
     font-size: 1rem;
 }
-
-.close-btn:hover {
-    color: #dc2626;
-}
-
+.close-btn:hover { color: #dc2626; }
 .modal-svg-container {
     background-color: #000;
     border: 1px solid #27272a;
@@ -410,7 +311,6 @@ footer p{
     height: auto;
     display: block;
 }
-
 .modal-footer {
     margin-top: 1rem;
     font-size: 0.75rem;
@@ -418,10 +318,6 @@ footer p{
     color: #71717a;
     text-transform: uppercase;
 }
-
-/* =========================================
-   REPORTE DE RESILIENCIA (TABLA)
-   ========================================= */
 .resilience-report {
     margin-top: 1.5rem;
     border: 2px solid #dc2626;
@@ -429,7 +325,6 @@ footer p{
     padding: 1rem;
     box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
 }
-
 .resilience-title {
     color: #dc2626;
     font-weight: 900;
@@ -442,11 +337,7 @@ footer p{
     align-items: center;
     gap: 8px;
 }
-
-.table-responsive {
-    overflow-x: auto;
-}
-
+.table-responsive { overflow-x: auto; }
 .resilience-table {
     width: 100%;
     text-align: left;
@@ -455,7 +346,6 @@ footer p{
     color: #d4d4d8;
     border-collapse: collapse;
 }
-
 .resilience-table th {
     background-color: #121212;
     color: #71717a;
@@ -464,20 +354,68 @@ footer p{
     padding: 0.5rem;
     border: 1px solid #27272a;
 }
-
 .resilience-table td {
     padding: 0.5rem;
     border: 1px solid #27272a;
 }
-
 .row-colapso {
     background-color: rgba(127, 29, 29, 0.2);
     color: #ef4444;
 }
-
 .resilience-note {
     margin-top: 1rem;
     font-size: 0.7rem;
     color: #71717a;
     font-style: italic;
+}
+.nodo-interactivo { cursor: crosshair; transition: all 0.2s ease; }
+.nodo-interactivo:hover { stroke: #fff; stroke-width: 2px; }
+.nodo-origen { stroke: #eab308; stroke-width: 4px; filter: drop-shadow(0 0 8px rgba(234, 179, 8, 0.8)); }
+.nodo-destino { stroke: #10b981; stroke-width: 4px; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.8)); }
+.panel-pathfinding {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid #10b981;
+    color: #d4d4d8;
+    font-family: monospace;
+    font-size: 0.85rem;
+    box-shadow: inset 0 0 20px rgba(16, 185, 129, 0.1);
+}
+.panel-pathfinding h3 {
+    margin: 0 0 10px 0;
+    color: #10b981;
+    text-transform: uppercase;
+    font-size: 1.1rem;
+    border-bottom: 1px dashed #10b981;
+    padding-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+.ruta-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ruta-item:last-child { border-bottom: none; }
+.ruta-valor-positivo { color: #10b981; font-weight: 900; }
+.ruta-valor-negativo { color: #ef4444; font-weight: 900; }
+.ruta-valor-neutro { color: #71717a; font-weight: bold; }
+.instruccion-radar {
+    color: #eab308; font-size: 0.8rem; text-align: center; margin-top: 10px; animation: titilar 2s infinite;
+}
+@keyframes titilar { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* =========================================
+* AJUSTES RESPONSIVE FINALES
+* (Solo agregados abajo para no romper nada)
+========================================= */
+@media (max-width: 800px) {
+    .MainContainer { flex-direction: column; }
+    .JsonInput, .JsonOutput {
+        width: 100% !important;
+        height: auto !important;
+        margin-bottom: 50px;
+    }
+    .json-editor, .json-output {
+        height: 50vh !important;
+    }
+    .action-btn { width: 100%; margin-bottom: 5px; }
+    .header-actions { flex-direction: column; width: 100%; }
 }

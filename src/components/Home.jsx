@@ -6,6 +6,22 @@ import Modal from './Modal';
 
 function Home(){
 
+    // Función para extraer letras dinámicamente del JSON del usuario
+const extraerVariablesDinamicas = (jsonEntrada) => {
+  const variablesEncontradas = new Set();
+  for (let i = 1; i < jsonEntrada.length; i++) {
+    const polinomio = jsonEntrada[i];
+    polinomio.forEach(monomio => {
+      if (monomio.partes && monomio.partes.length > 0) {
+        monomio.partes.forEach(parte => {
+          if (parte.base) variablesEncontradas.add(parte.base);
+        });
+      }
+    });
+  }
+  return Array.from(variablesEncontradas).sort();
+};
+
     const defaultInput = JSON.stringify([
         [{operacion: "Grobner", simulaciones:20}],
         [ // 3x³ + 2x²y + xy² + 2y - 140 = 0
@@ -50,7 +66,7 @@ function Home(){
     //Estado para el texto de progreso en tiempo real
     const [simulationStatus, setSimulationStatus] = useState('Iniciando motor matemático...');
 
-    //NUEVO: El "Radar" que lee el localStorage cada 100ms mientras procesa
+    
     useEffect(() => {
         let intervalId;
         
@@ -104,6 +120,10 @@ function Home(){
                 targetVectors: 300,
                 showSteps: true
             });
+            const letrasDetectadas = extraerVariablesDinamicas(inputData);
+            if (result && result.results) {
+                result.results.variables = letrasDetectadas;
+            }
              setRawResult(result);
             const formattedResult = JSON.stringify(result, null, 2);
             // Mostrar resultado
@@ -358,7 +378,7 @@ function Home(){
                             <code>{outputJSON}</code>
                         </pre>
 
-                        {/* Debajo de tu <pre className="json-output">... */}
+                       
 
 {resilienceReport && (
     <div className="resilience-report">
