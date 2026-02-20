@@ -379,7 +379,7 @@ export default class GeometricConnector {
         }
         return result;
     }
-    
+    /*
     private calculateDistance(u: Vector, v: Vector): number {
         let sumSquares = new Fraccion(0n);
         for (let i = 0; i < u.length; i++) {
@@ -387,6 +387,18 @@ export default class GeometricConnector {
             sumSquares = sumSquares.sumar(diff.multiplicar(diff));
         }
         return Math.sqrt(sumSquares.toFloat());
+    }*/
+    private calculateDistance(u: Vector, v: Vector): number {
+        let sumSquares = new Fraccion(0n);
+        const dimension = u.length; // <-- n variables
+        
+        for (let i = 0; i < dimension; i++) {
+            const diff = u[i].sumar(v[i].negar());
+            sumSquares = sumSquares.sumar(diff.multiplicar(diff));
+        }
+        
+        const distanciaBruta = Math.sqrt(sumSquares.toFloat());
+        return dimension > 0 ? distanciaBruta / Math.sqrt(dimension) : 0;
     }
     
     private areColinear(u: Vector, v: Vector, tolerance: number = 1e-6): boolean {
