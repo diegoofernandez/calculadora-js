@@ -408,17 +408,21 @@ export default class AproximationEngine {
             
             // X0 nominal (el primer vector base) y vector Tau (por defecto 1.0 para evitar div/0)
             const x0 = baseVectors[0];
-            const tau = new Array(x0.length).fill(1.0); 
+            const tau = Array.from({length: x0.length}, () => new Fraccion(1n, 1n)); 
 
-            // Cálculo empírico del error (Sigma) sobre el espacio transformado
-            const estadisticas = this.calcularSigmaDistancias(vectoresEstresados, x0, tau);
-            
-            const diagnosticoSR = this.calcularIndiceResiliencia(
+            // 🚨 ACÁ ESTÁ LA MAGIA: Calculamos la distribución real (Vector por Vector)
+            const distribucion = this.calcularDistribucionSR(
+                vectoresEstresados, 
+                x0, 
+                tau, 
                 stressedConnectivityRate, 
-                estadisticas.media, // Usamos la distancia media en el espacio T
-                0.85, 
-                estadisticas.sigma,
-                vectoresEstresados.length
+                0.85 // cosTheta promedio
+            );
+            
+            // Pasamos solo los 2 argumentos que ahora pide la función
+            const diagnosticoSR = this.calcularIndiceResiliencia(
+                distribucion.mediaSR, 
+                distribucion.margenError
             );
             // --- FIN DIAGNÓSTICO AVANZADO ---
             // --- FIN DIAGNÓSTICO AVANZADO ---
@@ -1239,7 +1243,7 @@ private calcularIndiceResiliencia(
             };
         }
     }*/
-
+    /*
     private transformarVector(x: Fraccion[], x0: Fraccion[], tau: number[]): number[] {
         const n = x.length;
         const vectorTransformado: number[] = new Array(n);
@@ -1250,6 +1254,24 @@ private calcularIndiceResiliencia(
             const denominador = Math.max(x0i_float, tau[i]); 
             vectorTransformado[i] = xi_float / denominador;
         }
+        return vectorTransformado;
+    }*/
+    private transformarVector(x: Fraccion[], x0: Fraccion[], tau: Fraccion[]): number[] {
+        const n = x.length;
+        const vectorTransformado: number[] = new Array(n);
+        
+        for (let i = 0; i < n; i++) {
+            const xi_float = x[i].toFloat();
+            const x0i_float = Math.abs(x0[i].toFloat());
+            
+            // Convertimos Tau a float explícitamente en la frontera geométrica
+            const tau_float = Math.abs(tau[i].toFloat()); 
+            
+            // Regularización con umbral mínimo estructural
+            const denominador = Math.max(x0i_float, tau_float); 
+            vectorTransformado[i] = xi_float / denominador;
+        }
+        
         return vectorTransformado;
     }
 
@@ -1265,6 +1287,7 @@ private calcularIndiceResiliencia(
         return Math.sqrt(sumSquares) / Math.sqrt(n);
     }
 
+    /*
     private calcularSigmaDistancias(vectoresSimulados: Vector[], x0: Vector[], tau: number[]): { media: number, sigma: number } {
         const n = vectoresSimulados.length;
         if (n <= 1) return { media: 0, sigma: 0 };
@@ -1279,8 +1302,49 @@ private calcularIndiceResiliencia(
         const sumaDiferenciasCuadradas = distancias.reduce((sum, d) => sum + Math.pow(d - media, 2), 0);
         const varianza = sumaDiferenciasCuadradas / (n - 1); // Muestra insesgada
         return { media, sigma: Math.sqrt(varianza) };
+    }*/
+    // Nueva función: Calcula la distribución real de S_R para el Monte Carlo completo
+    private calcularDistribucionSR(
+        vectoresSimulados: Fraccion[][], 
+        x0: Fraccion[], 
+        tau: Fraccion[], 
+        connectivityRate: number,
+        cosThetaAvg: number
+    ): { mediaSR: number, margenError: number } {
+        const n = vectoresSimulados.length;
+        if (n <= 1) return { mediaSR: 0, margenError: 0 };
+
+        const arraySR: number[] = [];
+        const x0_T = this.transformarVector(x0, x0, tau);
+
+        // 1. Calculamos el SR exacto para CADA vector simulado
+        for (let i = 0; i < n; i++) {
+            const v_T = this.transformarVector(vectoresSimulados[i], x0, tau);
+            const delta_i = this.calculateDistanceTransformada(v_T, x0_T);
+            
+            // Penalización logarítmica para este vector específico
+            const penalty_i = 1 / (1 + Math.log10(1 + Math.max(0, delta_i)));
+            
+            // S_R crudo del vector proyectado a escala 100
+            const sr_i = connectivityRate * Math.max(0, cosThetaAvg) * penalty_i * 100;
+            arraySR.push(sr_i);
+        }
+
+        // 2. Calculamos la Media de S_R
+        const mediaSR = arraySR.reduce((sum, val) => sum + val, 0) / n;
+        
+        // 3. Calculamos la Varianza y Desviación Estándar (Sigma) de los S_R
+        const sumaDiferenciasCuadradas = arraySR.reduce((sum, val) => sum + Math.pow(val - mediaSR, 2), 0);
+        const varianza = sumaDiferenciasCuadradas / (n - 1);
+        const sigmaSR = Math.sqrt(varianza);
+
+        // 4. Calculamos el Error Estándar (95% CI) en la MISMA escala del Índice
+        const margenError = 1.96 * (sigmaSR / Math.sqrt(n));
+
+        return { mediaSR, margenError };
     }
 
+    /*
     private calcularIndiceResiliencia(
         connectivityRate: number, 
         avgDistance: number, 
@@ -1300,6 +1364,38 @@ private calcularIndiceResiliencia(
         const errorEstandar = (sigmaEmpirico / Math.sqrt(Math.max(1, n_simulaciones)));
         const margenError95 = 1.96 * errorEstandar;
         const errorPuntosSR = Number((margenError95 * 100 * connectivityRate).toFixed(2));
+
+        let estadoStr = "";
+        let accionesArr: string[] = [];
+
+        if (SR_100 >= 35) {
+            estadoStr = "OPERACIÓN VIABLE";
+            accionesArr = ["Estructura soporta el volumen actual.", "Mantener variables operativas sin cambios estructurales."];
+        } else if (SR_100 >= 10) {
+            estadoStr = "TENSIONADO";
+            accionesArr = ["Auditar Variable Crítica.", "Bloquear incremento de costos fijos.", "Evaluar elasticidad de precio."];
+        } else {
+            estadoStr = "COLAPSO ESTRUCTURAL";
+            accionesArr = ["Reducir dependencia de la Variable Crítica inmediatamente.", "Reestructuración matemática requerida."];
+        }
+
+        return {
+            SR: SR_100,
+            errorMargen: errorPuntosSR,
+            estado: estadoStr,
+            acciones: accionesArr
+        };
+    }*/
+    private calcularIndiceResiliencia(
+        mediaSR_cruda: number,
+        margenError_crudo: number
+    ): { SR: number; errorMargen: number; estado: string; acciones: string[] } {
+        
+        let SR_100 = Number(mediaSR_cruda.toFixed(1));
+        if (SR_100 === 0 && mediaSR_cruda > 0) SR_100 = 0.1;
+
+        // El error ya viene calculado en escala real (ej: 0.8 pts)
+        const errorPuntosSR = Number(margenError_crudo.toFixed(2));
 
         let estadoStr = "";
         let accionesArr: string[] = [];
