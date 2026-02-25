@@ -29,11 +29,11 @@
 ## 📸 **EN ACCIÓN**
 
 ### **VISOR 3D DE VECTORES** (100 simulaciones como puntos)
-![Visor 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionmodal.jpg)
+![Visor 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionmodal2.jpg)
 *Cada punto es un escenario. Verde = viable, Rojo = inviable*
 
 ### **DYNAMIC FLUID - GRAFO VIVO**
-![Grafo 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionfront.jpeg)
+![Grafo 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/1.jpg)
 *Nodos = variables, Links = relaciones. Sliders inyectan estrés*
 
 ### **GRÖBNER EN ACCIÓN**
@@ -146,44 +146,39 @@
 
 ## 🛠️ **ARQUITECTURA TÉCNICA**
 
-RomiMath Core
-├── AproximationEngine (Orquestador)
-├── GeometricConnector (Geómetra)
-├── GrobnerRobusto (Corazón algebraico)
-├── VectorAnalyticEngine (Analista)
-├── DynamicFluid3D (Visualizador de grafos)
-├── ManifoldModal (Visor de vectores 3D)
-└── GrobnerParser (Traductor álgebra → geometría)
+### **RomiMath Core**
+- **AproximationEngine** - Orquestador principal
+- **GeometricConnector** - Geómetra que mide relaciones
+- **GrobnerRobusto** - Corazón algebraico (bases de Gröbner)
+- **VectorAnalyticEngine** - Analista de espacios vectoriales
+- **DynamicFluid3D** - Visualizador de grafos interactivo
+- **ManifoldModal** - Visor de vectores en 3D
+- **GrobnerParser** - Traductor de álgebra a geometría
 
-Métricas Propias
-├── Índice SR (Tensión Estructural)
-├── Conectividad (Densidad de grafos)
-├── Distancia Promedio (Esfuerzo)
-├── Rigidez de Variable (Sensibilidad)
-└── Variable Crítica (Cuello de botella)
+### **Métricas Propias**
+- **Índice SR** - Tensión Estructural (0-100)
+- **Conectividad** - % de caminos viables
+- **Distancia Promedio** - Esfuerzo operativo
+- **Rigidez de Variable** - Sensibilidad estructural
+- **Variable Crítica** - Cuello de botella del sistema
 
-Análisis Avanzado
-├── Índice de Sobol (Importancia relativa)
-├── Test de Estrés (Perturbaciones)
-└── Detector de Imposibilidad (Base = "1")
+### **Análisis Avanzado**
+- **Índice de Sobol** - Importancia relativa de variables
+- **Test de Estrés** - Perturbaciones controladas (+2%, +5%, +10%, +15%, +25%)
+- **Detector de Imposibilidad** - Base Gröbner = "1" (sistema sin solución)
 
-Visualización
-├── ForceGraph3D (Grafo interactivo)
-├── Sliders de estrés por variable
-├── Puntos 3D con hover info
-├── Física con peso de Sobol
-└── HUD  con telemetría
+### **Visualización**
+- **ForceGraph3D** - Grafo interactivo de variables
+- **Sliders de estrés** - Inyección de presión por variable
+- **Puntos 3D con hover** - 100 vectores como puntos flotantes
+- **Física con peso de Sobol** - Movimiento browniano inteligente
+- **HUD cyberpunk** - Telemetría en tiempo real
 
 
 
 ---
 
 ## 🚀 **PRÓXIMOS HITOS**
-
-### **Inmediatos (1-2 semanas)**
-- [ ] 🌐 Deploy público: https://romimath.pages.dev/
-- [ ] 📱 Landing page con demos interactivas
-- [ ] 🎥 Video mostrando los 7 casos reales
 
 ### **Corto plazo (1 mes)**
 - [ ] 🤝 Buscar socio comercial
@@ -198,7 +193,6 @@ Visualización
 ### **Largo plazo (6-12 meses)**
 - [ ] 🌍 Expansión internacional
 - [ ] 🎓 Libro: "De villa a matemático en 4 meses"
-- [ ] 🏆 Reconocimiento académico (honoris causa)
 
 ---
 
