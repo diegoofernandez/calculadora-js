@@ -462,6 +462,11 @@ function Home(){
                     variables={rawResult.results.variables || ['x', 'y', 'z']} // Pasamos los nombres de variables
                     srIndex={rawResult.frontendData.diagnosticoAvanzado?.indiceSR?.SR || 0}
                     sobolData={rawResult.frontendData.analisisSobol || []}
+                    algebraicBase={rawResult.frontendData.algebraicAnalysis.basePolynomials}
+                    geometricMetrics={{
+                        connectivity: rawResult.results.geometricProperties.connectivityRate * 100,
+                        avgDistance: rawResult.results.geometricProperties.averageDistance
+                    }}
                 />
             )}
 

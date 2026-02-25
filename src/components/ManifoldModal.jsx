@@ -1,7 +1,8 @@
 import React, { useMemo, useRef, useState, useEffect } from 'react';
 import ForceGraph3D from 'react-force-graph-3d';
+import { generateForensicReport } from './modulos/ReportGenerator';
 
-const ManifoldModal = ({ isOpen, onClose, vectors, variables, srIndex, sobolData }) => {
+const ManifoldModal = ({ isOpen, onClose, vectors, variables, srIndex, sobolData, algebraicBase, geometricMetrics }) => {
     // Si no está abierto o no hay vectores, no renderizamos nada
     if (!isOpen) return null;
 
@@ -296,6 +297,40 @@ const ManifoldModal = ({ isOpen, onClose, vectors, variables, srIndex, sobolData
         );
     }
 
+   const handleDownloadReport = async () => {
+        if (isSimulating) {
+            addLog('POR FAVOR, PAUSA LA SIMULACIÓN ANTES DE GENERAR REPORTE.', 'warning');
+            return;
+        }
+
+        addLog('CAPTURANDO EVIDENCIA 3D Y BASES...', 'info');
+        
+        setTimeout(async () => {
+            try {
+                // 2. Pasamos los datos correctamente al generador
+                await generateForensicReport({
+                    simulationId: `RM-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+                    variables,
+                    sobolData,
+                    crashCount,
+                    totalNodes: initialNodes.length,
+                    srIndex,
+                    graphRef,
+                    // Usamos los nombres exactos que espera el ReportGenerator.js
+                    algebraicBase: algebraicBase || [], 
+                    vectorialBase: vectors || [], 
+                    geometricMetrics: geometricMetrics || {},
+                    trajectoryData: {
+                        steps: trajectoryBuffer.current.length
+                    }
+                });
+                addLog('REPORTE PDF GENERADO EXITOSAMENTE.', 'success');
+            } catch (error) {
+                console.error("Error en PDF:", error);
+                addLog('ERROR AL GENERAR PDF. REVISA LA CONSOLA.', 'error');
+            }
+        }, 200); 
+    };
     return (
         <div style={{
             position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
@@ -348,6 +383,16 @@ const ManifoldModal = ({ isOpen, onClose, vectors, variables, srIndex, sobolData
                     >
                         <ion-icon name="download"></ion-icon> CSV DATA
                     </button>
+                    <button 
+                        onClick={handleDownloadReport} 
+                        style={{
+                            background: '#8b5cf6', border: 'none', color: '#fff', fontWeight: 'bold',
+                            padding: '8px 15px', cursor: 'pointer', fontFamily: 'monospace', borderRadius: '4px',
+                            display: 'flex', alignItems: 'center', gap: '5px'
+                        }}
+                    >
+                        <ion-icon name="document-text"></ion-icon> GENERAR PDF
+                    </button>
 
                     <button onClick={onClose} style={{
                         background: 'transparent', border: '1px solid #666', color: '#666',
@@ -362,7 +407,7 @@ const ManifoldModal = ({ isOpen, onClose, vectors, variables, srIndex, sobolData
                     ref={graphRef}
                     graphData={graphData}
                     backgroundColor="#000000"
-                    
+                    rendererConfig={{ preserveDrawingBuffer: true }}
                     nodeVal="val"
                     nodeRelSize={1} 
                     nodeOpacity={0.9}
