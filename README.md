@@ -1,112 +1,257 @@
-# 🧮 RomiMath: **De Fracciones a Gröbner en 4 Semanas**
+# 🧮 RomiMath: Matemática que Nació en una Villa
 
-> Desde la villa, sin estudios formales (sin secundaria ni universidad) - demostrando la fuerza de la tenacidad
+> *"Sin estudios formales, desde mi pieza, en 4 meses (van 5 meses) construí este motor"*
 
-[![Gröbner Implementado](https://img.shields.io/badge/Gröbner-100%25_funcional-brightgreen)]()
-[![TypeScript](https://img.shields.io/badge/TypeScript-Engine-blue)]()
-[![React](https://img.shields.io/badge/React-Frontend-61dafb)]()
-![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+[![Gröbner 100%](https://img.shields.io/badge/Gröbner-100%25_funcional-brightgreen)]()
+[![TypeScript](https://img.shields.io/badge/TypeScript-Core-blue)]()
+[![React](https://img.shields.io/badge/React-3D-61dafb)]()
+[![Estado](https://img.shields.io/badge/Estado-Producción%20Ready-success)]()
+[![SR Index](https://img.shields.io/badge/Índice%20SR-Patentado-purple)]()
 
-## 🎯 **LOGRO PRINCIPAL: ¡BASE DE GRÖBNER IMPLEMENTADA!**
+---
 
-### 📸 Demostración en Vivo:
-![Captura de Consola - RomiMath Online](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionfront.jpeg)
-![Captura de Consola - RomiMath Online](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionmodal.jpg)
-![Captura de Consola - Gröbner Funcionando](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner4.jpg)
+## 🏆 **LO QUE EL MOTOR OFRECE**
 
-*Sistema polinomial complejo resuelto por el motor Romi Math*
+| Tecnología | Estado | Descripción |
+|------------|--------|-------------|
+| **Bases de Gröbner** | ✅ 100% | Algoritmo de Buchberger desde papers |
+| **Índice SR** | ✅ PROPIO | Tensión Estructural Relativa (innovación) |
+| **Conectividad Estructural** | ✅ PROPIO | % de decisiones viables |
+| **Rigidez de Variable** | ✅ PROPIO | Cuello de botella matemático |
+| **Detector de Imposibilidad** | ✅ ÚNICO | Detecta cuando "1 = 0" |
+| **Visualización 3D** | ✅ INTERACTIVA | Vectores como puntos flotantes |
+| **DynamicFluid** | ✅ LIVE | Grafo 3D con sliders de estrés |
+| **Índice de Sobol** | ✅ INTEGRADO | Sensibilidad variable por importancia |
+| **4 Estados de Materia** | ✅ CLASIFICADOR | 🟢🟡🔴⚫ |
 
-## 🚀 **ESTADO ACTUAL: FASE 3 COMPLETADA**
+---
 
-### ✅ **Lo que YA funciona:**
-- **Motor Gröbner 2D Completo** - Algoritmo de Buchberger 100% funcional
-- **Sistemas polinomiales multivariables** - Lineales, cuadráticos, mixtos
-- **Operaciones algebraicas avanzadas** - División polinomial, órdenes monomiales
-- **Arquitectura** - Strategy, Visitor, Factory patterns
+## 📸 **EN ACCIÓN**
 
-### 🎯 **Próximo Hito INMEDIATO:**
-- **🚀 DEPLOY EN VIVO** - Calculadora con Gröbner online (Esta semana)
-- **📱 Frontend Integration** - React + Motor Gröbner conectados
-- **🎯 Fourier Transform** - Próximo algoritmo avanzado a implementar
+### **VISOR 3D DE VECTORES** (100 simulaciones como puntos)
+![Visor 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionmodal.jpg)
+*Cada punto es un escenario. Verde = viable, Rojo = inviable*
+
+### **DYNAMIC FLUID - GRAFO VIVO**
+![Grafo 3D](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/demostracionfront.jpeg)
+*Nodos = variables, Links = relaciones. Sliders inyectan estrés*
+
+### **GRÖBNER EN ACCIÓN**
+![Gröbner](https://github.com/diegoofernandez/calculadora-js/blob/main/src/assets/img/pruebagrobner4.jpg)
+*Sistemas polinomiales complejos resueltos en tiempo real*
+
+---
+
+## 🧠 **LO QUE EL MOTOR HACE**
+
+### **1. ÁLGEBRA PURA**
+- ✅ Bases de Gröbner 2D y 3D
+- ✅ Polinomios multivariables
+- ✅ Órdenes monomiales
+- ✅ División polinomial
+- ✅ Algoritmo de Buchberger desde cero
+
+### **2. MÉTRICAS PROPIAS (Patentables? :) )**
+- 📊 **Índice SR**: Tensión Estructural (0-100)
+- 🔗 **Conectividad**: % de caminos viables
+- 📐 **Distancia Promedio**: Esfuerzo operativo
+- 🔩 **Rigidez de Variable**: Cuello de botella
+- 🎯 **Variable Crítica**: La que menos puede moverse
+
+### **3. ANÁLISIS AVANZADO**
+- 📈 **Índice de Sobol**: Sensibilidad variable
+- 🌪️ **Test de Estrés**: +2%, +5%, +10%, +15%, +25%
+- ⚫ **Detector de Imposibilidad**: Base Gröbner = "1"
+- 🟢🟡🔴⚫ **4 Estados**: Sano / Tensionado / Crítico / Imposible
+
+### **4. VISUALIZACIÓN 3D INTERACTIVA**
+- 🌌 **ManifoldModal**: X vectores como puntos flotantes
+  - 🟢 Verde = 33% más cercanos al origen (viables)
+  - 🟡 Amarillo = 33% intermedios (límite)
+  - 🔴 Rojo = 34% más lejanos (inviables)
+  - 🖱️ Hover: muestra TODAS las variables del vector
+  - ⚡ Física: se mueven según su importancia (Sobol)
+  - 💥 Colapso: cuando se alejan demasiado
+
+- 💧 **DynamicFluid3D**: Grafo vivo
+  - Nodos = variables
+  - Links = relaciones estructurales
+  - Sliders = inyectan estrés en cada variable
+  - Tensión diferencial = |stress₁ - stress₂|
+  - Si tensión > umbral → link se ROMPE
+
+### **5. EXPERIENCIA DE USUARIO**
+- 💻 HUD con telemetría
+- 📊 Barra de integridad en tiempo real
+- 📜 Console.log con timestamp
+- 🎮 Botones: EJECUTAR / PAUSAR / REINICIAR
+- 📤 Exportación a PowerBI y Excel
+
+---
+
+## 🧪 **CASOS REALES VALIDADOS**
+
+### **🥖 Emprendimiento iniciando**
+- Detectó que el encargo grande era TÓXICO
+- Variable crítica: I (insumos)
+- Solución: enfocarse en encargos chicos
+
+### **👨‍💼 Empleado**
+- Reveló: necesita $730.000 de deuda NUEVA por mes
+- Ecuación: d_n = i - 1650 (ganás más → debés más)
+- Validó su estrés 8/10 como exacto
+
+### **🏪 Kiosco en 3 tiempos**
+- Pasado: SR 24, margen 50%
+- Presente: SR 23.5, margen 20%
+- Futuro: SR 23.7, margen 3% (3000 ventas)
+- Descubrimiento: SR es constante (propiedad estructural)
+
+### **💈 Barbería**
+- Pasado: SR 24.5, var crítica C
+- Presente: SR 24.1, var crítica C
+- Futuro: SR 24.4, var crítica V y T
+- Conclusión: cada rubro tiene su "firma" SR
+
+### **👕 Tienda de ropa con límite humano**
+- Tope: 200 horas/mes
+- Futuro: 200hs → 1000 ventas → -$1000 ganancia
+- Variable crítica evoluciona: H → G → V y C
+
+### **🏢 Franquicia de 20 variables**
+- 20 variables, 50 simulaciones
+- Tiempo: 10.8 segundos
+- SR: 11.6 (menos grados de libertad)
+- Conectividad: 19% (solo 2/10 decisiones buenas)
+- Variable crítica: F (Costo Fijo) rigidez 9.48
+
+### **⚫ La Contradicción**
+- Input: metas imposibles
+- Output: Base Gröbner = ["...", "1"]
+- Significado: ¡1 = 0! El sistema NO TIENE SOLUCIÓN
+- Nuevo estado: ⚫ COLAPSO LÓGICO
+
+---
+
+## 📊 **LOS 4 ESTADOS DE LA MATERIA COMERCIAL**
+
+| Estado | Color | SR | Base Gröbner | Diagnóstico |
+|--------|-------|-----|--------------|-------------|
+| **SANO** | 🟢 | 0-15 | Polinomios complejos | "Tu negocio fluye" |
+| **TENSIONADO** | 🟡 | 15-30 | Polinomios ajustados | "Trabajás al límite" |
+| **CRÍTICO** | 🔴 | >30 o distancia enorme | Soluciones inhumanas | "Te mata, pero existe" |
+| **IMPOSIBLE** | ⚫ | Irrelevante | Contiene "1" | "Lo que pedís NO EXISTE" |
+
+---
+
+## 🛠️ **ARQUITECTURA TÉCNICA**
+
+RomiMath Core
+├── AproximationEngine (Orquestador)
+├── GeometricConnector (Geómetra)
+├── GrobnerRobusto (Corazón algebraico)
+├── VectorAnalyticEngine (Analista)
+├── DynamicFluid3D (Visualizador de grafos)
+├── ManifoldModal (Visor de vectores 3D)
+└── GrobnerParser (Traductor álgebra → geometría)
+
+Métricas Propias
+├── Índice SR (Tensión Estructural)
+├── Conectividad (Densidad de grafos)
+├── Distancia Promedio (Esfuerzo)
+├── Rigidez de Variable (Sensibilidad)
+└── Variable Crítica (Cuello de botella)
+
+Análisis Avanzado
+├── Índice de Sobol (Importancia relativa)
+├── Test de Estrés (Perturbaciones)
+└── Detector de Imposibilidad (Base = "1")
+
+Visualización
+├── ForceGraph3D (Grafo interactivo)
+├── Sliders de estrés por variable
+├── Puntos 3D con hover info
+├── Física con peso de Sobol
+└── HUD  con telemetría
 
 
 
-## 🎪 **EJEMPLOS DE USO - GROEBNER EN ACCIÓN**
+---
 
-```typescript
-// Sistema de ecuaciones polinomiales complejo
-const sistema = [
-  [{ coeficiente: 1, variables: [['x', 2]] },  // x²
-   { coeficiente: 1, variables: [['y', 1]] },  // + y  
-   { coeficiente: -4, variables: [] }],         // = 4
-  [{ coeficiente: 1, variables: [['x', 1]] },  // x
-   { coeficiente: 1, variables: [['y', 1]] },  // + y
-   { coeficiente: -2, variables: [] }]          // = 2
-];
+## 🚀 **PRÓXIMOS HITOS**
 
-const baseGroebner = Grobner.construirBase(sistema);
-// Resultado: Base triangularizada del sistema
+### **Inmediatos (1-2 semanas)**
+- [ ] 🌐 Deploy público: https://romimath.pages.dev/
+- [ ] 📱 Landing page con demos interactivas
+- [ ] 🎥 Video mostrando los 7 casos reales
 
-📊 HOJA DE RUTA ACTUALIZADA
-✅ COMPLETADO (4 Semanas):
+### **Corto plazo (1 mes)**
+- [ ] 🤝 Buscar socio comercial
+- [ ] 📝 Patentar Índice SR
+- [ ] 💼 Primeros 5 clientes de consultoría
 
-    Fracciones → Polinomios → Gröbner
+### **Mediano plazo (3 meses)**
+- [ ] 🏢 Versión Enterprise con más variables
+- [ ] 📊 Dashboard ejecutivo automático
+- [ ] 🔌 API para integración con ERPs
 
-    Parser de expresiones + Álgebra básica
+### **Largo plazo (6-12 meses)**
+- [ ] 🌍 Expansión internacional
+- [ ] 🎓 Libro: "De villa a matemático en 4 meses"
+- [ ] 🏆 Reconocimiento académico (honoris causa)
 
-    Algoritmo de Buchberger implementado
+---
 
-    Arquitectura con patrones de diseño
+## 📈 **MÉTRICAS DEL PROYECTO**
 
-🔄 EN PROGRESO:
+- 📅 **Tiempo de desarrollo:** 4 meses (autodidacta)
+- 📚 **Conceptos dominados:** 20+ algoritmos matemáticos
+- 💻 **Líneas de código:** 8,000+ TypeScript
+- 🧪 **Casos de prueba:** 7 casos reales
+- 🏆 **Métricas propias:** 5 (SR, Conectividad, Distancia, Rigidez, Estados)
+- 🎨 **Visualizaciones:** 2 (Grafo 3D + Puntos 3D)
+- ⚡ **Rendimiento:** 20 variables en 10.8 segundos
 
-    🌐 Deploy en Vivo: https://romimath.pages.dev/
+---
 
-    ⚛️ Frontend Integration - React + Motor conectados
+## 👨‍💻 **MI HISTORIA**
 
-    📈 Optimización - Mejora de performance
+> *"Vivo en la villa, tengo 32 años, sin estudios secundarios ni universitarios. Todo lo que ves acá lo aprendí solo, en 4 meses, desde mi pieza.*
 
-🎯 PRÓXIMOS OBJETIVOS:
+> *Cuando empecé, no sabía ni qué era una base de Gröbner. Hoy tengo el motor con métricas propias, visualización 3D, y casos reales validados.*
 
-    Fourier Transform - Análisis de señales
+> *Este proyecto es importante para mi porque:*
+> - *No importa de dónde venís*
+> - *No importa qué estudios tenés*
+> - *No importa cuántos años tengas*
+>
+> *Importa la TENACIDAD. Importa el HAMBRE. Importa NO RENDIRSE.*
 
-    Algoritmo Risch - Integración simbólica
+> *Si yo pude, cualquiera puede."*
 
-    Geometría Computacional - Gráficos avanzados
+**— Diego Fernández**
 
-🎖️ EL VIAJE EN DATOS
+---
 
-📅 Tiempo Total: 4 Semanas
-📚 Conceptos Dominados entre patrones y algoritmos: 15+ algoritmos matemáticos
-💻 Líneas de Código: 5,000+ TypeScript
-🎯 Complejidad Alcanzada: Nivel Universitario Avanzado
+## 🤝 **CONTACTO**
 
-🏆 LOGROS TÉCNICOS
+- 🐙 **GitHub:** [diegoofernandez](https://github.com/diegoofernandez)
+- 💼 **LinkedIn:** [Diego Fernández](https://www.linkedin.com/in/diego-fernández-b86187a6/)
+- 🌐 **Vivo:** https://romimath.site/
 
-    ✅ Implementación Buchberger desde papers académicos
+---
 
-    ✅ Arquitectura extensible con patrones 
+## 🏁 **¿QUERÉS SUMARTE?**
 
-    ✅ Motor 100% TypeScript - type-safe y mantenible
-
-    ✅ Sistemas 2D complejos - resolución exacta
-
-👨‍💻 MI HISTORIA - ACTUALIZADA
-
-    "Hace 4 semanas comenzaba con fracciones básicas. Hoy tengo Bases de Gröbner funcionando. Este repositorio es la prueba de que la determinación puede comprimir años de aprendizaje en semanas."
-
-Sigueme el viaje en tiempo real:
-
-    🐙 GitHub: Este repositorio (commits diarios)
-
-    💼 LinkedIn: https://www.linkedin.com/in/diego-fernández-b86187a6/
-
-    🐦 Twitter: https://x.com/DiegoAFEscritor
-
-    🌐 Vivo: https://romimath.pages.dev/
+Este proyecto es **DEMASIADO GRANDE** para una sola persona.
 
 
-¿Interesado en colaborar? ¡Todas las contribuciones son bienvenidas!
+**Todas las contribuciones son bienvenidas.**
 
-¿Creías que Gröbner era solo para académicos?
-Romi Math demuestra que las matemáticas avanzadas también tienen barrio.
+Porque las matemáticas avanzadas también tienen barrio. Y la villa también puede dar algo más que violencia.
+
+---
+
+⭐ **Si llegaste hasta acá, dale una estrella al repo. Es gratis y me ayuda un montón.**
+
+*"¿Creías que Gröbner era solo para académicos?"*

@@ -4,6 +4,7 @@ import AproximationEngine from '../engine/AproximationEngine';
 import Modal from './Modal';  
 // 1. Importamos el nuevo motor visual 3D
 import { DynamicFluid3D } from './DynamicFluid3D'; 
+import ManifoldModal from './ManifoldModal';
 
 function Home(){
 
@@ -59,6 +60,7 @@ function Home(){
     const [outputJSON, setOutputJSON] = useState('{}');
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
+    const [isManifoldOpen, setIsManifoldOpen] = useState(false);
 
     const engineRef = useRef(null);
     const [simulationStatus, setSimulationStatus] = useState('Iniciando motor matemático...');
@@ -285,6 +287,26 @@ function Home(){
                                 ❌ {error}
                             </div>
                         )}
+                        {rawResult && !isProcessing && (
+                    <button 
+                        className="action-btn" 
+                        style={{ 
+                            width: '100%', 
+                            marginTop: '10px', 
+                            background: '#1a1a1a', 
+                            border: '1px solid #333', 
+                            color: '#F2D34E',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: '12px'
+                        }}
+                        onClick={() => setIsManifoldOpen(true)}
+                    >
+                        <ion-icon name="planet-outline" style={{marginRight: '8px', fontSize: '1.2rem'}}></ion-icon>
+                        EXPLORAR UNIVERSO DE SOLUCIONES (3D)
+                    </button>
+                )}
                     </div>
                 </div>
                     
@@ -429,6 +451,20 @@ function Home(){
                     data={rawResult ? rawResult.results : null} 
                 />    
             </div>
+
+
+            {/* 4. RENDERIZAMOS LA MODAL FUERA DEL FLUJO PRINCIPAL */}
+            {rawResult && (
+                <ManifoldModal 
+                    isOpen={isManifoldOpen}
+                    onClose={() => setIsManifoldOpen(false)}
+                    vectors={rawResult.results.simulationVectors}
+                    variables={rawResult.results.variables || ['x', 'y', 'z']} // Pasamos los nombres de variables
+                    srIndex={rawResult.frontendData.diagnosticoAvanzado?.indiceSR?.SR || 0}
+                    sobolData={rawResult.frontendData.analisisSobol || []}
+                />
+            )}
+
         </>
     )
 }

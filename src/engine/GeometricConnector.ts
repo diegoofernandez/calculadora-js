@@ -1,5 +1,6 @@
 import Fraccion from './objects/Fraccion';
 
+
 type Vector = Fraccion[];
 
 export default class GeometricConnector {
@@ -60,18 +61,7 @@ export default class GeometricConnector {
     setBaseVectors(vectors: Vector[]): void {
         this.baseVectors = vectors;
         this.calcularCentroideCono();
-        /*if (vectors.length < 1) {
-            throw new Error("Se requiere al menos 1 vector base");
-        }
         
-        if (this.strictMode && vectors.length !== 3) {
-            console.warn(`Modo estricto: Se esperaban 3 vectores, pero se recibieron ${vectors.length}. Cambiando a modo flexible.`);
-            this.strictMode = false;
-        }
-        
-        this.baseVectors = vectors;
-        this.vectorCache.clear(); // Limpiar cache
-        //console.log(`Vectores base configurados: ${vectors.length} vector(es)`);*/
     }
     
     setSimulationStrategy(strategy: string): void {
@@ -97,7 +87,6 @@ export default class GeometricConnector {
                 this.strictMode = false;
         }
         
-        //console.log(`Estrategia configurada: ${strategy} (umbral: ${this.connectionThreshold})`);
     }
     
     canConnect(u: Vector, v: Vector): {
@@ -379,15 +368,6 @@ export default class GeometricConnector {
         }
         return result;
     }
-    /*
-    private calculateDistance(u: Vector, v: Vector): number {
-        let sumSquares = new Fraccion(0n);
-        for (let i = 0; i < u.length; i++) {
-            const diff = u[i].sumar(v[i].negar());
-            sumSquares = sumSquares.sumar(diff.multiplicar(diff));
-        }
-        return Math.sqrt(sumSquares.toFloat());
-    }*/
     private calculateDistance(u: Vector, v: Vector): number {
         let sumSquares = new Fraccion(0n);
         const dimension = u.length; // <-- n variables

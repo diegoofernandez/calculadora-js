@@ -3,6 +3,7 @@ import VectorAnalyticEngine from './objects/analytics/VectorAnalyticEngine';
 import GeometricConnector from './GeometricConnector';
 import ASTConstrucG from './libs/ASTConstructG';
 import GrobnerRobusto from './objects/grobner/Grobner';
+import SensitivityEngine from './objects/SensitivityEngine';
 
 type Vector = Fraccion[];
 
@@ -12,11 +13,13 @@ export default class AproximationEngine {
     private simulationId: string;
     private startTime: number;
     private seed: number = 12345;
+    private sensitivityEngine: SensitivityEngine;
     
     constructor() {
         this.vectorEngine = new VectorAnalyticEngine();
         this.geometricConnector = new GeometricConnector();
         this.simulationId = this.generateSimulationId();
+        this.sensitivityEngine = new SensitivityEngine();
         this.startTime = Date.now();
         
         this.initializeStorage();
@@ -109,184 +112,7 @@ export default class AproximationEngine {
             console.warn('Error actualizando historial:', error);
         }
     }
-    /*
-    public async runCompleteSimulation(
-        polinomiosInput: any[],
-        options: {
-            maxVectors?: number;
-            targetVectors?: number;
-            showSteps?: boolean;
-            minVectorsForSimulation?: number;
-        } = {}
-        ): Promise<{
-            success: boolean;
-            simulationId: string;
-            results: any;
-            frontendData: any;
-        }> {
-            const startTime = Date.now();
-        
-        try {
-            localStorage.setItem('simulation_status', '🚀 Iniciando simulación...');
-            
-            localStorage.setItem('simulation_status', '📐 Calculando base de Gröbner...');
-            const grobnerResult = await this.calculateGroebnerBase(polinomiosInput);
-            
-            if (!grobnerResult.vectorialData) {
-                throw new Error('No se pudo obtener datos vectoriales de Gröbner');
-            }
-            
-            const optimalVectors = grobnerResult.vectorialData.optimalVectors || [];
-            const isViable = grobnerResult.vectorialData.isViable !== false;
-            
-            if (!isViable) {
-                throw new Error('Base de Gröbner no viable');
-            }
-            
-            console.log(`📊 Grobner devolvió: ${optimalVectors.length} vector(es) viable=${isViable}`);
-            
-            const minRequired = options.minVectorsForSimulation || 3;
-            //let baseVectors: Vector[];
-            //let simulationStrategy: string;
-            //let adaptationInfo: string;
-
-            let baseVectors = optimalVectors; // USAR TODAS LAS BASES QUE SALIERON
-            let simulationStrategy = 'optimal';
-            let adaptationInfo = `Usando la totalidad de ${optimalVectors.length} vectores extraídos de Gröbner.`;
-
-            console.log(`✅ ${adaptationInfo}`);
-
-            
-            
-            try {
-                this.geometricConnector.setBaseVectors(baseVectors);
-                this.geometricConnector.setSimulationStrategy(simulationStrategy);
-            } catch (error: any) {
-                console.warn(`Error configurando conector: ${error.message}`);
-            }
-            
-
-            // 1. Intentamos leer la cantidad de simulaciones desde el propio JSON
-            // 1. Lectura a prueba de balas del JSON
-            let simulacionesDelJSON = undefined;
-            try {
-                if (Array.isArray(polinomiosInput) && polinomiosInput.length > 0) {
-                    // Si la posición 0 es un arreglo (como manda Home.jsx), sacamos el objeto de adentro [0][0]
-                    const configObj = Array.isArray(polinomiosInput[0]) ? polinomiosInput[0][0] : polinomiosInput[0];
-                    
-                    if (configObj && configObj.simulaciones) {
-                        simulacionesDelJSON = Number(configObj.simulaciones);
-                    }
-                }
-            } catch (e) {
-                console.warn("No se pudo leer configuración extra del JSON");
-            }
-            // OPTIMIZACIÓN: Ajustar target más conservadoramente
-            //let targetVectors = options.targetVectors || 50;
-            // 2. Definimos el target con prioridades:
-            //    1° El valor del JSON (manda siempre)
-            //    2° El valor de options pasado por UI
-            //    3° Un default de 500 si no hay nada
-            let targetVectors = simulacionesDelJSON || options.targetVectors || 500;
-            if (simulationStrategy !== 'optimal') {
-                targetVectors = Math.floor(targetVectors * 0.6); // Reducido de 0.7
-            }
-            
-            // Limitar máximo de vectores
-            //targetVectors = Math.min(targetVectors, 500); // Límite absoluto
-            // 3. Un límite absoluto de seguridad por si alguien pone "simulaciones": 9999999
-            targetVectors = Math.min(targetVectors, 2000); 
-            
-            console.log(`🎯 Target final: ${targetVectors} vectores (JSON: ${simulacionesDelJSON ? 'Sí' : 'No'})`);
-            
-            console.log(`🎯 Target: ${targetVectors} vectores (estrategia: ${simulationStrategy})`);
-            
-            localStorage.setItem('simulation_status', '🌌 Generando espacio de simulación...');
-            const simulationResult = await this.generateSimulationSpace(
-                baseVectors, 
-                targetVectors
-            );
-            
-            localStorage.setItem('simulation_status', '🔗 Analizando conectividad...');
-            const connectivity = this.geometricConnector.buildConnectivityGraph(
-                simulationResult.simulationVectors
-            );
-            
-            const frontendData = this.prepareJSONOutput({
-                grobnerResult,
-                baseVectors,
-                simulationResult,
-                connectivity,
-                options,
-                simulationStrategy,
-                adaptationInfo,
-                originalVectorsCount: optimalVectors.length
-            });
-            
-            const finalResults = {
-                success: true,
-                simulationId: this.simulationId,
-                duration: Date.now() - startTime,
-                results: {
-                    grobnerBase: grobnerResult.basePolynomials || [],
-                    originalVectorsCount: optimalVectors.length,
-                    simulationStrategy: simulationStrategy,
-                    adaptationInfo: adaptationInfo,
-                    baseVectors: this.vectorsToString(baseVectors),
-                    simulationVectors: this.vectorsToString(simulationResult.simulationVectors),
-                    connectivity,
-                    geometricProperties: simulationResult.geometricProperties
-                },
-                frontendData
-            };
-            
-            this.saveToLocalStorage('final_results', finalResults);
-            
-            // Preparar datos para exportación
-            const powerBIData = this.generatePowerBIExport(finalResults);
-            this.saveToLocalStorage('powerbi_export', powerBIData);
-            
-            const excelData = this.generateExcelExport(finalResults);
-            this.saveToLocalStorage('excel_export', excelData);
-            
-            localStorage.setItem('simulation_status', '✅ Simulación completada');
-            localStorage.setItem('last_simulation_id', this.simulationId);
-            
-            // Agregar métodos de exportación al resultado
-            finalResults.frontendData.exportMethods = {
-                powerBI: 'Use downloadPowerBIFile(results)',
-                excel: 'Use downloadExcelFile(results) or downloadExcelXLSX(results)'
-            };
-            
-            console.log('📊 Datos preparados para exportación a Power BI y Excel');
-            
-            return finalResults;
-            
-        } catch (error: any) {
-            console.error('❌ Error en simulación:', error);
-            
-            const errorResult = {
-                success: false,
-                simulationId: this.simulationId,
-                duration: Date.now() - startTime,
-                error: error.message
-            };
-            
-            this.saveToLocalStorage('error', errorResult);
-            localStorage.setItem('simulation_status', `❌ Error: ${error.message}`);
-            
-            return {
-                ...errorResult,
-                results: null,
-                frontendData: {
-                    error: error.message,
-                    status: 'failed',
-                    timestamp: new Date().toISOString()
-                }
-            };
-        }
-    }
-    */
+    
     public async runCompleteSimulation(
         polinomiosInput: any[],
         options: {
@@ -365,32 +191,8 @@ export default class AproximationEngine {
                 targetVectors
             );
             
-            // --- 🚨 NUEVO: MOTOR DE DIAGNÓSTICO AVANZADO ---
-            /*localStorage.setItem('simulation_status', '🔥 Aplicando Test de Estrés y Sensibilidad...');
             
-            // 1. Estrés Global (Aplicamos 15% de ruido macroeconómico)
-            //const nivelEstres = 0.15;
-            const nivelEstres = options.stressLevel !== undefined ? options.stressLevel : 0.15;
-            //const vectoresEstresados = this.aplicarEstresGlobal(simulationResult.simulationVectors, nivelEstres);
-            const vectoresEstresados = this.aplicarEstresGlobal(simulationResult.simulationVectors, nivelEstres);
-            
-            // 2. Construir Grafo sobre los vectores ESTRESADOS (Resiliencia Real)
-            const connectivity = this.geometricConnector.buildConnectivityGraph(vectoresEstresados);
-            const stressedConnectivityRate = this.calculateConnectivityRate(vectoresEstresados);
-            
-            // 3. Análisis de Sensibilidad (Obtener nombres de variables si existen, sino VAR_X)
-            const nombresVariables = grobnerResult.vectorialData.baseMonomial || 
-                                     Array.from({length: baseVectors[0].length}, (_, i) => `VAR_${i}`);
-            
-            const sensibilidad = this.identificarVariableCritica(simulationResult.simulationVectors, nombresVariables);
-            
-            // 4. Calcular Índice S_R (Asumiendo un coseno promedio de viabilidad de 0.85 para el cono)
-            const diagnosticoSR = this.calcularIndiceResiliencia(
-                stressedConnectivityRate, 
-                simulationResult.geometricProperties.averageDistance, 
-                0.85
-            );*/
-            // --- 🚨 NUEVO: MOTOR DE DIAGNÓSTICO AVANZADO ---
+            // --- MOTOR DE DIAGNÓSTICO AVANZADO ---
             localStorage.setItem('simulation_status', '🔥 Aplicando Test de Estrés y Sensibilidad...');
             
             // Forzamos semilla para repetibilidad
@@ -410,7 +212,7 @@ export default class AproximationEngine {
             const x0 = baseVectors[0];
             const tau = Array.from({length: x0.length}, () => new Fraccion(1n, 1n)); 
 
-            // 🚨 ACÁ ESTÁ LA MAGIA: Calculamos la distribución real (Vector por Vector)
+            // Calculamos la distribución real (Vector por Vector)
             const distribucion = this.calcularDistribucionSR(
                 vectoresEstresados, 
                 x0, 
@@ -425,7 +227,13 @@ export default class AproximationEngine {
                 distribucion.margenError
             );
             // --- FIN DIAGNÓSTICO AVANZADO ---
-            // --- FIN DIAGNÓSTICO AVANZADO ---
+
+            localStorage.setItem('simulation_status', '🔬 Calculando Vectores de Fuerza (Sobol)...');
+            
+            const indicesSobol = this.sensitivityEngine.calcularIndicesSobol(
+                vectoresEstresados, // Usamos los vectores con ruido para ver quién empuja más
+                nombresVariables
+            );
 
             const frontendData = this.prepareJSONOutput({
                 grobnerResult,
@@ -444,6 +252,7 @@ export default class AproximationEngine {
                 variableCritica: sensibilidad,
                 estresAplicado: `${(nivelEstres * 100)}%`
             };
+            frontendData.analisisSobol = indicesSobol;
             
             const finalResults = {
                 success: true,
@@ -605,33 +414,6 @@ export default class AproximationEngine {
         
         return result;
     }
-    /*
-    private async calculateGroebnerBase(input: any[]): Promise<{
-        basePolynomials?: any[];
-        vectorialData?: any;
-    }> {
-
-        try {
-            const ast = ASTConstrucG.construirAST(input);
-            const grobner = new GrobnerRobusto();
-            
-            const vectorialData = grobner.obtenerBaseVectorialOptima();
-            
-            let basePolynomials: any[] = [];
-            if (typeof grobner.getBase === 'function') {
-                basePolynomials = grobner.getBase();
-            }
-            
-            return {
-                basePolynomials,
-                vectorialData
-            };
-            
-        } catch (error) {
-            console.error('Error en cálculo de Gröbner:', error);
-            throw error;
-        }
-    }*/
 
     private async calculateGroebnerBase(input: any[]): Promise<{
         basePolynomials?: any[];
@@ -1145,117 +927,6 @@ export default class AproximationEngine {
     }
 
     // indices de estres
-    /*
-private calcularIndiceResiliencia(
-        connectivityRate: number, 
-        avgDistance: number, 
-        cosTheta: number
-    ): { SR: number; estado: string; acciones: string[] } {
-        
-        // SR = C * cos(theta) * (Penalización Suavizada por Distancia)
-        // Usamos 50 / (50 + distancia) para que distancias grandes no den CERO absoluto.
-        const penaltyDistancia = 50 / (50 + Math.max(0, avgDistance));
-        const SR = connectivityRate * Math.max(0, cosTheta) * penaltyDistancia;
-        
-        // Lo pasamos a una escala de 0 a 100 para que sea más legible para el cliente
-        const SR_100 = Number((SR * 100).toFixed(1));
-
-        // Ajustamos los umbrales para la nueva escala (0 a 100)
-        if (SR_100 >= 35) { // Más de 35 puntos es sólido
-            return {
-                SR: SR_100,
-                estado: "ÓPTIMO / RESILIENTE",
-                acciones: [
-                    "Escalar inversión operativa: el sistema soporta volumen.",
-                    "Mantener estructura de costos fijos actual.",
-                    "El modelo es altamente resiliente a perturbaciones macroeconómicas."
-                ]
-            };
-        } else if (SR_100 >= 15) { // Entre 15 y 35
-            return {
-                SR: SR_100,
-                estado: "TENSIONADO",
-                acciones: [
-                    "Congelar la contratación de nuevos gastos fijos.",
-                    "Auditar la Variable Crítica detectada para flexibilizarla.",
-                    "Aumentar el margen de seguridad en el flujo de caja."
-                ]
-            };
-        } else { // Menos de 15
-            return {
-                SR: SR_100,
-                estado: "FRÁGIL / CRÍTICO",
-                acciones: [
-                    "URGENTE: Reducir la dependencia de la Variable Crítica.",
-                    "Detener gastos que no generen retorno de capital inmediato.",
-                    "Reestructurar ecuaciones (Precio vs Costo) desde cero."
-                ]
-            };
-        }
-    }*/
-    /*
-    private calcularIndiceResiliencia(
-        connectivityRate: number, 
-        avgDistance: number, 
-        cosTheta: number
-    ): { SR: number; estado: string; acciones: string[] } {
-        
-        // 🚨 SOLUCIÓN AL EFECTO ESCALA: Penalización Logarítmica
-        // Usamos log10 para que los sistemas con números gigantes (ej: potencias o pesos argentinos)
-        // no aplasten el índice a cero. 
-        const penaltyDistancia = 1 / (1 + Math.log10(1 + Math.max(0, avgDistance)));
-        
-        const SR = connectivityRate * Math.max(0, cosTheta) * penaltyDistancia;
-        let SR_100 = Number((SR * 100).toFixed(1));
-
-        // Seguro de visualización: Si el sistema no colapsó del todo, no mostramos un cero seco.
-        if (SR_100 === 0 && SR > 0) SR_100 = 0.1;
-
-        if (SR_100 >= 35) {
-            return {
-                SR: SR_100,
-                estado: "ÓPTIMO / RESILIENTE",
-                acciones: [
-                    "Escalar inversión operativa: el sistema soporta volumen.",
-                    "Mantener estructura de costos fijos actual.",
-                    "El modelo es altamente resiliente a perturbaciones macroeconómicas."
-                ]
-            };
-        } else if (SR_100 >= 10) { // Ajuste fino del umbral
-            return {
-                SR: SR_100,
-                estado: "TENSIONADO",
-                acciones: [
-                    "Congelar la contratación de nuevos gastos fijos.",
-                    "Auditar la Variable Crítica detectada para flexibilizarla.",
-                    "Aumentar el margen de seguridad en el flujo de caja."
-                ]
-            };
-        } else {
-            return {
-                SR: SR_100,
-                estado: "FRÁGIL / CRÍTICO",
-                acciones: [
-                    "URGENTE: Reducir la dependencia de la Variable Crítica.",
-                    "Detener gastos que no generen retorno de capital inmediato.",
-                    "Reestructurar ecuaciones (Precio vs Costo) desde cero."
-                ]
-            };
-        }
-    }*/
-    /*
-    private transformarVector(x: Fraccion[], x0: Fraccion[], tau: number[]): number[] {
-        const n = x.length;
-        const vectorTransformado: number[] = new Array(n);
-        for (let i = 0; i < n; i++) {
-            const xi_float = x[i].toFloat();
-            const x0i_float = Math.abs(x0[i].toFloat());
-            // Regularización con umbral mínimo estructural (Tau)
-            const denominador = Math.max(x0i_float, tau[i]); 
-            vectorTransformado[i] = xi_float / denominador;
-        }
-        return vectorTransformado;
-    }*/
     private transformarVector(x: Fraccion[], x0: Fraccion[], tau: Fraccion[]): number[] {
         const n = x.length;
         const vectorTransformado: number[] = new Array(n);
@@ -1287,22 +958,7 @@ private calcularIndiceResiliencia(
         return Math.sqrt(sumSquares) / Math.sqrt(n);
     }
 
-    /*
-    private calcularSigmaDistancias(vectoresSimulados: Vector[], x0: Vector[], tau: number[]): { media: number, sigma: number } {
-        const n = vectoresSimulados.length;
-        if (n <= 1) return { media: 0, sigma: 0 };
-
-        const x0_T = this.transformarVector(x0, x0, tau);
-        const distancias = vectoresSimulados.map(v => {
-            const v_T = this.transformarVector(v, x0, tau);
-            return this.calculateDistanceTransformada(v_T, x0_T);
-        });
-        
-        const media = distancias.reduce((sum, d) => sum + d, 0) / n;
-        const sumaDiferenciasCuadradas = distancias.reduce((sum, d) => sum + Math.pow(d - media, 2), 0);
-        const varianza = sumaDiferenciasCuadradas / (n - 1); // Muestra insesgada
-        return { media, sigma: Math.sqrt(varianza) };
-    }*/
+    
     // Nueva función: Calcula la distribución real de S_R para el Monte Carlo completo
     private calcularDistribucionSR(
         vectoresSimulados: Fraccion[][], 
@@ -1344,48 +1000,7 @@ private calcularIndiceResiliencia(
         return { mediaSR, margenError };
     }
 
-    /*
-    private calcularIndiceResiliencia(
-        connectivityRate: number, 
-        avgDistance: number, 
-        cosTheta: number,
-        sigmaEmpirico: number,
-        n_simulaciones: number
-    ): { SR: number; errorMargen: number; estado: string; acciones: string[] } {
-        
-        // Castigo logarítmico para absorber el Efecto Escala
-        const penaltyDistancia = 1 / (1 + Math.log10(1 + Math.max(0, avgDistance)));
-        const SR_crudo = connectivityRate * Math.max(0, cosTheta) * penaltyDistancia;
-        
-        let SR_100 = Number((SR_crudo * 100).toFixed(1));
-        if (SR_100 === 0 && SR_crudo > 0) SR_100 = 0.1;
-
-        // Intervalo de Confianza 95% (Monte Carlo)
-        const errorEstandar = (sigmaEmpirico / Math.sqrt(Math.max(1, n_simulaciones)));
-        const margenError95 = 1.96 * errorEstandar;
-        const errorPuntosSR = Number((margenError95 * 100 * connectivityRate).toFixed(2));
-
-        let estadoStr = "";
-        let accionesArr: string[] = [];
-
-        if (SR_100 >= 35) {
-            estadoStr = "OPERACIÓN VIABLE";
-            accionesArr = ["Estructura soporta el volumen actual.", "Mantener variables operativas sin cambios estructurales."];
-        } else if (SR_100 >= 10) {
-            estadoStr = "TENSIONADO";
-            accionesArr = ["Auditar Variable Crítica.", "Bloquear incremento de costos fijos.", "Evaluar elasticidad de precio."];
-        } else {
-            estadoStr = "COLAPSO ESTRUCTURAL";
-            accionesArr = ["Reducir dependencia de la Variable Crítica inmediatamente.", "Reestructuración matemática requerida."];
-        }
-
-        return {
-            SR: SR_100,
-            errorMargen: errorPuntosSR,
-            estado: estadoStr,
-            acciones: accionesArr
-        };
-    }*/
+    
     private calcularIndiceResiliencia(
         mediaSR_cruda: number,
         margenError_crudo: number
@@ -1468,24 +1083,7 @@ private identificarVariableCritica(vectoresSimulados: Vector[], nombresVariables
         };
 }
 
-// En AproximationEngine.ts
-/*
-private aplicarEstresGlobal(vectores: Vector[], nivelEstres: number): Vector[] {
-    // nivelEstres: 0.05 (5%), 0.15 (15%), 0.30 (30%)
-    return vectores.map(v => {
-        const vectorEstresado: Vector = [];
-        for (let i = 0; i < v.length; i++) {
-            const valorOriginal = v[i].toFloat();
-            // Genera un ruido aleatorio entre -nivelEstres y +nivelEstres
-            const ruido = 1 + ((Math.random() * 2 - 1) * nivelEstres); 
-            
-            // Reconvierte a Fracción (simplificado para el ejemplo)
-            const nuevoValor = Math.round(valorOriginal * ruido * 1000);
-            vectorEstresado.push(new Fraccion(BigInt(nuevoValor), 1000n));
-        }
-        return vectorEstresado;
-    });
-}*/
+
 private aplicarEstresGlobal(vectores: Vector[], nivelEstres: number): Vector[] {
         return vectores.map(v => {
             const vectorEstresado: Vector = [];
