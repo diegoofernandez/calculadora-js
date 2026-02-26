@@ -26,12 +26,16 @@ export const generateForensicReport = async (data) => {
     doc.setFontSize(9); doc.setFont("monospace");
     doc.text(`REFERENCE_ID: ${simulationId} | SR_INDEX: ${srIndex.toFixed(2)} pts`, 20, 35);
 
-    // 1. CONTEXTO DEL NEGOCIO
+    // 1. CONTEXTO DEL NEGOCIO (Blindaje Técnico Sugerido por el Mentor)
     doc.setTextColor(0, 0, 0); doc.setFontSize(14);
-    doc.text("1. CONTEXTO DEL NEGOCIO", 20, 55);
+    doc.text("1. METODOLOGÍA DE ESTRÉS ESTRUCTURAL", 20, 55);
     doc.setFont("helvetica", "normal"); doc.setFontSize(10);
-    doc.text(doc.splitTextToSize(`Estudio de estabilidad estructural en un espacio de ${variables.length} dimensiones activas. El sistema evalúa la capacidad de absorción de entropía ante variaciones críticas de mercado.`, 175), 20, 63);
-
+    const contexto = doc.splitTextToSize(
+        "Este informe evalúa la RESILIENCIA ESTRUCTURAL PASIVA ante perturbaciones paramétricas. " +
+        "IMPORTANTE: La trayectoria de perturbación ha sido direccionada proporcionalmente a los índices de sensibilidad Sobol. " +
+        "El modelo no simula mecanismos de ajuste estratégico o feedback correctivo; mide la robustez intrínseca de la arquitectura algebraica actual.", 175
+    );
+    doc.text(contexto, 20, 63);
     // 2. MODELO ESTRUCTURAL (EL DOBLE ADN)
     let currentY = 85;
     doc.setFont("helvetica", "bold"); doc.text("2. MODELO ESTRUCTURAL (BASES)", 20, currentY);
@@ -92,17 +96,17 @@ export const generateForensicReport = async (data) => {
         `Ciclos de deriva antes de colapso: ${trajectoryData?.steps || 0}`
     ], 20, currentY + 10);
 
-    // 6. MÉTRICAS GEOMÉTRICAS (GEOMETRIC CONNECTOR)
+    // 6. MÉTRICAS GEOMÉTRICAS (Simplificadas: Solo el dato puro)
     currentY += 35;
     doc.setFont("helvetica", "bold"); doc.setFontSize(14);
-    doc.text("6. MÉTRICAS DE RESILIENCIA (GEOMETRIC CONNECTOR)", 20, currentY);
+    doc.text("6. MÉTRICAS DE COHERENCIA GEOMÉTRICA", 20, currentY);
     autoTable(doc, {
         startY: currentY + 5,
-        head: [['Métrica Geométrica', 'Valor Detectado', 'Referencia Sector']],
+        head: [['Parámetro de Red', 'Valor Detectado', 'Estado']],
         body: [
-            ['Connectivity Rate', `${(geometricMetrics?.connectivity || 0).toFixed(2)}%`, '80.00%'],
-            ['Average Distance', `${(geometricMetrics?.avgDistance || 0).toFixed(4)}`, '0.4500'],
-            ['SR Index', `${srIndex.toFixed(2)} pts`, '25.00 pts']
+            ['Connectivity Rate', `${(geometricMetrics?.connectivity || 0).toFixed(2)}%`, geometricMetrics?.connectivity > 80 ? 'ÓPTIMO' : 'TENSO'],
+            ['Average Distance', `${(geometricMetrics?.avgDistance || 0).toFixed(4)}`, geometricMetrics?.avgDistance < 0.5 ? 'COMPACTO' : 'DIVERGENTE'],
+            ['SR Index (Resistencia)', `${srIndex.toFixed(2)} pts`, srIndex > 25 ? 'RESILIENTE' : 'INSUFICIENTE']
         ],
         theme: 'striped'
     });
