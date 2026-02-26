@@ -231,7 +231,7 @@ function Home(){
 
     return(
         <>
-            <p className="TextoAblog">Visita el blog para información técnica y asesoramiento sobre el motor. <a href="https://blog.romimath.site" target="_blank">Ir al blog</a></p>
+            <p className="TextoAblog">Visita el blog para información técnica y asesoramiento sobre el motor. <a href="https://romimath.site/blog" target="_blank">Ir al blog</a></p>
             <div className="MainContainer">
                 <div className="JsonInput">
                     <div className="editor-header">
