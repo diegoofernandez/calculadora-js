@@ -22,7 +22,7 @@ function App() {
       </BrowserRouter>
 
       <footer>
-          <p>© 2026 RomiMath. Creado por Diego Fernández</p>
+          <p>© 2026 RomiMath. Creado por Diego Fernández. V1.0</p>
       </footer>
       
     </>
