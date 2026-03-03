@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import FacadeDriver from '../engine/FacadeDriver';
 import AproximationEngine from '../engine/AproximationEngine';  
+import { CalculadorDiferencial } from '../engine/CalculadorDiferencial'; // Ajustá la ruta si hace falta
+import { ModalJacobiano } from './ModalJacobiano';
 import Modal from './Modal';  
 // 1. Importamos el nuevo motor visual 3D
 import { DynamicFluid3D } from './DynamicFluid3D'; 
@@ -61,6 +63,8 @@ function Home(){
     const [isProcessing, setIsProcessing] = useState(false);
     const [error, setError] = useState(null);
     const [isManifoldOpen, setIsManifoldOpen] = useState(false);
+    const [isJacobianoOpen, setIsJacobianoOpen] = useState(false);
+    const [datosJacobiano, setDatosJacobiano] = useState({ matriz: null, superficie: [], diagnostico: "" });
 
     const engineRef = useRef(null);
     const [simulationStatus, setSimulationStatus] = useState('Iniciando motor matemático...');
@@ -199,6 +203,85 @@ function Home(){
         setSimulationStatus('Iniciando motor matemático...');
     }
 
+    const runDifferentialAnalysis = () => {
+        try {
+            const inputData = JSON.parse(inputJSON);
+            // Aislar solo los polinomios (ignoramos el objeto de configuración en la posición 0)
+            const polinomios = inputData.slice(1);
+            const variables = extraerVariablesDinamicas(inputData);
+
+            if (variables.length < 2) {
+                alert("El motor élite requiere al menos 2 variables acopladas para generar el mapa topológico diferencial.");
+                return;
+            }
+
+            // 1. CALCULO MATEMÁTICO PURO (Matriz Exacta)
+            const matrizJ = CalculadorDiferencial.calcularJacobiano(polinomios, variables);
+
+            // 2. GENERACIÓN DEL ABISMO TOPOLÓGICO PARA PLOTLY
+           // 2. BARRIDO TOPOLÓGICO REAL (El Escáner Determinista y el Francotirador)
+            const varX = variables[0];
+            const varY = variables[1] || variables[0]; 
+            
+            const puntoBase = {};
+            variables.forEach(v => puntoBase[v] = 1);
+
+            const resolucion = 40; 
+            const rangoMin = -10;  
+            const rangoMax = 10;
+            const paso = (rangoMax - rangoMin) / resolucion;
+
+            const Z = [];
+            const ejeX = [];
+            const ejeY = [];
+            
+            // Variables para el Francotirador (Punto más cercano a 0)
+            let minDetAbs = Infinity;
+            let puntoCritico = { x: 0, y: 0, z: 0 };
+
+            for (let i = 0; i < resolucion; i++) {
+                const filaZ = [];
+                const valY = rangoMin + (i * paso); 
+                ejeY.push(valY); // Guardamos el eje real para Plotly
+                
+                for (let j = 0; j < resolucion; j++) {
+                    const valX = rangoMin + (j * paso); 
+                    if (i === 0) ejeX.push(valX); // Guardamos el eje real solo en la primera pasada
+                    
+                    const puntoActual = { ...puntoBase, [varX]: valX, [varY]: valY };
+                    
+                    const matrizNumerica = CalculadorDiferencial.evaluarJacobiano(matrizJ, puntoActual);
+                    const determinante = CalculadorDiferencial.calcularDeterminante(matrizNumerica);
+                    
+                    filaZ.push(determinante);
+
+                    // EL FRANCOTIRADOR: Si este punto está más cerca de 0 (el abismo), lo memorizamos
+                    if (Math.abs(determinante) < minDetAbs) {
+                        minDetAbs = Math.abs(determinante);
+                        puntoCritico = { x: valX, y: valY, z: determinante };
+                    }
+                }
+                Z.push(filaZ);
+            }
+
+            // 3. CARGAMOS EL DIAGNÓSTICO CON COORDENADAS EXACTAS
+            setDatosJacobiano({
+                matriz: matrizJ,
+                superficie: Z,
+                ejeX: ejeX,   // Inyectamos Eje X real
+                ejeY: ejeY,   // Inyectamos Eje Y real
+                puntoCritico: puntoCritico, // Inyectamos la coordenada del láser
+                diagnostico: `SINGULARIDAD DETECTADA EN (${varX}: ${puntoCritico.x.toFixed(2)}, ${varY}: ${puntoCritico.y.toFixed(2)}). El análisis diferencial muestra un punto de curvatura extrema. Si tu negocio llega a estas variables exactas, la estructura matemática se rompe.`
+            });
+
+            setIsJacobianoOpen(true);
+
+        } catch (e) {
+            console.error(e);
+            alert("Error al calcular el Jacobiano: " + e.message);
+        }
+    };
+
     function handleEditorChange(e) {
         setInputJSON(e.target.textContent);
     }
@@ -306,7 +389,29 @@ function Home(){
                         <ion-icon name="planet-outline" style={{marginRight: '8px', fontSize: '1.2rem'}}></ion-icon>
                         EXPLORAR UNIVERSO DE SOLUCIONES (3D)
                     </button>
+
                 )}
+                        <button 
+                            className="action-btn" 
+                            style={{ 
+                                width: '100%', 
+                                marginTop: '10px', 
+                                background: '#3b0000', 
+                                border: '1px solid #ff3333', 
+                                color: '#ff3333',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                padding: '12px',
+                                fontWeight: 'bold',
+                                textTransform: 'uppercase',
+                                letterSpacing: '1px'
+                            }}
+                            onClick={runDifferentialAnalysis}
+                        >
+                            <ion-icon name="nuclear-outline" style={{marginRight: '8px', fontSize: '1.2rem'}}></ion-icon>
+                            Radar de Singularidades (Jacobiano)
+                        </button>
                     </div>
                 </div>
                     
@@ -469,6 +574,18 @@ function Home(){
                     }}
                 />
             )}
+
+            {/* 5. RADAR DE SINGULARIDADES DIFERENCIAL */}
+            <ModalJacobiano 
+                isOpen={isJacobianoOpen}
+                onClose={() => setIsJacobianoOpen(false)}
+                matrizJacobiana={datosJacobiano.matriz}
+                datosSuperficie={datosJacobiano.superficie}
+                ejeX={datosJacobiano.ejeX}
+                ejeY={datosJacobiano.ejeY}
+                puntoCritico={datosJacobiano.puntoCritico}
+                diagnostico={datosJacobiano.diagnostico}
+            />
 
         </>
     )

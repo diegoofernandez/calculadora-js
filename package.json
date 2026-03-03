@@ -18,9 +18,11 @@
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",
     "katex": "^0.16.25",
+    "plotly.js": "^3.4.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-force-graph-3d": "^1.29.1",
+    "react-plotly.js": "^2.6.0",
     "react-router-dom": "^7.9.4",
     "recharts": "^3.3.0"
   },

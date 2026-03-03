@@ -17,7 +17,7 @@ export default class Fraccion {
         this.denominador = typeof denominador === 'bigint' ? denominador : BigInt(denominador);
         
         if (this.denominador === 0n) {
-            throw new Error("❌ Denominador cero detectado");
+            throw new Error("Denominador cero detectado");
         }
         
         //  SIMPLIFICAR USANDO SOLO ARITMÉTICA BIGINT
