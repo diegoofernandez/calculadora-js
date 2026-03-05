@@ -314,7 +314,32 @@ function Home(){
 
     return(
         <>
-            <p className="TextoAblog">Visita el blog para información técnica y asesoramiento sobre el motor. <a href="https://romimath.site/blog" target="_blank">Ir al blog</a></p>
+            <div className="romi-app">
+            
+            {/* === CABECERA CORPORATIVA Y REDES === */}
+            <header className="romi-header">
+                <div className="romi-brand">
+                    <ion-icon name="cube-outline" style={{marginRight: '8px'}}></ion-icon>
+                    ROMI MATH
+                    <span className="romi-badge">ENGINE v1.0</span>
+                </div>
+                
+                <div className="romi-socials">
+                    <a href="https://tiktok.com/@romimath.vt" target="_blank" rel="noreferrer" className="romi-social-link">
+                        <ion-icon name="logo-tiktok"></ion-icon>
+                    </a>
+                    <a href="https://www.youtube.com/@RomiMath-Motoralgebraico" target="_blank" rel="noreferrer" className="romi-social-link">
+                        <ion-icon name="logo-youtube"></ion-icon>
+                    </a>
+                    <a href="https://github.com/diegoofernandez" target="_blank" rel="noreferrer" className="romi-social-link">
+                        <ion-icon name="logo-github"></ion-icon>
+                    </a>
+                    <a href="https://romimath.site/blog" target="_blank" rel="noreferrer" className="romi-social-link">
+                        <ion-icon name="globe-outline"></ion-icon>
+                    </a>
+                </div>
+            </header>
+
             <div className="MainContainer">
                 <div className="JsonInput">
                     <div className="editor-header">
@@ -372,18 +397,7 @@ function Home(){
                         )}
                         {rawResult && !isProcessing && (
                     <button 
-                        className="action-btn" 
-                        style={{ 
-                            width: '100%', 
-                            marginTop: '10px', 
-                            background: '#1a1a1a', 
-                            border: '1px solid #333', 
-                            color: '#F2D34E',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            padding: '12px'
-                        }}
+                        className="action-btn btn-manifold" 
                         onClick={() => setIsManifoldOpen(true)}
                     >
                         <ion-icon name="planet-outline" style={{marginRight: '8px', fontSize: '1.2rem'}}></ion-icon>
@@ -392,21 +406,7 @@ function Home(){
 
                 )}
                         <button 
-                            className="action-btn" 
-                            style={{ 
-                                width: '100%', 
-                                marginTop: '10px', 
-                                background: '#3b0000', 
-                                border: '1px solid #ff3333', 
-                                color: '#ff3333',
-                                display: 'flex',
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                padding: '12px',
-                                fontWeight: 'bold',
-                                textTransform: 'uppercase',
-                                letterSpacing: '1px'
-                            }}
+                            className="action-btn btn-jacobiano" 
                             onClick={runDifferentialAnalysis}
                         >
                             <ion-icon name="nuclear-outline" style={{marginRight: '8px', fontSize: '1.2rem'}}></ion-icon>
@@ -452,9 +452,9 @@ function Home(){
                             padding: '20px', 
                             color: '#e5e5e5',
                             marginBottom: '20px',
-                            textAlign: 'left'
+                            textAlign: 'left',
+                            borderRadius: '8px'
                         }}>
-                            {/* ... (Todo tu código del diagnóstico se mantiene intacto) ... */}
                             <div style={{ borderBottom: '1px solid #333', paddingBottom: '10px', marginBottom: '20px', display: 'flex', justifyContent: 'space-between' }}>
                                 <span style={{ fontWeight: 'bold', letterSpacing: '1px', color: '#10b981' }}>[ DIAGNÓSTICO ESTRUCTURAL ]</span>
                                 <span style={{ color: '#888' }}>ID: {rawResult.simulationId.split('_')[1]}</span>
@@ -491,12 +491,12 @@ function Home(){
                         </div>
                     )}
                     
-                    {/* 2. INYECCIÓN DEL MOTOR DE FLUIDOS 3D AQUÍ */}
+                    {/* INYECCIÓN DEL MOTOR DE FLUIDOS 3D AQUÍ */}
                     {rawResult && rawResult.results && rawResult.results.grobnerBase && !isProcessing && (
                         <div style={{ marginBottom: '20px' }}>
                             <DynamicFluid3D 
                                 grobnerOutput={rawResult.results.grobnerBase} 
-                                viabilidadMax={30} // Esto lo podés linkear a tu ángulo de GeometricConnector
+                                viabilidadMax={30} 
                             />
                         </div>
                     )}
@@ -507,7 +507,6 @@ function Home(){
 
                     {resilienceReport && (
                         <div className="resilience-report">
-                            {/* ... (Tu tabla de resiliencia intacta) ... */}
                             <h3 className="resilience-title">
                                 <ion-icon name="warning-outline"></ion-icon> Reporte de Resiliencia Estructural
                             </h3>
@@ -557,14 +556,13 @@ function Home(){
                 />    
             </div>
 
-
-            {/* 4. RENDERIZAMOS LA MODAL FUERA DEL FLUJO PRINCIPAL */}
+            {/* MODALES FUERA DEL FLUJO PRINCIPAL */}
             {rawResult && (
                 <ManifoldModal 
                     isOpen={isManifoldOpen}
                     onClose={() => setIsManifoldOpen(false)}
                     vectors={rawResult.results.simulationVectors}
-                    variables={rawResult.results.variables || ['x', 'y', 'z']} // Pasamos los nombres de variables
+                    variables={rawResult.results.variables || ['x', 'y', 'z']}
                     srIndex={rawResult.frontendData.diagnosticoAvanzado?.indiceSR?.SR || 0}
                     sobolData={rawResult.frontendData.analisisSobol || []}
                     algebraicBase={rawResult.frontendData.algebraicAnalysis.basePolynomials}
@@ -575,7 +573,6 @@ function Home(){
                 />
             )}
 
-            {/* 5. RADAR DE SINGULARIDADES DIFERENCIAL */}
             <ModalJacobiano 
                 isOpen={isJacobianoOpen}
                 onClose={() => setIsJacobianoOpen(false)}
@@ -587,6 +584,7 @@ function Home(){
                 diagnostico={datosJacobiano.diagnostico}
             />
 
+        </div>
         </>
     )
 }
