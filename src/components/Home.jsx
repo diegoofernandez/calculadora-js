@@ -7,6 +7,7 @@ import Modal from './Modal';
 // 1. Importamos el nuevo motor visual 3D
 import { DynamicFluid3D } from './DynamicFluid3D'; 
 import ManifoldModal from './ManifoldModal';
+import {SimuladorEstructural} from '../engine/SimuladorEstructural'; 
 
 function Home(){
 
@@ -55,6 +56,9 @@ function Home(){
         ]
     ], null, 2);
 
+    // NUEVOS ESTADOS PARA LAS 500 SIMULACIONES:
+    const [ejecutandoLote, setEjecutandoLote] = useState(false);
+    const [progresoLote, setProgresoLote] = useState({ porcentaje: 0, mensaje: '' });
     const [resilienceReport, setResilienceReport] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rawResult, setRawResult] = useState(null);
@@ -103,6 +107,22 @@ function Home(){
                 inputData = JSON.parse(inputJSON);
             } catch (err) {
                 throw new Error('JSON inválido: ' + err.message);
+            }
+
+            // ACÁ EL MOTOR INTERCEPTA LAS 500 SIMULACIONES
+            if (inputData[0]?.[0]?.correr_escenarios_estructurales) {
+                setEjecutandoLote(true); 
+                const variablesDinamicas = extraerVariablesDinamicas(inputData);
+                
+                await SimuladorEstructural.ejecutar500Escenarios(
+                    inputData, 
+                    variablesDinamicas, 
+                    (mensaje, porcentaje) => setProgresoLote({ porcentaje, mensaje })
+                );
+                
+                setEjecutandoLote(false);
+                setIsProcessing(false);
+                return; 
             }
 
             if (!Array.isArray(inputData) || inputData.length < 2) {
@@ -583,6 +603,34 @@ function Home(){
                 puntoCritico={datosJacobiano.puntoCritico}
                 diagnostico={datosJacobiano.diagnostico}
             />
+
+            {ejecutandoLote && (
+                <div style={{
+                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh',
+                    backgroundColor: 'rgba(15, 23, 42, 0.95)', zIndex: 99999,
+                    display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                    fontFamily: 'monospace', color: '#10b981'
+                }}>
+                    <div style={{ width: '600px', background: '#000', padding: '30px', borderRadius: '8px', border: '1px solid #10b981', boxShadow: '0 0 30px rgba(16, 185, 129, 0.2)' }}>
+                        <h2 style={{ margin: '0 0 20px 0', textTransform: 'uppercase', letterSpacing: '2px', color: '#fff' }}>
+                            <span style={{color: '#F2D34E'}}>⚡</span> ROMI MATH | Inteligencia Estructural
+                        </h2>
+                        <div style={{ marginBottom: '20px', fontSize: '16px', color: '#888' }}>
+                            Ejecutando Análisis de Montecarlo y Ablación Topológica...
+                        </div>
+                        <div style={{ width: '100%', height: '10px', background: '#333', borderRadius: '5px', overflow: 'hidden', marginBottom: '15px' }}>
+                            <div style={{ width: `${progresoLote.porcentaje}%`, height: '100%', background: '#10b981', transition: 'width 0.2s ease-out' }}></div>
+                        </div>
+                        <div style={{ fontSize: '18px', fontWeight: 'bold' }}>
+                            > {progresoLote.mensaje} <span style={{ animation: 'blink 1s infinite' }}>_</span>
+                        </div>
+                        <div style={{ marginTop: '20px', fontSize: '12px', color: '#555' }}>
+                            Generando archivo Excel (.xlsx) de grado consultoría... No cierre la ventana.
+                        </div>
+                    </div>
+                    <style>{`@keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }`}</style>
+                </div>
+            )}
 
         </div>
         </>

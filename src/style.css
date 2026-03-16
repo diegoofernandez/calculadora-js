@@ -340,3 +340,8 @@ body {
     .header-actions, .output-actions { width: 100%; }
     .action-btn { flex: 1; justify-content: center; }
 }
+footer{
+
+    text-align: center;
+
+}
