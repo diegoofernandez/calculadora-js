@@ -36,6 +36,7 @@ export class SimuladorEstructural {
         onProgress(`Renderizando Excel Boutique...`, 99);
         await this.generarExcelBoutique(resultadosTotales, variables);
         onProgress(`¡Análisis completado!`, 100);
+        return resultadosTotales;
     }
 
     private static async correrSimulacionMutada(

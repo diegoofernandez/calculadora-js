@@ -343,7 +343,7 @@ function Home(){
                     ROMI MATH
                     <span className="romi-badge">ENGINE v1.0</span>
                 </div>
-                
+                <a href="https://romimath.site/auditoria"><button>Auditoría</button></a>
                 <div className="romi-socials">
                     <a href="https://tiktok.com/@romimath.vt" target="_blank" rel="noreferrer" className="romi-social-link">
                         <ion-icon name="logo-tiktok"></ion-icon>

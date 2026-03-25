@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home'
+import CalculadorUniversal from './components/CalculadorUniversal'
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
       <BrowserRouter>
         <Routes>
 
-          <Route path='/' element={<Home/>} />       
+          <Route path='/' element={<Home/>} />
+          <Route path='/auditoria' element={<CalculadorUniversal/>} />        
 
         </Routes>
       
