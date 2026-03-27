@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import { SimuladorEstructural } from '../engine/SimuladorEstructural'; 
 import DashboardEstructural from './DashboardEstructural';
 
+// 1. NUEVO MAPA UNIVERSAL (Con UX Mejorada)
 const MAPA_UNIVERSAL = {
-  v: "Volumen (Clientes/Ventas)",
-  p: "Precio Promedio (Ticket)",
-  c: "Capacidad Máxima",
-  d: "Desperdicio / Merma",
-  t: "Tiempo Operativo (Horas)",
-  f: "Costos Fijos Estructurales",
-  cv: "Costo Variable Unitario",
-  i: "Inversión en Adquisición (CAC)",
-  r: "Retorno"
+  v: { label: "Volumen de Ventas", symbol: "#", hint: "Cantidad total de unidades vendidas o clientes atendidos por mes." },
+  p: { label: "Precio Promedio (Ticket)", symbol: "$", hint: "Ingreso bruto promedio que deja cada venta." },
+  c: { label: "Capacidad Máxima", symbol: "#", hint: "Límite máximo de producción. ¿Cuánto es lo máximo que podés hacer?" },
+  d: { label: "Desperdicio / Merma", symbol: "#", hint: "Unidades perdidas, clientes que no pagan o tiempo muerto." },
+  t: { label: "Tiempo Operativo", symbol: "Hs", hint: "Cantidad de horas totales invertidas en este proceso al mes." },
+  f: { label: "Costos Fijos Estructurales", symbol: "$", hint: "Gastos obligatorios (alquiler, sueldos base, servicios, software)." },
+  cv: { label: "Costo Variable Unitario", symbol: "$", hint: "Costo directo por fabricar o atender a 1 sola unidad." },
+  i: { label: "Inversión en Adquisición", symbol: "$", hint: "Gasto en marketing, publicidad o comisiones de venta (CAC)." },
+  r: { label: "Retorno (Índice SR)", symbol: "%", hint: "Rentabilidad." }
 };
 
-// Generador del JSON Matemático
+// 2. Generador del JSON Matemático
 export function generarJsonUniversal(inputs) {
   return [
     [{ "operacion": "Grobner", "simulaciones": 150 }],
@@ -37,6 +38,7 @@ export function generarJsonUniversal(inputs) {
   ];
 }
 
+// 3. COMPONENTE PRINCIPAL
 export default function CalculadoraUniversal() {
   const [fase, setFase] = useState('formulario');
   const [progreso, setProgreso] = useState({ mensaje: '', porcentaje: 0 });
@@ -50,58 +52,24 @@ export default function CalculadoraUniversal() {
     setInputs({ ...inputs, [e.target.name]: Number(e.target.value) });
   };
 
-  /*
-  const ejecutarAutopsia = async () => {
-    setFase('simulando');
-    
-    try {
-      const jsonBaseTemporal = generarJsonUniversal(inputs);
-      const variablesActivas = ['v', 'p', 'c', 'd', 't', 'r'];
-
-      const resultados500 = await SimuladorEstructural.ejecutar500Escenarios(
-        jsonBaseTemporal, 
-        variablesActivas, 
-        (msg, percent) => setProgreso({ mensaje: msg, porcentaje: percent })
-      );
-
-      const metricasFundacionales = {
-        srInicial: resultados500[0]?.srIndex || 0,
-        conectividad: resultados500[0]?.conectividad || 0,
-        distanciaPromedio: resultados500[0]?.distancia || 0,
-        variableRestrictiva: resultados500[0]?.variablesDominantes || 'Ninguno'
-      };
-
-      setResultados({ metricasFundacionales, datosSimulacion: resultados500 });
-      setFase('resultados');
-
-    } catch (error) {
-      console.error("El motor colapsó:", error);
-      alert("Error en la simulación estocástica. Revisá la consola.");
-      setFase('formulario');
-    }
-  };*/
   const ejecutarAutopsia = () => {
-    // 1. Cambiamos la fase a simulando
     setFase('simulando');
     setProgreso({ mensaje: 'Iniciando motor estocástico...', porcentaje: 0 });
     
-    // 2. Le damos 50 milisegundos al navegador para que DIBUJE la pantalla oscura
     setTimeout(async () => {
       try {
         const jsonBaseTemporal = generarJsonUniversal(inputs);
         const variablesActivas = ['v', 'p', 'c', 'd', 't', 'r'];
 
-        // 3. Ahora sí, le tiramos todo el peso matricial
         const resultados500 = await SimuladorEstructural.ejecutar500Escenarios(
           jsonBaseTemporal, 
           variablesActivas, 
           (msg, percent) => setProgreso({ mensaje: msg, porcentaje: percent })
         );
 
-        // 4. Procesamos resultados
         const metricasFundacionales = {
           srInicial: resultados500[0]?.srIndex || 0,
-          conectividad: resultados500[0]?.conectividad || 0,
+          conectividad: resultados500[0]?.conectividad || "0%", // Ahora se pasa como string
           distanciaPromedio: resultados500[0]?.distancia || 0,
           variableRestrictiva: resultados500[0]?.variablesDominantes || 'Ninguno'
         };
@@ -114,9 +82,10 @@ export default function CalculadoraUniversal() {
         alert("Error en la simulación estocástica. Revisá la consola.");
         setFase('formulario');
       }
-    }, 50); // <-- Acá está la clave, el respiro de 50ms
+    }, 50);
   };
 
+  // PANTALLA 2: CARGA
   if (fase === 'simulando') {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white p-6">
@@ -133,53 +102,67 @@ export default function CalculadoraUniversal() {
     );
   }
 
+  // PANTALLA 3: RESULTADOS
   if (fase === 'resultados' && resultados) {
     return (
       <div className="relative">
         <button 
           onClick={() => setFase('formulario')}
-          className="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded"
+          className="absolute top-4 right-4 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded z-10"
         >
           ← Nuevo Análisis
         </button>
         <DashboardEstructural 
           metricasFundacionales={resultados.metricasFundacionales} 
           datosSimulacion={resultados.datosSimulacion} 
-          mapaVariables={MAPA_UNIVERSAL} 
+          // OJO: Le pasamos un mapa limpio al dashboard para que pueda leer los nombres originales
+          mapaVariables={Object.fromEntries(Object.entries(MAPA_UNIVERSAL).map(([k, v]) => [k, v.label]))} 
         />
       </div>
     );
   }
 
+  // PANTALLA 1: FORMULARIO
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 font-sans">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
         
-        {/* CABECERA */}
         <div className="bg-gray-900 py-6 px-8 border-b-4 border-red-600">
           <h2 className="text-3xl font-black text-white uppercase tracking-wider">Auditoría Estructural</h2>
           <p className="text-gray-400 mt-2">Ingresá los parámetros operativos actuales. El motor someterá la estructura a 500 escenarios estocásticos para encontrar tus puntos de quiebre.</p>
         </div>
         
         <div className="p-8">
-          {/* GRILLA DE INPUTS */}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            {Object.entries(MAPA_UNIVERSAL).map(([key, label]) => (
+            {Object.entries(MAPA_UNIVERSAL)
+              .filter(([key]) => key !== 'r') // Ocultamos la 'r'
+              .map(([key, data]) => (
               <div key={key} className="flex flex-col">
-                <label className="text-sm font-bold text-gray-700 mb-1">{label} ({key.toUpperCase()})</label>
-                <input 
-                  type="number" 
-                  name={key}
-                  value={inputs[key]}
-                  onChange={handleInputChange}
-                  // FIX COLOR: Agregamos text-gray-900 y bg-white para forzar contraste
-                  className="px-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 outline-none transition-colors font-mono font-bold shadow-inner"
-                />
+                <label className="text-sm font-bold text-gray-700 mb-1">
+                  {data.label} <span className="text-red-500">({key.toUpperCase()})</span>
+                </label>
+                
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <span className="text-gray-500 font-black">{data.symbol}</span>
+                  </div>
+                  <input 
+                    type="number" 
+                    name={key}
+                    value={inputs[key]}
+                    onChange={handleInputChange}
+                    className="w-full pl-8 pr-4 py-2 border border-gray-300 bg-white text-gray-900 rounded-lg focus:ring-2 focus:ring-red-500 outline-none transition-colors font-mono font-bold shadow-inner"
+                  />
+                </div>
+                
+                <p className="text-xs text-gray-500 mt-1 italic">
+                  {data.hint}
+                </p>
               </div>
             ))}
           </div>
 
-          {/* NUEVO: GUÍA DE RESULTADOS (PRE-MORTEM) */}
           <div className="bg-gray-50 rounded-xl p-6 border border-gray-200 mb-8">
             <h3 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-300 pb-2">
               ¿Qué te revelará esta autopsia?
@@ -198,7 +181,7 @@ export default function CalculadoraUniversal() {
                   <span className="text-xl">🔪</span> El Cuello de Botella
                 </h4>
                 <p className="text-sm text-gray-600 leading-relaxed">
-                  Descubrirás la <b>Variable Asesina</b>. La matemática aislará el factor exacto (ej: alquiler alto, poco volumen o exceso de horas) que está secuestrando tus ganancias reales.
+                  Descubrirás la <b>Variable Asesina</b>. La matemática aislará el factor exacto que está secuestrando tus ganancias reales.
                 </p>
               </div>
               <div>
@@ -212,7 +195,6 @@ export default function CalculadoraUniversal() {
             </div>
           </div>
 
-          {/* BOTÓN DE ACCIÓN */}
           <div className="pt-6 border-t border-gray-200 flex justify-end">
             <button 
               onClick={ejecutarAutopsia}

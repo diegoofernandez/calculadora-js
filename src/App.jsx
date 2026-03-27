@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home'
 import CalculadorUniversal from './components/CalculadorUniversal'
+import RomiMathStudio from './components/RomiMathStudio'
 
 function App() {
 
@@ -17,7 +18,8 @@ function App() {
         <Routes>
 
           <Route path='/' element={<Home/>} />
-          <Route path='/auditoria' element={<CalculadorUniversal/>} />        
+          <Route path='/auditoria' element={<CalculadorUniversal/>} />
+          <Route path='/studio' element={<RomiMathStudio/>} />         
 
         </Routes>
       

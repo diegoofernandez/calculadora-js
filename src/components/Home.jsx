@@ -8,6 +8,7 @@ import Modal from './Modal';
 import { DynamicFluid3D } from './DynamicFluid3D'; 
 import ManifoldModal from './ManifoldModal';
 import {SimuladorEstructural} from '../engine/SimuladorEstructural'; 
+import { Link } from 'react-router-dom';
 
 function Home(){
 
@@ -343,7 +344,7 @@ function Home(){
                     ROMI MATH
                     <span className="romi-badge">ENGINE v1.0</span>
                 </div>
-                <a href="https://romimath.site/auditoria"><button>Auditoría</button></a>
+                <Link to="/auditoria"><button>Auditoría</button></Link>
                 <div className="romi-socials">
                     <a href="https://tiktok.com/@romimath.vt" target="_blank" rel="noreferrer" className="romi-social-link">
                         <ion-icon name="logo-tiktok"></ion-icon>

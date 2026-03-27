@@ -345,3 +345,42 @@ footer{
     text-align: center;
 
 }
+/* =========================================================
+   OVERRIDES DE AG GRID (EL LIENZO ESTILO EXCEL)
+   ========================================================= */
+.ag-theme-alpine.romi-grid {
+    /* El lienzo (Celdas blancas puras) */
+    --ag-background-color: #ffffff;
+    --ag-odd-row-background-color: #ffffff; /* Apagamos el estilo cebra para que sea liso */
+    
+    /* Textos oscuros para contraste perfecto sobre blanco */
+    --ag-data-color: #0f172a; 
+    --ag-font-family: "Space Grotesk", sans-serif;
+    --ag-font-size: 13px;
+    
+    /* Bordes (Grid lines) ultra finos y con transparencia */
+    --ag-border-color: rgba(15, 23, 42, 0.3); /* Gris muy transparente */
+    --ag-row-border-color: rgba(15, 23, 42, 0.3);
+    
+    /* Cabeceras de columnas (A, B, C...) en gris claro institucional */
+    --ag-header-background-color: #f1f5f9;
+    --ag-header-foreground-color: #475569;
+    --ag-header-column-separator-display: block;
+    --ag-header-column-separator-color: rgba(15, 23, 42, 0.3);
+    
+    /* Interacción (Color de selección estilo Excel) */
+    --ag-row-hover-color: transparent; 
+    --ag-selected-row-background-color: rgba(59, 130, 246, 0.1); /* Celeste suave */
+    --ag-range-selection-border-color: var(--color-primario);
+}
+
+/* Ocultar el borde exterior por defecto para que se funda con la app */
+.ag-theme-alpine.romi-grid .ag-root-wrapper {
+    border: none;
+}
+
+/* Ocultar el borde exterior por defecto para que se funda con la app */
+.ag-theme-alpine.romi-grid .ag-root-wrapper {
+    border: none;
+    border-top: 1px solid var(--color-border);
+}
