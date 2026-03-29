@@ -5,146 +5,71 @@ import { HyperFormula } from 'hyperformula';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 
+
+import { FloatingModal } from './sections/FloatingModal';
+import { parseGridToAST } from './modulos/mathTranslator';
+
+// Importamos los submódulos que separamos
+import { colToNum, generarColumnasExcel, generarFilasVacias, cellToCoords } from './sections/excelUtils';
+import { Header } from './sections/Header';
+import { RibbonMenu } from './sections/RibbonMenu';
+import { FormulaBar } from './sections/FormulaBar';
+import { FooterTabs } from './sections/FooterTab';
+
 ModuleRegistry.registerModules([ AllCommunityModule ]);
 
-// ============================================================================
-// 1. UTILIDADES: GENERADORES Y TRADUCTORES
-// ============================================================================
-const colToNum = (letra) => {
-  let num = 0;
-  for (let i = 0; i < letra.length; i++) {
-    num = num * 26 + (letra.charCodeAt(i) - 64);
-  }
-  return num - 1;
-};
-
-const generarColumnasExcel = (cantidad) => {
-  const cols = [];
-  cols.push({ 
-    headerName: '', valueGetter: 'node.rowIndex + 1', pinned: 'left', width: 50, editable: false,
-    cellStyle: { background: '#f1f5f9', color: '#475569', fontWeight: 'bold', textAlign: 'center', borderRight: '1px solid rgba(15, 23, 42, 0.08)' }
-  });
-
-  for (let i = 0; i < cantidad; i++) {
-    let letra = '';
-    let temp = i;
-    while (temp >= 0) {
-      letra = String.fromCharCode((temp % 26) + 65) + letra;
-      temp = Math.floor(temp / 26) - 1;
-    }
-    cols.push({ field: letra, headerName: letra, width: 100 });
-  }
-  return cols;
-};
-
-const generarFilasVacias = (filas, columnas) => {
-  const data = [];
-  for (let i = 0; i < filas; i++) {
-    const row = {};
-    for (let c = 0; c < columnas; c++) {
-      let letra = String.fromCharCode((c % 26) + 65);
-      row[letra] = '';
-    }
-    data.push(row);
-  }
-  return data;
-};
-
-// ============================================================================
-// 2. COMPONENTES DE VISTA
-// ============================================================================
-const Header = () => (
-  <header className="romi-header" style={{ padding: '10px 20px' }}>
-    <div className="romi-brand">ROMI MATH <span className="romi-badge">STUDIO</span></div>
-    <span style={{color: 'var(--color-exito)', fontSize: '11px', fontWeight: 'bold'}}>● Motor HF Activo</span>
-  </header>
-);
-
-const RibbonMenu = ({ applyStyle, rellenarAbajo }) => (
-  <div style={{ background: 'var(--color-bg-panel)', borderBottom: '1px solid var(--color-border)' }}>
-    <div style={{ display: 'flex', gap: '20px', padding: '5px 20px', fontSize: '12px', borderBottom: '1px solid #334155' }}>
-      <span style={{ color: 'var(--color-primario)', fontWeight: 'bold', cursor: 'pointer', borderBottom: '2px solid var(--color-primario)', paddingBottom: '4px' }}>Inicio</span>
-      <span style={{ color: 'var(--color-texto-muted)', cursor: 'pointer' }}>Análisis Estructural</span>
-    </div>
-    
-    <div style={{ padding: '8px 20px', display: 'flex', alignItems: 'center', gap: '15px', flexWrap: 'wrap' }}>
-      <select onChange={(e) => applyStyle('fontFamily', e.target.value)} style={{ background: '#0f172a', color: 'white', border: '1px solid var(--color-border)', padding: '4px 8px', borderRadius: '4px', fontSize: '12px' }}>
-        <option value="Space Grotesk">Space Grotesk</option>
-        <option value="Arial">Arial</option>
-        <option value="Courier New">Courier New</option>
-      </select>
-      
-      <div style={{ display: 'flex', gap: '5px' }}>
-        <button onClick={() => applyStyle('fontWeight', 'bold')} className="action-btn" style={{ fontWeight: 'bold' }}>B</button>
-        <button onClick={() => applyStyle('fontStyle', 'italic')} className="action-btn" style={{ fontStyle: 'italic' }}>I</button>
-      </div>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '5px', paddingRight: '15px', borderRight: '1px solid var(--color-border)' }}>
-        <span style={{ color: 'var(--color-texto-muted)', fontSize: '11px' }}>A</span>
-        <input type="color" onChange={(e) => applyStyle('color', e.target.value)} style={{ width: '22px', height: '22px', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }} title="Color de texto" />
-        <span style={{ color: 'var(--color-texto-muted)', fontSize: '11px', marginLeft: '5px' }}>fondo</span>
-        <input type="color" onChange={(e) => applyStyle('backgroundColor', e.target.value)} style={{ width: '22px', height: '22px', padding: 0, border: 'none', background: 'transparent', cursor: 'pointer' }} title="Color de fondo" />
-      </div>
-
-      <div style={{ display: 'flex', gap: '5px' }}>
-        <button onClick={() => applyStyle('formatType', 'currency')} className="action-btn" style={{ color: 'var(--color-exito)', fontWeight: 'bold' }} title="Formato Moneda">$</button>
-        <button onClick={() => applyStyle('formatType', 'percent')} className="action-btn" style={{ color: 'var(--color-primario)', fontWeight: 'bold' }} title="Formato Porcentaje">%</button>
-        <button onClick={() => applyStyle('formatType', 'none')} className="action-btn" title="Quitar Formato">123</button>
-        
-        <button 
-          onClick={rellenarAbajo} 
-          className="action-btn" 
-          style={{ marginLeft: '10px', backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'var(--color-primario)', color: 'var(--color-primario)' }} 
-          title="Extender hacia abajo"
-        >
-          ↓ Rellenar
-        </button>
-      </div>
-    </div>
-  </div>
-);
-
-const FormulaBar = ({ activeCell, handleFormulaChange }) => (
-  <div style={{ padding: '4px 20px', background: '#0f172a', display: 'flex', alignItems: 'center', gap: '10px', borderBottom: '1px solid #334155' }}>
-    <span style={{ color: 'var(--color-texto-muted)', fontSize: '11px', width: '30px', textAlign: 'center', background: '#1e293b', padding: '2px 0', borderRadius: '3px' }}>
-      {activeCell.colId ? `${activeCell.colId}${activeCell.rowIndex + 1}` : ''}
-    </span>
-    <span style={{ color: 'var(--color-primario)', fontStyle: 'italic', fontWeight: '900', fontSize: '14px' }}>ƒx</span>
-    <input 
-      type="text" value={activeCell.value || ''} onChange={handleFormulaChange}
-      style={{ flex: 1, background: 'transparent', border: 'none', color: '#f8fafc', padding: '4px', fontFamily: 'monospace', outline: 'none', fontSize: '13px' }}
-    />
-  </div>
-);
-
-const FooterTabs = ({ hojas, hojaActiva, setHojaActiva, zoom, setZoom, agregarHoja, renombrarHoja }) => (
-  <div style={{ background: '#1e293b', borderTop: '1px solid var(--color-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0 10px', height: '35px' }}>
-    <div style={{ display: 'flex', overflowX: 'auto' }}>
-      <button onClick={agregarHoja} style={{ background: 'transparent', border: 'none', color: 'var(--color-texto-muted)', padding: '0 15px', cursor: 'pointer', fontSize: '18px', fontWeight: 'bold' }}>+</button>
-      {hojas.map((hoja, i) => (
-        <button key={i} onClick={() => setHojaActiva(i)} onDoubleClick={() => { const nn = window.prompt("Renombrar hoja:", hoja.nombre); if(nn) renombrarHoja(i, nn); }}
-          style={{ background: hojaActiva === i ? '#0f172a' : 'transparent', color: hojaActiva === i ? 'var(--color-primario)' : 'var(--color-texto-muted)', border: 'none', padding: '0 20px', height: '35px', fontWeight: hojaActiva === i ? 'bold' : 'normal', borderBottom: hojaActiva === i ? '2px solid var(--color-primario)' : 'none', cursor: 'pointer', fontSize: '12px', userSelect: 'none' }}>
-          {hoja.nombre}
-        </button>
-      ))}
-    </div>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--color-texto-muted)', fontSize: '12px' }}>
-      <button onClick={() => setZoom(z => Math.max(50, z - 10))} style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer' }}>-</button>
-      <span style={{ width: '40px', textAlign: 'center' }}>{zoom}%</span>
-      <button onClick={() => setZoom(z => Math.min(200, z + 10))} style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer' }}>+</button>
-    </div>
-  </div>
-);
-
-// ============================================================================
-// 3. CONTROLADOR PRINCIPAL
-// ============================================================================
 export default function RomiMathStudio() {
+
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [astActual, setAstActual] = useState(null);
   const gridRef = useRef();
   const [gridListo, setGridListo] = useState(false);
   const [zoom, setZoom] = useState(100);
   const [activeCell, setActiveCell] = useState({ rowIndex: null, colId: null, value: '' });
   const cellStylesRef = useRef({}); 
+
+
+  const extraerRangoAJSON = () => {
+    const rangoStr = window.prompt("Indicá el rango a procesar para el Motor (Ej: A1:D3):", "A1:D3");
+    if (!rangoStr || !rangoStr.includes(':')) return;
+
+    const [inicioCelda, finCelda] = rangoStr.split(':');
+    const coordsInicio = cellToCoords(inicioCelda);
+    const coordsFin = cellToCoords(finCelda);
+
+    if (!coordsInicio || !coordsFin) {
+        alert("Formato de rango inválido."); return;
+    }
+
+    const hfSheetId = hf.getSheetId(hojas[hojaActiva].nombre);
+    const matrizCruda = [];
+
+    // Recorremos el rectángulo exacto que pidió el usuario
+    for (let r = coordsInicio.row; r <= coordsFin.row; r++) {
+        const fila = [];
+        for (let c = coordsInicio.col; c <= coordsFin.col; c++) {
+            // Obtenemos el valor calculado de HyperFormula
+            const val = hf.getCellValue({ sheet: hfSheetId, col: c, row: r });
+            // Extraemos el número crudo esquivando errores de tipo
+            const cleanVal = (val !== null && typeof val === 'object' && val.value) ? val.value : val;
+            fila.push(cleanVal);
+        }
+        matrizCruda.push(fila);
+    }
+
+    try {
+        const astGenerado = parseGridToAST(matrizCruda, { operacion: "Grobner", simulaciones: 20 });
+        setAstActual(astGenerado);
+        setModalAbierto(true);
+    } catch (e) {
+        alert(e.message);
+    }
+  };
+
+/*****************************************************************************
+ * **************************************************************************
+ * **************************************************************************
+ * ***************************************************************************/
 
   const [hf] = useState(() => {
     const instance = HyperFormula.buildEmpty({ licenseKey: 'gpl-v3' });
@@ -253,9 +178,6 @@ export default function RomiMathStudio() {
     if (rowNode) gridRef.current.api.redrawRows({ rowNodes: [rowNode] });
   };
 
-  // ==========================================================================
-  // HACK MAESTRO: RELLENO CON DESPLAZAMIENTO MATEMÁTICO (Regex Vibe Coding)
-  // ==========================================================================
   const rellenarAbajo = () => {
     if (activeCell.rowIndex === null || !activeCell.colId) {
       alert("Seleccioná la celda que querés extender hacia abajo.");
@@ -273,40 +195,33 @@ export default function RomiMathStudio() {
     const startRow = activeCell.rowIndex;
 
     try {
-      // 1. Vemos qué hay en la celda original (fórmula o valor estático)
       let valorBase = hf.getCellFormula({ sheet: hfSheetId, col: colNum, row: startRow });
       let esFormula = true;
       
       if (valorBase === undefined || valorBase === null) {
-        // Si no hay fórmula, sacamos el valor plano
         valorBase = hf.getCellValue({ sheet: hfSheetId, col: colNum, row: startRow });
         esFormula = false;
       } else {
-        // FIX MAESTRO: Limpiamos cualquier "=" que ya traiga la fórmula y le clavamos uno solo.
-        // Así matamos el temido "==A1" para siempre.
         valorBase = '=' + String(valorBase).replace(/^=+/, '');
       }
 
-      // 2. El motor Regex que simula a Excel
       const shiftFormula = (formula, shiftBy) => {
         if (!esFormula || typeof formula !== 'string') return formula;
         
         return formula.replace(/(\$?)([A-Z]+)(\$?)([0-9]+)/ig, (match, colAbs, colLetra, rowAbs, rowNumTxt) => {
-          if (rowAbs === '$') return match; // Respetamos referencias absolutas ($A$1)
+          if (rowAbs === '$') return match; 
           
           const nuevaFila = parseInt(rowNumTxt, 10) + shiftBy;
           return `${colAbs}${colLetra}${rowAbs}${nuevaFila}`;
         });
       };
 
-      // 3. Pegamos los nuevos valores iterando hacia abajo
       for (let i = 1; i <= cantidad; i++) {
         const targetRow = startRow + i;
         const nuevoContenido = esFormula ? shiftFormula(valorBase, i) : valorBase;
         
         hf.setCellContents({ sheet: hfSheetId, col: colNum, row: targetRow }, [[nuevoContenido]]);
         
-        // Sincronizamos con la interfaz visual
         const node = gridRef.current.api.getDisplayedRowAtIndex(targetRow);
         if (node) {
           node.setDataValue(activeCell.colId, nuevoContenido);
@@ -319,10 +234,11 @@ export default function RomiMathStudio() {
       alert("Ocurrió un error al extender las celdas.");
     }
   };
+
   return (
     <div className="romi-app" style={{ height: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <Header />
-      <RibbonMenu applyStyle={applyStyle} rellenarAbajo={rellenarAbajo} />
+      <RibbonMenu applyStyle={applyStyle} rellenarAbajo={rellenarAbajo} extraerRangoAJSON={extraerRangoAJSON} />
       <FormulaBar activeCell={activeCell} handleFormulaChange={handleFormulaChange} />
       
       <div style={{ flex: 1, position: 'relative', overflow: 'hidden', background: '#e2e8f0' }}>
